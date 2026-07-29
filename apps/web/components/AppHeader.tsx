@@ -11,7 +11,7 @@ import {
 export default function AppHeader() {
   return (
     <Header
-      logo="/logo.svg"
+      logo="/brand/logo-white.svg"
       logoAlt="Hirakada"
       logoHref={DOMAIN.web}
       items={navigation}
