@@ -66,7 +66,7 @@ export default function HeaderMobileMenu({
 
             "overflow-y-auto",
 
-            "bg-[var(--color-background)]",
+            "bg-(--color-background)",
 
             "border-t border-[rgba(var(--color-secondary-rgb),0.12)]",
           )}
@@ -97,7 +97,7 @@ export default function HeaderMobileMenu({
 
               "gap-2",
 
-              "px-[var(--global-padding-x)]",
+              "px-(--global-padding-x)",
 
               "py-8",
             )}

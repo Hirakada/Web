@@ -69,7 +69,7 @@ export default function Header({
           ? "sticky"
           : "relative",
 
-        "bg-[var(--color-background)]/80",
+        "bg-(--color-background)/80",
 
         "backdrop-blur-xl",
 
@@ -84,7 +84,7 @@ export default function Header({
         className="
           relative mx-auto flex w-full 
           max-w-container items-center 
-          px-[var(--global-padding-x)]
+          px-(--global-padding-x)
         "
         style={{
           height: HEADER_HEIGHT,
