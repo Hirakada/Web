@@ -8,11 +8,17 @@
 @import "./tokens.css";
 @import "./animations.css";
 
-  /* ==========================================================
-    Base
-  ========================================================== */
 
-  @layer base {
+/* ==========================================================
+   Base
+========================================================== */
+
+@layer base {
+
+  :root {
+    color-scheme: dark;
+  }
+
 
   *,
   *::before,
@@ -22,136 +28,236 @@
     padding: 0;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ul,
-  ol,
-  figure,
-  blockquote {
-    margin: 0;
-  }
-
-  ul,
-  ol {
-    padding: 0;
-  }
-
-  html, 
-  body {
-    user-select: none;
-  }
 
   html {
+
     width: 100%;
     height: 100%;
 
     font-size: 12px;
 
     overflow-x: hidden;
+
     scroll-behavior: smooth;
 
-    background: var(--color-background);
-    color: var(--color-on-background);
 
-    text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    scrollbar-width: none;
+    background:
+      var(--color-background);
 
+
+    color:
+      var(--color-on-background);
+
+
+    color-scheme:
+      dark;
+
+
+    user-select:
+      none;
+
+
+    text-size-adjust:
+      100%;
+
+
+    -webkit-text-size-adjust:
+      100%;
+
+
+    scrollbar-width:
+      none;
   }
 
+
+
   body {
+
     width: 100%;
+
     min-height: 100vh;
 
+
     display: flex;
+
     flex-direction: column;
+
 
     overflow-x: hidden;
 
-    background: var(--color-background);
-    color: var(--color-on-background);
 
-    font-family: var(--font-body);
-    font-weight: 400; 
-    line-height: 1.5;
+    background:
+      var(--color-background);
 
-    text-rendering: optimizeLegibility;
 
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    color:
+      var(--color-on-background);
+
+
+    font-family:
+      var(--font-body);
+
+
+    font-weight:
+      400;
+
+
+    line-height:
+      1.5;
+
+
+    text-rendering:
+      optimizeLegibility;
+
+
+    -webkit-font-smoothing:
+      antialiased;
+
+
+    -moz-osx-font-smoothing:
+      grayscale;
+
 
     transition:
-      background-color var(--quick-transition),
-      color var(--quick-transition);
+
+      background-color
+      var(--quick-transition),
+
+      color
+      var(--quick-transition);
   }
+
+
 
   main {
+
     width: 100%;
+
     flex: 1;
+
   }
 
-    header {
+
+
+  header {
+
     width: 100%;
 
+
     display: flex;
+
     justify-content: center;
+
     align-items: center;
 
+
     position: sticky;
+
+
     top: 0;
+
 
     z-index: 50;
 
-    transition: all var(--quick-transition);
 
-    background: rgba(var(--color-background-rgb), .85);
+    transition:
+      all var(--quick-transition);
 
-    backdrop-filter: blur(1rem);
-    -webkit-backdrop-filter: blur(1rem);
+
+    background:
+
+      rgba(
+        var(--color-background-rgb),
+        .75
+      );
+
+
+    backdrop-filter:
+      blur(1rem);
+
+
+    -webkit-backdrop-filter:
+      blur(1rem);
+
+
 
     border-bottom:
-      1px solid rgba(var(--color-secondary-rgb), .1);
+
+      1px solid
+
+      rgba(
+        var(--color-on-background-rgb),
+        .08
+      );
+
   }
+
+
 
   nav {
+
     width: 100%;
+
   }
 
+
+
   section {
+
     width: 100%;
 
+
     display: flex;
+
+
     flex-direction: column;
+
+
     justify-content: center;
+
+
     align-items: center;
+
 
     position: relative;
 
+
     padding:
+
       var(--section-padding-y)
+
       var(--global-padding-x);
+
   }
+
+
 
   article,
-  aside,s
+  aside,
   footer {
+
     width: 100%;
+
   }
 
+
+
   footer {
+
     padding:
+
       var(--footer-padding-y)
+
       var(--global-padding-x);
+
   }
+
+
 
   /* ==========================================================
-    Typography
+     Typography
   ========================================================== */
+
 
   h1,
   h2,
@@ -159,374 +265,792 @@
   h4,
   h5,
   h6 {
-    margin: 0;
 
-    color: var(--text-heading);
+    color:
+      var(--text-heading);
 
-    font-family: var(--font-heading);
-    font-style: normal;
-    line-height: 1.2;
 
-    text-wrap: balance;
+    font-family:
+      var(--font-heading);
+
+
+    font-style:
+      normal;
+
+
+    line-height:
+      1.2;
+
+
+    text-wrap:
+      balance;
+
   }
+
+
 
   h1 {
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    font-weight: 700;
-    letter-spacing: -0.015625em;
+
+    font-size:
+      clamp(2rem, 5vw, 2.5rem);
+
+
+    font-weight:
+      700;
+
+
+    letter-spacing:
+      -0.015625em;
+
   }
+
+
 
   h2 {
-    font-size: clamp(1.75rem, 4.5vw, 2rem);
-    font-weight: 700;
-    letter-spacing: -0.008333em;
-    margin-bottom: 1rem;
+
+    font-size:
+      clamp(1.75rem, 4.5vw, 2rem);
+
+
+    font-weight:
+      700;
+
+
+    letter-spacing:
+      -0.008333em;
+
+
+    margin-bottom:
+      1rem;
+
   }
+
+
 
   h3 {
-    font-size: clamp(1.5rem, 4vw, 1.75rem);
-    font-weight: 600;
-    letter-spacing: 0;
-    margin-bottom: .8rem;
+
+    font-size:
+      clamp(1.5rem, 4vw, 1.75rem);
+
+
+    font-weight:
+      600;
+
+
+    margin-bottom:
+      .8rem;
+
   }
+
+
 
   h4 {
-    font-size: clamp(1.2rem, 3.5vw, 1.4rem);
-    font-weight: 600;
-    letter-spacing: 0.00735em;
-    margin-bottom: .6rem;
+
+    font-size:
+      clamp(1.2rem, 3.5vw, 1.4rem);
+
+
+    font-weight:
+      600;
+
+
+    margin-bottom:
+      .6rem;
+
   }
+
+
 
   h5 {
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    font-weight: 600;
-    letter-spacing: 0;
-    margin-bottom: .4rem;
+
+    font-size:
+      clamp(1rem, 3vw, 1.2rem);
+
+
+    font-weight:
+      600;
+
+
+    margin-bottom:
+      .4rem;
+
   }
+
+
 
   h6 {
-    font-size: clamp(0.9rem, 2.5vw, 1rem);
-    font-weight: 600;
-    letter-spacing: 0.0075em;
+
+    font-size:
+      clamp(.9rem, 2.5vw, 1rem);
+
+
+    font-weight:
+      600;
+
   }
+
+
 
   p {
-    margin: 0;
 
-    color: var(--color-on-background);
+    color:
+      var(--text-medium-emphasis);
 
-    font-family: var(--font-body);
-    font-size: clamp(0.9rem, 2.3vw, 1rem);
-    font-weight: 400;
-    line-height: 1.6;
 
-    letter-spacing: clamp(0.01785em, 0.025vw, 0.03125em);
+    font-family:
+      var(--font-body);
 
-    text-wrap: pretty;
+
+    font-size:
+      clamp(.9rem, 2.3vw, 1rem);
+
+
+    font-weight:
+      400;
+
+
+    line-height:
+      1.6;
+
+
+    letter-spacing:
+      clamp(
+        .01785em,
+        .025vw,
+        .03125em
+      );
+
+
+    text-wrap:
+      pretty;
+
   }
+
+
 
   small {
-    font-size: 0.875em;
+
+    font-size:
+      .875em;
+
   }
+
+
 
   strong,
   b {
-    font-weight: 700;
+
+    font-weight:
+      700;
+
   }
+
+
 
   em,
   i {
-    font-style: italic;
+
+    font-style:
+      italic;
+
   }
 
-  mark {
-    background: rgba(var(--color-primary-rgb), 0.2);
-    color: inherit;
-  }
+
 
   blockquote {
-    padding-left: 1rem;
 
-    border-left: 4px solid var(--color-primary);
+    padding-left:
+      1rem;
 
-    color: var(--text-medium-emphasis);
+
+    border-left:
+
+      4px solid
+
+      var(--color-primary);
+
+
+    color:
+      var(--text-medium-emphasis);
+
   }
+
+
 
   code,
   pre,
   kbd,
   samp {
+
     font-family:
+
       ui-monospace,
+
       SFMono-Regular,
+
       Menlo,
+
       Monaco,
+
       Consolas,
+
       "Liberation Mono",
+
       monospace;
+
   }
+
+
 
   code {
-    padding: 0.125rem 0.375rem;
 
-    border-radius: 0.25rem;
+    padding:
+      .125rem .375rem;
 
-    background: rgba(var(--color-surface-rgb), 0.9);
+
+    border-radius:
+      .25rem;
+
+
+    background:
+
+      rgba(
+        var(--color-surface-rgb),
+        .9
+      );
+
   }
+
+
 
   pre {
-    overflow-x: auto;
 
-    padding: 1rem;
+    overflow-x:
+      auto;
 
-    border-radius: 0.5rem;
 
-    background: rgba(var(--color-surface-rgb), 0.9);
+    padding:
+      1rem;
+
+
+    border-radius:
+      .5rem;
+
+
+    background:
+
+      rgba(
+        var(--color-surface-rgb),
+        .9
+      );
+
   }
+
+
 
   pre code {
-    padding: 0;
 
-    background: transparent;
+    padding:
+      0;
+
+
+    background:
+      transparent;
+
   }
 
-    /* ==========================================================
+
+
+  /* ==========================================================
      Media
   ========================================================== */
+
 
   img,
   picture,
   video,
   canvas,
   svg {
-    display: block;
-    max-width: 100%;
+
+    display:
+      block;
+
+
+    max-width:
+      100%;
+
   }
+
+
 
   img {
-    height: auto;
+
+    height:
+      auto;
+
   }
+
+
 
   iframe {
-    border: 0;
+
+    border:
+      0;
+
   }
 
+
+
   hr {
-    border: 0;
-    border-top: 1px solid rgba(var(--color-secondary-rgb), 0.15);
+
+    border:
+      0;
+
+
+    border-top:
+
+      1px solid
+
+      rgba(
+        var(--color-secondary-rgb),
+        .15
+      );
+
   }
+
+
 
   /* ==========================================================
      Links
   ========================================================== */
 
+
   a {
-    color: inherit;
-    text-decoration: none;
+
+    color:
+      inherit;
+
+
+    text-decoration:
+      none;
+
 
     transition:
-      color var(--quick-transition),
-      opacity var(--quick-transition);
+
+      color
+      var(--quick-transition),
+
+      opacity
+      var(--quick-transition);
+
   }
 
+
+
   a:hover {
-    color: var(--color-primary);
+
+    color:
+      var(--color-primary);
+
   }
+
+
 
   /* ==========================================================
      Lists
   ========================================================== */
 
+
   ul,
   ol {
-    list-style: none;
+
+    list-style:
+      none;
+
   }
 
+
+
   li {
-    list-style: none;
+
+    list-style:
+      none;
+
   }
+
+
 
   /* ==========================================================
      Forms
   ========================================================== */
 
+
   button,
   input,
   textarea,
   select {
-    font: inherit;
-    color: inherit;
+
+    font:
+      inherit;
+
+
+    color:
+      inherit;
+
   }
+
+
+
+  input,
+  textarea,
+  select {
+
+    user-select:
+      text;
+
+  }
+
+
 
   button {
-    cursor: pointer;
 
-    background: none;
-    border: none;
+    cursor:
+      pointer;
+
+
+    background:
+      none;
+
+
+    border:
+      none;
+
   }
+
+
 
   button:disabled,
   input:disabled,
   textarea:disabled,
   select:disabled {
-    cursor: not-allowed;
-    opacity: .6;
+
+    cursor:
+      not-allowed;
+
+
+    opacity:
+      .6;
+
   }
 
-  input,
-  textarea,
-  select {
-    background: transparent;
-    border: none;
-    outline: none;
-  }
+
 
   textarea {
-    resize: vertical;
+
+    resize:
+      vertical;
+
   }
+
+
 
   input::placeholder,
   textarea::placeholder {
-    color: var(--text-disabled);
+
+    color:
+      var(--text-disabled);
+
   }
+
+
 
   /* ==========================================================
      Tables
   ========================================================== */
 
-  table {
-    width: 100%;
 
-    border-collapse: collapse;
-    border-spacing: 0;
+  table {
+
+    width:
+      100%;
+
+
+    border-collapse:
+      collapse;
+
+
+    border-spacing:
+      0;
+
   }
+
+
 
   th,
   td {
-    text-align: left;
-    vertical-align: middle;
+
+    text-align:
+      left;
+
+
+    vertical-align:
+      middle;
+
   }
+
+
 
   th {
-    font-weight: 600;
+
+    font-weight:
+      600;
+
   }
+
 }
-  
-  /* ==========================================================
-     Accessibility
-  ========================================================== */
-
-  :focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: 0.5rem;
-  }
-
-  [hidden] {
-    display: none !important;
-  }
-
-  ::selection {
-    background: var(--color-primary);
-    color: var(--color-on-primary);
-  }
-
-  ::-moz-selection {
-    background: var(--color-primary);
-    color: var(--color-on-primary);
-  }
-
-  /* ==========================================================
-    Custom Scroll Indicator
-  ========================================================== */
 
 
-  /* Hide Native Scrollbar */
+
+/* ==========================================================
+   Accessibility
+========================================================== */
+
+
+:focus-visible {
+
+  outline:
+
+    2px solid
+
+    var(--color-primary);
+
+
+  outline-offset:
+    2px;
+
+
+  border-radius:
+    .5rem;
+
+}
+
+
+
+[hidden] {
+
+  display:
+    none !important;
+
+}
+
+
+
+::selection {
+
+  background:
+
+    rgba(
+      var(--color-primary-rgb),
+      .2
+    );
+
+
+  color:
+    var(--color-primary);
+
+}
+
+
+
+::-moz-selection {
+
+  background:
+
+    rgba(
+      var(--color-primary-rgb),
+      .2
+    );
+
+
+  color:
+    var(--color-primary);
+
+}
+
+
+
+/* ==========================================================
+   Scroll Indicator
+========================================================== */
+
+
+html {
+
+  scrollbar-width:
+    none;
+
+}
+
+
+
+body {
+
+  -ms-overflow-style:
+    none;
+
+}
+
+
+
+body::-webkit-scrollbar {
+
+  display:
+    none;
+
+}
+
+
+
+body::before {
+
+  content:
+    "";
+
+
+  position:
+    fixed;
+
+
+  top:
+    0;
+
+
+  right:
+    1rem;
+
+
+  width:
+    2px;
+
+
+  height:
+    100vh;
+
+
+  background:
+
+    rgba(
+      var(--color-on-background-rgb),
+      .08
+    );
+
+
+  border-radius:
+    999px;
+
+
+  z-index:
+    9998;
+
+
+  pointer-events:
+    none;
+
+}
+
+
+
+body::after {
+
+  content:
+    "";
+
+
+  position:
+    fixed;
+
+
+  top:
+    0;
+
+
+  right:
+    1rem;
+
+
+  width:
+    2px;
+
+
+  height:
+    var(--scroll-progress, 0%);
+
+
+  background:
+    var(--color-primary);
+
+
+  border-radius:
+    999px;
+
+
+  box-shadow:
+    var(--glow-text-subtle);
+
+
+  z-index:
+    9999;
+
+
+  pointer-events:
+    none;
+
+
+  transition:
+
+    height
+    100ms linear;
+
+}
+
+
+
+/* ==========================================================
+   Reduced Motion
+========================================================== */
+
+
+@media (prefers-reduced-motion: reduce) {
+
 
   html {
-    scrollbar-width: none;
-  }
 
-  body {
-    -ms-overflow-style: none;
-  }
+    scroll-behavior:
+      auto;
 
-  body::-webkit-scrollbar {
-    display: none;
   }
 
 
-  /* Background Line */
 
-  body::before {
-    content: "";
+  *,
+  *::before,
+  *::after {
 
-    position: fixed;
-
-    top: 0;
-    right: 1rem;
-
-    width: 2px;
-    height: 100vh;
+    animation-duration:
+      .01ms !important;
 
 
+    animation-iteration-count:
+      1 !important;
 
-    border-radius: 999px;
 
-    z-index: 9998;
+    transition-duration:
+      .01ms !important;
 
-    pointer-events: none;
+
+    scroll-behavior:
+      auto !important;
+
   }
 
-
-  /* Progress Line */
-
-  body::after {
-    content: "";
-
-    position: fixed;
-
-    top: 0;
-    right: 1rem;
-
-    width: 2px;
-
-    height: var(--scroll-progress, 0%);
-
-    background:
-      var(--color-primary);
-
-    border-radius: 999px;
-
-    box-shadow:
-      var(--glow-text-subtle);
-
-    z-index: 9999;
-
-    pointer-events: none;
-
-    transition:
-      height 100ms linear;
-  }
-
-  /* ==========================================================
-     Reduced Motion
-  ========================================================== */
-
-  @media (prefers-reduced-motion: reduce) {
-
-    html {
-      scroll-behavior: auto;
-    }
-
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-
-      transition-duration: 0.01ms !important;
-
-      scroll-behavior: auto !important;
-    }
-  }
+}

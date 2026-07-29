@@ -1,6 +1,10 @@
 import "@hirakada/ui/styles/global.css";
 
-import type { Metadata } from "next";
+import type {
+  Metadata,
+  Viewport,
+} from "next";
+
 
 import {
   bodyFont,
@@ -8,30 +12,104 @@ import {
   headingFont,
 } from "@hirakada/config";
 
+
 import AppHeader from "@/components/AppHeader";
+
 
 export const metadata: Metadata = {
   ...defaultMetadata,
+
   title: {
-    default: "Portfolio | Hirakada",
-    template: "%s | Portfolio | Hirakada",
+    default:
+      "Portfolio | Hizkya Raka Priananda",
+
+    template:
+      "%s | Portfolio | Hirakada",
+  },
+
+
+  description:
+    "Explore software engineering projects, web applications, UI/UX case studies, and digital products created by Hizkya Raka Priananda.",
+
+
+  keywords: [
+    "Hizkya Raka Priananda Portfolio",
+    "Software Engineering Projects",
+    "Next.js Projects",
+    "React Applications",
+    "Web Development",
+    "UI UX Case Studies",
+  ],
+
+
+  alternates: {
+    canonical: "/",
+  },
+
+
+  openGraph: {
+    ...defaultMetadata.openGraph,
+
+    title:
+      "Portfolio | Hizkya Raka Priananda",
+
+    description:
+      "A collection of software engineering projects, web applications, UI/UX designs, and digital experiences created by Hizkya Raka Priananda.",
+
+    url:
+      "/",
+  },
+
+
+  twitter: {
+    ...defaultMetadata.twitter,
+
+    title:
+      "Portfolio | Hizkya Raka Priananda",
+
+    description:
+      "Explore software engineering projects, web applications, UI/UX case studies, and digital products.",
   },
 };
+
+
+export const viewport: Viewport = {
+  width: "device-width",
+
+  initialScale: 1,
+
+  colorScheme: "dark",
+
+  themeColor: "#101010",
+};
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html
       lang="en"
-      className={`${headingFont.variable} ${bodyFont.variable}`}
+      className={`
+        dark
+        ${headingFont.variable}
+        ${bodyFont.variable}
+      `}
     >
+
       <body>
+
         <AppHeader />
-        <main>{children}</main>
+
+        <main>
+          {children}
+        </main>
+
       </body>
+
     </html>
   );
 }

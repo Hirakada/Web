@@ -1,9 +1,9 @@
 import { DOMAIN } from "./domain";
 
-export const webNavigation = [
+export const navigation = [
   {
     label: "Home",
-    href: "/",
+    href: DOMAIN.web,
   },
   {
     label: "Projects",
@@ -16,16 +16,5 @@ export const webNavigation = [
   {
     label: "Journey",
     href: "/journey",
-  },
-] as const;
-
-export const portfolioNavigation = [
-  {
-    label: "Home",
-    href: DOMAIN.web,
-  },
-  {
-    label: "Projects",
-    href: "/",
   },
 ] as const;
