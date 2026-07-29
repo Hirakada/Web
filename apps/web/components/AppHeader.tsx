@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@hirakada/ui";
-import { webNavigation } from "@hirakada/config";
+import { navigation } from "@hirakada/config";
 
 export default function AppHeader() {
   return (
@@ -9,7 +9,7 @@ export default function AppHeader() {
       logo="/logo.svg"
       logoAlt="Hirakada"
       logoHref="/"
-      items={webNavigation}
+      items={navigation}
     />
   );
 }

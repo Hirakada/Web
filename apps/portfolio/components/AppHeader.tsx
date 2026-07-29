@@ -1,6 +1,6 @@
 "use client";
 
-import { portfolioNavigation } from "@hirakada/config";
+import { navigation } from "@hirakada/config";
 import { Header } from "@hirakada/ui";
 
 export default function AppHeader() {
@@ -9,7 +9,7 @@ export default function AppHeader() {
       logo="/logo.svg"
       logoAlt="Hirakada"
       logoHref="/"
-      items={portfolioNavigation}
+      items={navigation}
     />
   );
 }
