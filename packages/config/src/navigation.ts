@@ -11,10 +11,10 @@ export const navigation = [
   },
   {
     label: "Documentation",
-    href: "/documentation",
+    href: `${DOMAIN.web}/documentation`,
   },
   {
     label: "Journey",
-    href: "/journey",
+    href: `${DOMAIN.web}/journey`,
   },
 ] as const;
