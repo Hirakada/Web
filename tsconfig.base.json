@@ -32,8 +32,8 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
 
-    /* Future Compatibility */
-    "ignoreDeprecations": "6.0"
+    //* Future Compatibility */
+    //"ignoreDeprecations": "6.0"
   },
 
   "exclude": [
