@@ -1,0 +1,155 @@
+/* packages/ui/styles/animations.css */
+
+
+/* ==========================================
+   Fade Animations
+========================================== */
+
+@keyframes appear-on-open {
+
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+
+@keyframes fade-in-from-bottom {
+
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+
+@keyframes fade-in-typed {
+
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+
+/* ==========================================
+   Marquee
+========================================== */
+
+@keyframes scroll-left {
+
+  to {
+    transform:
+      translateX(calc(-100% - 100vw));
+  }
+
+}
+
+
+
+/* ==========================================
+   Pulse / Glow
+========================================== */
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+
+    transform:
+      scale(1);
+
+    opacity:
+      .2;
+
+  }
+
+
+  50% {
+
+    transform:
+      scale(1.05);
+
+    opacity:
+      .3;
+
+  }
+
+}
+
+
+
+@keyframes glow-pulse {
+
+  from {
+
+    box-shadow:
+      0 0 15px var(--color-primary),
+      0 0 30px rgba(var(--color-primary-rgb),.4);
+
+  }
+
+
+  to {
+
+    box-shadow:
+      0 0 25px var(--color-primary),
+      0 0 50px rgba(var(--color-primary-rgb),.6);
+
+  }
+
+}
+
+
+
+/* ==========================================
+   Tailwind v4 Animation Tokens
+========================================== */
+
+@theme {
+
+  --animate-appear-on-open:
+    appear-on-open .8s ease-out forwards;
+
+
+  --animate-fade-in-from-bottom:
+    fade-in-from-bottom .8s ease-out forwards;
+
+
+  --animate-fade-in-typed:
+    fade-in-typed .8s ease-out .5s forwards;
+
+
+  --animate-scroll-left:
+    scroll-left 10s linear infinite;
+
+
+  --animate-pulse-slow:
+    pulse-slow 8s ease-in-out infinite;
+
+
+  --animate-glow-pulse:
+    glow-pulse 3s ease-in-out infinite alternate;
+
+}

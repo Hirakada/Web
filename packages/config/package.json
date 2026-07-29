@@ -1,0 +1,23 @@
+{
+  "name": "@hirakada/config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./site": "./src/site.ts",
+    "./navigation": "./src/navigation.ts",
+    "./fonts": "./src/fonts.ts"
+  },
+  "peerDependencies": {
+    "next": "^16.2.10",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5.9.2"
+  }
+}

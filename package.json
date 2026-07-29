@@ -1,0 +1,23 @@
+{
+  "name": "hirakada",
+  "private": true,
+  "packageManager": "pnpm@11.15.1",
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+
+    "dev:web": "turbo run dev --filter=web",
+    "dev:portfolio": "turbo run dev --filter=portfolio",
+
+    "build": "turbo run build",
+    "build:web": "turbo run build --filter=web",
+    "build:portfolio": "turbo run build --filter=portfolio",
+
+    "lint": "turbo run lint",
+    "lint:web": "turbo run lint --filter=web",
+    "lint:portfolio": "turbo run lint --filter=portfolio"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.7"
+  }
+}

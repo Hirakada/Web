@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    /* Language & Environment */
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* JavaScript */
+    "allowJs": false,
+    "checkJs": false,
+
+    /* Modules */
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+
+    /* Build */
+    "noEmit": true,
+    "isolatedModules": true,
+    "incremental": true,
+
+    /* Type Checking */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* Future Compatibility */
+    "ignoreDeprecations": "6.0"
+  },
+
+  "exclude": [
+    "**/node_modules",
+    "**/.next",
+    "**/dist",
+    "**/build",
+    "**/coverage"
+  ]
+}
