@@ -10,24 +10,43 @@ import type { HeaderItem } from "./types";
 interface HeaderLinkProps {
   item: HeaderItem;
   pathname: string;
+  internalUrls?: readonly string[];
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 }
 
 export default function HeaderLink({
   item,
   pathname,
+  internalUrls = [],
   onClick,
 }: HeaderLinkProps) {
-  const isExternal =
-    item.external ||
+
+  const isHttpUrl =
     item.href.startsWith("http://") ||
     item.href.startsWith("https://");
 
+
+  const isInternalDomain =
+    isHttpUrl &&
+    internalUrls.some((url) =>
+      item.href.startsWith(url)
+    );
+
+
+  const isExternal =
+    isHttpUrl &&
+    !isInternalDomain;
+
+
   const isActive =
-    !isExternal &&
-    (item.href === "/"
-      ? pathname === "/"
-      : pathname === item.href || pathname.startsWith(`${item.href}/`));
+    !isHttpUrl &&
+    (
+      item.href === "/"
+        ? pathname === "/"
+        : pathname === item.href ||
+          pathname.startsWith(`${item.href}/`)
+    );
+
 
   const className = cn(
     "inline-flex items-center justify-center",
@@ -36,9 +55,11 @@ export default function HeaderLink({
     "text-sm font-medium",
     "transition-all duration-200",
     "select-none",
+
     item.disabled
       ? "pointer-events-none opacity-50"
       : "hover:bg-[rgba(var(--color-primary-rgb),0.08)]",
+
     isActive
       ? [
           "bg-[rgba(var(--color-primary-rgb),0.10)]",
@@ -47,6 +68,7 @@ export default function HeaderLink({
         ]
       : "text-[var(--text-disabled)]",
   );
+
 
   const content = (
     <>
@@ -61,12 +83,18 @@ export default function HeaderLink({
     </>
   );
 
+
+  /*
+    External website:
+    GitHub, LinkedIn, etc.
+    Open new tab
+  */
   if (isExternal) {
     return (
       <a
         href={item.href}
-        target={item.target ?? "_blank"}
-        rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+        target="_blank"
+        rel="noopener noreferrer"
         className={className}
         {...(onClick ? { onClick } : {})}
       >
@@ -75,6 +103,30 @@ export default function HeaderLink({
     );
   }
 
+
+  /*
+    Internal domain:
+    hirakada.vercel.app
+    potfoliohirakada.vercel.app
+
+    Same tab
+  */
+  if (isInternalDomain) {
+    return (
+      <a
+        href={item.href}
+        className={className}
+        {...(onClick ? { onClick } : {})}
+      >
+        {content}
+      </a>
+    );
+  }
+
+
+  /*
+    Next.js internal route
+  */
   return (
     <Link
       href={item.href}

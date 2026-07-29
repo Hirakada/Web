@@ -42,6 +42,7 @@ export interface HeaderItem {
   disabled?: boolean;
 }
 
+
 export interface HeaderProps {
   /**
    * Logo image.
@@ -64,6 +65,17 @@ export interface HeaderProps {
   items?: ReadonlyArray<HeaderItem>;
 
   /**
+   * Trusted internal URLs.
+   *
+   * Example:
+   * [
+   *   "https://hirakada.vercel.app",
+   *   "https://potfoliohirakada.vercel.app"
+   * ]
+   */
+  internalUrls?: ReadonlyArray<string>;
+
+  /**
    * Additional classes.
    */
   className?: string;
@@ -77,4 +89,32 @@ export interface HeaderProps {
    * Bottom border.
    */
   bordered?: boolean;
+}
+
+
+export interface HeaderMobileMenuProps {
+  /**
+   * Mobile menu visibility.
+   */
+  open: boolean;
+
+  /**
+   * Current pathname.
+   */
+  pathname: string;
+
+  /**
+   * Navigation items.
+   */
+  items: ReadonlyArray<HeaderItem>;
+
+  /**
+   * Trusted internal URLs.
+   */
+  internalUrls?: ReadonlyArray<string>;
+
+  /**
+   * Callback after navigation.
+   */
+  onNavigate: () => void;
 }

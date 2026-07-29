@@ -1,15 +1,24 @@
 "use client";
 
-import { navigation } from "@hirakada/config";
 import { Header } from "@hirakada/ui";
+
+import {
+  DOMAIN,
+  navigation,
+} from "@hirakada/config";
+
 
 export default function AppHeader() {
   return (
     <Header
       logo="/logo.svg"
       logoAlt="Hirakada"
-      logoHref="/"
+      logoHref={DOMAIN.web}
       items={navigation}
+      internalUrls={[
+        DOMAIN.web,
+        DOMAIN.portfolio,
+      ]}
     />
   );
 }
