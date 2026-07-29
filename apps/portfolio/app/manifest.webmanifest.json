@@ -1,5 +1,5 @@
 {
-  "name": "Hizkya Rakaa Priananda",
+  "name": "Hirakada",
   "short_name": "Hirakada",
   "icons": [
     {
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#e0e0e0",
-  "background_color": "#121212",
+  "theme_color": "#fefefe",
+  "background_color": "#fefefe",
   "display": "standalone"
 }

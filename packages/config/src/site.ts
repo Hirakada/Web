@@ -1,12 +1,23 @@
 export const SITE = {
   name: "Hirakada",
 
-  owner: "Hizkya Raka Priananda",
+  shortName: "Hirakada",
 
-  url: "https://hirakada.vercel.app",
+  owner:
+    "Hizkya Raka Priananda",
+
+
+  url:
+    process.env.NEXT_PUBLIC_WEB_URL ??
+    "https://hirakada.vercel.app",
+
 
   description:
     "Official portfolio of Hizkya Raka Priananda, showcasing software engineering projects, modern web applications, UI/UX design, and digital innovation.",
+
+
+  locale:
+    "en_US",
 
 
   keywords: [
@@ -23,19 +34,25 @@ export const SITE = {
     "Tailwind CSS",
     "UI UX Design",
     "Software Engineering Portfolio",
+    "Digital Innovation",
   ],
 
 
   theme: {
-    color: "#101010",
-    background: "#101010",
+    color:
+      "#101010",
+
+    background:
+      "#101010",
   },
 
 
   author: {
-    name: "Hizkya Raka Priananda",
+    name:
+      "Hizkya Raka Priananda",
 
     url:
+      process.env.NEXT_PUBLIC_WEB_URL ??
       "https://hirakada.vercel.app",
   },
 
@@ -57,13 +74,14 @@ export const SITE = {
       "/og-image.png",
 
     twitter:
-      "/twitter-image.png",
+      "/og-image.png",
 
     favicon:
-      "/favicon.ico",
+      "/icon.svg",
 
     apple:
-      "/apple-touch-icon.png",
+      "/apple-icon.png",
   },
+
 
 } as const;

@@ -4,77 +4,105 @@ import { SITE } from "./site";
 
 
 export const defaultMetadata: Metadata = {
-  metadataBase: new URL(SITE.url),
+
+  metadataBase:
+    new URL(SITE.url),
 
 
   title: {
-    default: `${SITE.name} | ${SITE.owner}`,
-    template: `%s | ${SITE.name}`,
+    default:
+      `${SITE.name} | ${SITE.owner}`,
+
+    template:
+      `%s | ${SITE.name}`,
   },
 
 
-  description: SITE.description,
+  description:
+    SITE.description,
 
 
-  applicationName: SITE.name,
+  applicationName:
+    SITE.name,
 
 
   authors: [
     {
-      name: SITE.author.name,
-      url: SITE.author.url,
+      name:
+        SITE.author.name,
+
+      url:
+        SITE.author.url,
     },
   ],
 
 
-  creator: SITE.owner,
-
-  publisher: SITE.owner,
-
-
-  generator: "Next.js",
+  creator:
+    SITE.owner,
 
 
-  keywords: [...SITE.keywords],
+  publisher:
+    SITE.owner,
 
 
-  category: "technology",
+  generator:
+    "Next.js",
 
 
-  referrer: "origin-when-cross-origin",
+  keywords:
+    [...SITE.keywords],
+
+
+  category:
+    "technology",
+
+
+  referrer:
+    "origin-when-cross-origin",
 
 
   alternates: {
-    canonical: "/",
+    canonical:
+      "/",
   },
 
 
   robots: {
-    index: true,
-    follow: true,
+    index:
+      true,
+
+    follow:
+      true,
 
     googleBot: {
-      index: true,
-      follow: true,
+      index:
+        true,
 
-      "max-image-preview": "large",
+      follow:
+        true,
 
-      "max-snippet": -1,
+      "max-image-preview":
+        "large",
 
-      "max-video-preview": -1,
+      "max-snippet":
+        -1,
+
+      "max-video-preview":
+        -1,
     },
   },
 
 
   openGraph: {
-    type: "website",
 
-    locale: "en_US",
+    type:
+      "website",
 
-    siteName: SITE.name,
+    locale:
+      "en_US",
 
-
-    url: SITE.url,
+    siteName:
+      SITE.name,
 
 
     title:
@@ -87,20 +115,24 @@ export const defaultMetadata: Metadata = {
 
     images: [
       {
-        url: SITE.images.og,
+        url:
+          SITE.images.og,
 
-        width: 1200,
+        width:
+          1200,
 
-        height: 630,
+        height:
+          630,
 
         alt:
-          `${SITE.name} - ${SITE.owner}`,
+          `${SITE.name} | ${SITE.owner}`,
       },
     ],
   },
 
 
   twitter: {
+
     card:
       "summary_large_image",
 
@@ -114,7 +146,9 @@ export const defaultMetadata: Metadata = {
 
 
     creator:
-      SITE.social.x || undefined,
+      SITE.social.x
+        ? SITE.social.x
+        : undefined,
 
 
     images: [
@@ -124,28 +158,44 @@ export const defaultMetadata: Metadata = {
 
 
   icons: {
+
     icon: [
       {
         url:
-          SITE.images.favicon,
+          "/icon.svg",
+
+        type:
+          "image/svg+xml",
+      },
+
+      {
+        url:
+          "/favicon.ico",
+
+        type:
+          "image/x-icon",
       },
     ],
 
 
     apple:
-      SITE.images.apple,
+      "/apple-icon.png",
   },
 
 
   manifest:
-    "/site.webmanifest",
+    "/manifest.webmanifest",
 
 
   appleWebApp: {
-    capable: true,
+
+    capable:
+      true,
+
 
     title:
       SITE.name,
+
 
     statusBarStyle:
       "black-translucent",
@@ -153,10 +203,15 @@ export const defaultMetadata: Metadata = {
 
 
   formatDetection: {
-    telephone: false,
 
-    email: false,
+    telephone:
+      false,
 
-    address: false,
+    email:
+      false,
+
+    address:
+      false,
   },
+
 };
