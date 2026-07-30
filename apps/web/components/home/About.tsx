@@ -62,7 +62,7 @@ export default function About() {
               ease: "easeInOut",
             }}
           >
-          <div className="relative aspect-[4/5] w-full max-w-xl overflow-hidden rounded-3xl">
+          <div className="relative aspect-4/5 w-full max-w-xl overflow-hidden rounded-3xl">
             <Image
               src="/img/profile.webp"
               alt="Hizkya Raka Priananda"
@@ -70,7 +70,7 @@ export default function About() {
               height={875}
               priority
               className="
-                aspect-[4/5]
+                aspect-4/5
                 w-full
                 max-w-xl
                 object-cover

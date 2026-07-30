@@ -71,9 +71,9 @@ export default function Hero() {
         inset-x-0
         bottom-10
         -z-10
-        h-[180px]
-        md:h-[240px]
-        lg:h-[320px]
+        h-45
+        md:h-60
+        lg:h-80
         overflow-hidden
       "
     >

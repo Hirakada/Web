@@ -25,24 +25,24 @@ export default async function Page({
 }: PageProps) {
   const { id } = await params;
 
+  console.log("Route ID:", id);
+
   const supabase = await createClient();
 
   const [project, projects] = await Promise.all([
-    getProjectById(
-      supabase,
-      id
-    ),
+    getProjectById(supabase, id),
     getProjects(supabase),
   ]);
 
+  console.log("Project:", project);
+
   if (!project) {
-    notFound();
+    throw new Error(`Project "${id}" not found`);
+    // atau notFound();
   }
 
   const relatedProjects = shuffleAndTake(
-    projects.filter(
-      (item) => item.id !== project.id
-    ),
+    projects.filter((item) => item.id !== project.id),
     Math.min(3, Math.max(0, projects.length - 1))
   );
 

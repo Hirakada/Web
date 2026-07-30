@@ -51,7 +51,7 @@ export function GlobalBackground() {
           absolute
           -left-52
           -top-36
-          h-[42rem]
+          h-168
           w-2xl
           bg-brand/20
           blur-[140px]
@@ -78,8 +78,8 @@ export function GlobalBackground() {
           absolute
           -right-44
           top-10
-          h-[36rem]
-          w-[36rem]
+          h-144
+          w-xl
           bg-brand/15
           blur-[170px]
         "
@@ -105,8 +105,8 @@ export function GlobalBackground() {
           absolute
           left-1/2
           top-1/2
-          h-[32rem]
-          w-[32rem]
+          h-128
+          w-lg
           -translate-x-1/2
           -translate-y-1/2
           bg-brand/18
@@ -134,8 +134,8 @@ export function GlobalBackground() {
           absolute
           -right-28
           -bottom-28
-          h-[40rem]
-          w-[40rem]
+          h-160
+          w-160
           bg-brand/16
           blur-[180px]
         "
@@ -147,8 +147,8 @@ export function GlobalBackground() {
           absolute
           inset-0
           opacity-[0.025]
-          [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)]
-          [background-size:24px_24px]
+          bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)]
+          bg-size-[24px_24px]
         "
       />
 

@@ -86,15 +86,15 @@ export default function ScrollIndicator() {
 
         top-0
 
-        z-[9999]
+        z-9999
 
-        w-[2px]
+        w-0.5
 
         rounded-full
 
-        bg-[var(--color-primary)]
+        bg-(--color-primary)
 
-        shadow-[var(--glow-text-subtle)]
+        shadow-(--glow-text-subtle)
 
         transition-[height]
 

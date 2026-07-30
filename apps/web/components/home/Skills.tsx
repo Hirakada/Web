@@ -61,9 +61,9 @@ export default function Skills({
         justify-center
         items-start
 
-        bg-[var(--color-background)]
+        bg-(--color-background)
 
-        px-[var(--global-padding-x)]
+        px-(--global-padding-x)
 
         pt-0
       "
