@@ -936,15 +936,6 @@ body::before {
   height:
     100vh;
 
-
-  background:
-
-    rgba(
-      var(--color-on-background-rgb),
-      .08
-    );
-
-
   border-radius:
     999px;
 

@@ -5,11 +5,9 @@ import { motion } from "framer-motion";
 import { AttributeTag } from "@hirakada/ui";
 import type { Attribute } from "@hirakada/database";
 
-
 interface SkillsProps {
   attributes: Attribute[];
 }
-
 
 const TYPE_ORDER = [
   "language",
@@ -17,133 +15,138 @@ const TYPE_ORDER = [
   "tool",
 ];
 
-
 export default function Skills({
   attributes,
 }: SkillsProps) {
-
   const sortedAttributes = [...attributes].sort((a, b) => {
     const indexA = TYPE_ORDER.indexOf(a.type ?? "");
     const indexB = TYPE_ORDER.indexOf(b.type ?? "");
-
 
     if (indexA === -1 && indexB === -1) {
       return a.name.localeCompare(b.name);
     }
 
-
     if (indexA === -1) return 1;
     if (indexB === -1) return -1;
-
 
     if (indexA !== indexB) {
       return indexA - indexB;
     }
 
-
     return a.name.localeCompare(b.name);
   });
-
 
   if (sortedAttributes.length === 0) {
     return null;
   }
 
+  const repeatCount =
+    sortedAttributes.length <= 10
+      ? 4
+      : sortedAttributes.length <= 20
+        ? 3
+        : 2;
+
+  const marqueeItems = Array.from(
+    { length: repeatCount },
+    () => sortedAttributes
+  ).flat();
 
   return (
     <section
       className="
-        key-skills-section
-
-        flex
+        relative
         w-full
-
-        justify-center
-        items-start
+        overflow-hidden
 
         bg-(--color-background)
 
         px-(--global-padding-x)
-
-        pt-0
+        py-2
       "
     >
+      {/* Left Fade */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-y-0
+          left-0
+          z-10
+          w-16
+
+          bg-gradient-to-r
+          from-(--color-background)
+          to-transparent
+        "
+      />
+
+      {/* Right Fade */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-y-0
+          right-0
+          z-10
+          w-16
+
+          bg-gradient-to-l
+          from-(--color-background)
+          to-transparent
+        "
+      />
 
       <motion.div
-        className="
-          skills-grid
-
-          flex
-          w-full
-
-          flex-wrap
-
-          justify-center
-          items-center
-
-          gap-[clamp(1rem,2vw,1.75rem)]
-
-          box-border
-        "
-
         initial={{
           opacity: 0,
-          y: 20,
+          y: 16,
         }}
-
         whileInView={{
           opacity: 1,
           y: 0,
         }}
-
         viewport={{
           once: true,
           amount: 0.2,
         }}
-
         transition={{
-          duration: 0.6,
+          duration: 0.5,
           ease: "easeOut",
         }}
       >
-
-        {sortedAttributes.map((attribute, index) => (
-
-          <motion.div
-            key={attribute.id}
-
-            initial={{
-              opacity: 0,
-              scale: 0.95,
-            }}
-
-            whileInView={{
-              opacity: 1,
-              scale: 1,
-            }}
-
-            viewport={{
-              once: true,
-            }}
-
-            transition={{
-              duration: 0.3,
-              delay: index * 0.05,
-            }}
-          >
-
-            <AttributeTag
-              iconUrl={attribute.iconUrl}
+        <motion.div
+          className="
+            flex
+            w-max
+            items-center
+            gap-[clamp(1rem,2vw,1.75rem)]
+          "
+          animate={{
+            x: ["0%", "-50%"],
+          }}
+          transition={{
+            duration: 60,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+        >
+          {marqueeItems.map((attribute, index) => (
+            <div
+              key={`${attribute.id}-${index}`}
+              className="shrink-0"
             >
-              {attribute.name}
-            </AttributeTag>
-
-          </motion.div>
-
-        ))}
-
+              <AttributeTag
+                iconUrl={attribute.iconUrl}
+              >
+                {attribute.name}
+              </AttributeTag>
+            </div>
+          ))}
+        </motion.div>
       </motion.div>
-
     </section>
   );
 }
