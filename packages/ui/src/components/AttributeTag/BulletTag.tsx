@@ -2,13 +2,22 @@ import type { ReactNode } from "react";
 
 export interface BulletTagProps {
   children: ReactNode;
-  variant?: "default" | "success" | "warning" | "danger" | "info";
+  variant?:
+    | "default"
+    | "success"
+    | "warning"
+    | "danger"
+    | "info"
+    | "muted";
   className?: string;
 }
 
 const variants = {
   default:
     "bg-neutral-100 text-neutral-700 border-neutral-200 dark:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800",
+
+  muted:
+    "bg-neutral-100 text-neutral-500 border-neutral-200 dark:bg-neutral-900 dark:text-neutral-400 dark:border-neutral-800",
 
   success:
     "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800",

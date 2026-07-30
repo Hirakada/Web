@@ -46,7 +46,7 @@ export default function Footer({
           ease: [0.22, 1, 0.36, 1],
         }}
       >
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 px-6">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 ">
         <motion.nav
           initial="hidden"
           whileInView="show"
@@ -69,6 +69,10 @@ export default function Footer({
             md:gap-6
             lg:gap-8
             overflow-x-auto
+            overflow-y-hidden
+            [-ms-overflow-style:none]
+            [scrollbar-width:none]
+            [&::-webkit-scrollbar]:hidden
           ">
           {navigation.map((item) => (
             <motion.div

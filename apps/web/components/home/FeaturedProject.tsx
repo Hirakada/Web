@@ -3,12 +3,19 @@ import Link from "next/link";
 import { DOMAIN } from "@hirakada/config";
 import {
   AttributeTag,
+  BulletTag,
   Card,
   CardContent,
   CardFooter,
   CardImage,
   CardTitle,
 } from "@hirakada/ui";
+
+const statusVariants = {
+  Live: "success",
+  Completed: "info",
+  Abandoned: "muted",
+} as const;
 
 import type {
   ProjectCard,
@@ -130,32 +137,11 @@ export default function FeaturedProject({
                 {/* Status */}
 
                 <div>
-                  <span
-                    className="
-                      inline-flex
-                      items-center
-                      gap-2
-                      rounded-lg
-                      border
-                      border-green-500/30
-                      bg-green-500/10
-                      px-3
-                      py-1.5
-                      text-sm
-                      font-medium
-                      text-green-400
-                    "
+                  <BulletTag
+                    variant={statusVariants[project.status as keyof typeof statusVariants]}
                   >
-                    <span
-                      className="
-                        size-2
-                        rounded-full
-                        bg-green-500
-                      "
-                    />
-
                     {project.status}
-                  </span>
+                  </BulletTag>
                 </div>
 
                 {/* Title */}
