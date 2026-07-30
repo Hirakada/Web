@@ -2,16 +2,14 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/Supabase/server";
 
+import { getCachedProject, getCachedProjectCards } from "@hirakada/cache";
+
 import {
   getProjectById,
-  getRelatedProjects,
 } from "@hirakada/database";
 
-import {
-  ProjectCard,
-} from "@/components/Project";
-
 import RelatedProjects from "@/components/Project/RelatedProjects";
+import ProjectCard from "@/components/Project/ProjectCard";
 
 interface PageProps {
   params: Promise<{
@@ -28,10 +26,14 @@ export default async function Page({
 
   const supabase = await createClient();
 
-  const [project, relatedProjects] = await Promise.all([
+  const [project, projects] = await Promise.all([
     getProjectById(supabase, id),
-    getRelatedProjects(supabase, id, 3),
+    getCachedProjectCards(supabase),
   ]);
+
+  const relatedProjects = projects
+      .filter((p) => p.id !== id)
+      .slice(0, 3);
 
   console.log("Project:", project);
 
