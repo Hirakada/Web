@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/Supabase/server";
-import { shuffleAndTake } from "@/lib/project-detail/shuffle";
 
 import {
   getProjectById,
-  getProjects,
+  getRelatedProjects,
 } from "@hirakada/database";
 
 import {
@@ -29,9 +28,9 @@ export default async function Page({
 
   const supabase = await createClient();
 
-  const [project, projects] = await Promise.all([
+  const [project, relatedProjects] = await Promise.all([
     getProjectById(supabase, id),
-    getProjects(supabase),
+    getRelatedProjects(supabase, id, 3),
   ]);
 
   console.log("Project:", project);
@@ -40,11 +39,6 @@ export default async function Page({
     throw new Error(`Project "${id}" not found`);
     // atau notFound();
   }
-
-  const relatedProjects = shuffleAndTake(
-    projects.filter((item) => item.id !== project.id),
-    Math.min(3, Math.max(0, projects.length - 1))
-  );
 
   return (
     <main
