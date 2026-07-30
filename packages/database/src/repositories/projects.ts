@@ -1,7 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Project } from "../types/project";
-
+import type {
+  Project,
+  ProjectCard,
+} from "../types/project";
 
 type ProjectImageRow = {
   id: string;
@@ -33,15 +35,10 @@ type ProjectContributorRow = {
   };
 };
 
-
-type ProjectRow = {
+type ProjectBaseRow = {
   id: string;
   title: string;
   description: string;
-  long_description: string | null;
-  category: string | null;
-  project_url: string | null;
-  github_url: string | null;
   status: string;
   is_featured: boolean;
   completion_date: string | null;
@@ -51,16 +48,13 @@ type ProjectRow = {
   project_contributors: ProjectContributorRow[] | null;
 };
 
-type RelatedProject = Pick<
-  Project,
-  | "id"
-  | "title"
-  | "description"
-  | "status"
-  | "coverImage"
->;
-
-function mapProject(project: ProjectRow): Project {
+type ProjectRow = ProjectBaseRow & {
+  long_description: string | null;
+  category: string | null;
+  project_url: string | null;
+  github_url: string | null;
+};
+function mapProjectDetail(project: ProjectRow): Project {
   const sortedImages = [
     ...(project.project_images ?? []),
   ].sort((a, b) => a.order - b.order);
@@ -157,20 +151,89 @@ function mapProject(project: ProjectRow): Project {
   };
 }
 
-export async function getProjects(
+function mapProjectCard(
+  project: ProjectBaseRow
+): ProjectCard {
+  const sortedImages = [
+    ...(project.project_images ?? []),
+  ].sort((a, b) => a.order - b.order);
+
+  return {
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    status: project.status,
+    isFeatured: project.is_featured,
+
+    ...(project.completion_date && {
+      completionDate: project.completion_date,
+    }),
+
+    ...(sortedImages[0]?.image_url && {
+      coverImage: sortedImages[0].image_url,
+    }),
+
+    attributes: (project.project_attributes ?? []).map(
+      ({ attributes }) => ({
+        id: attributes.id,
+        name: attributes.name,
+
+        ...(attributes.icon_url && {
+          iconUrl: attributes.icon_url,
+        }),
+      })
+    ),
+
+    contributors: (project.project_contributors ?? []).map(
+      ({ contributors }) => ({
+        id: contributors.id,
+        name: contributors.name,
+
+        ...(contributors.profile_image_url && {
+          profileImageUrl:
+            contributors.profile_image_url,
+        }),
+      })
+    ),
+  };
+}
+
+export async function getProjectCards(
   supabase: SupabaseClient
-): Promise<Project[]> {
+): Promise<ProjectCard[]> {
   const { data, error } = await supabase
     .from("projects")
     .select(`
-      *,
+      id,
+      title,
+      description,
+      status,
+      is_featured,
+      completion_date,
+
+      project_images(
+        id,
+        image_url,
+        alt_text,
+        caption,
+        order
+      ),
+
       project_attributes(
-        attributes(*)
+        attributes(
+          id,
+          name,
+          icon_url
+        )
       ),
+
       project_contributors(
-        contributors(*)
-      ),
-      project_images(*)
+        contributors(
+          id,
+          name,
+          profile_image_url
+        )
+      )
     `)
     .order("order");
 
@@ -178,7 +241,9 @@ export async function getProjects(
     throw error;
   }
 
-  return (data as ProjectRow[]).map(mapProject);
+  return (data as unknown as ProjectBaseRow[]).map(
+    mapProjectCard
+  );
 }
 
 export async function getProjectById(
@@ -208,25 +273,47 @@ export async function getProjectById(
     throw error;
   }
 
-  return mapProject(data as ProjectRow);
+  return mapProjectDetail(data as ProjectRow);
 }
 
 export async function getRelatedProjects(
   supabase: SupabaseClient,
   currentId: string,
   limit = 3
-): Promise<Project[]> {
+): Promise<ProjectCard[]> {
   const { data, error } = await supabase
     .from("projects")
     .select(`
-      *,
+      id,
+      title,
+      description,
+      status,
+      is_featured,
+      completion_date,
+
+      project_images(
+        id,
+        image_url,
+        alt_text,
+        caption,
+        order
+      ),
+
       project_attributes(
-        attributes(*)
+        attributes(
+          id,
+          name,
+          icon_url
+        )
       ),
+
       project_contributors(
-        contributors(*)
-      ),
-      project_images(*)
+        contributors(
+          id,
+          name,
+          profile_image_url
+        )
+      )
     `)
     .neq("id", currentId)
     .limit(limit);
@@ -235,5 +322,5 @@ export async function getRelatedProjects(
     throw error;
   }
 
-  return (data as ProjectRow[]).map(mapProject);
+  return (data as unknown as ProjectRow[]).map(mapProjectCard);
 }

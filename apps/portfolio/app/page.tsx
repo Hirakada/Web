@@ -5,7 +5,7 @@ import { createClient } from "@/lib/Supabase/server";
 import { DOMAIN } from "@hirakada/config";
 
 import {
-  getProjects,
+  getProjectCards,
 } from "@hirakada/database";
 
 import {
@@ -20,7 +20,7 @@ import {
 export default async function Page() {
   const supabase = await createClient();
 
-  const projects = await getProjects(supabase);
+  const projects = await getProjectCards(supabase);
 
   return (
     <section

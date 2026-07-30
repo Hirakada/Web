@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { Project } from "@hirakada/database";
+import type { ProjectCard } from "@hirakada/database";
 
 import { DOMAIN } from "@hirakada/config";
 
@@ -13,7 +13,7 @@ import {
 } from "@hirakada/ui";
 
 export interface RelatedProjectsProps {
-  projects: Project[];
+  projects: ProjectCard[];
 }
 
 export default function RelatedProjects({

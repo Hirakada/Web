@@ -1,6 +1,6 @@
 export type { Attribute } from "./types/attribute";
 export type { Contributor } from "./types/contributor";
-export type { Project, ProjectImage } from "./types/project";
+export type { Project, ProjectCard, ProjectImage } from "./types/project";
 
 export { getAttributes } from "./repositories/attributes";
-export { getProjects, getProjectById, getRelatedProjects } from "./repositories/projects";
+export { getProjectCards, getProjectById, getRelatedProjects } from "./repositories/projects";

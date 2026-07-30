@@ -2,7 +2,7 @@ import { createClient } from "@/lib/Supabase/server";
 
 import {
   getAttributes,
-  getProjects,
+  getProjectCards,
 } from "@hirakada/database";
 
 import {
@@ -21,7 +21,7 @@ export default async function HomePage() {
     projects,
   ] = await Promise.all([
     getAttributes(supabase),
-    getProjects(supabase),
+    getProjectCards(supabase),
   ]);
 
 

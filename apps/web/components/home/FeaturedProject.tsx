@@ -10,10 +10,12 @@ import {
   CardTitle,
 } from "@hirakada/ui";
 
-import type { Project } from "@hirakada/database";
+import type {
+  ProjectCard,
+} from "@hirakada/database";
 
 interface FeaturedProjectProps {
-  projects: Project[];
+  projects: ProjectCard[];
 }
 
 export default function FeaturedProject({
