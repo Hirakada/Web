@@ -98,7 +98,7 @@ export default function FeaturedProject({
         {featuredProjects.map((project) => (
           <Link
             key={project.id}
-            href={`${DOMAIN.portfolio}/projects/${project.id}`}
+            href={`${DOMAIN.portfolio}/${project.id}`}
             className="
               block
               h-full
