@@ -1,15 +1,10 @@
 import Link from "next/link";
 
-import { createClient } from "@/lib/Supabase/server";
+import type { Project } from "@hirakada/database";
 
 import { DOMAIN } from "@hirakada/config";
 
 import {
-  getProjects,
-} from "@hirakada/database";
-
-import {
-  AttributeTag,
   Card,
   CardContent,
   CardFooter,
@@ -17,57 +12,48 @@ import {
   CardTitle,
 } from "@hirakada/ui";
 
-export default async function Page() {
-  const supabase = await createClient();
+export interface RelatedProjectsProps {
+  projects: Project[];
+}
 
-  const projects = await getProjects(supabase);
+export default function RelatedProjects({
+  projects,
+}: RelatedProjectsProps) {
+  if (projects.length === 0) {
+    return null;
+  }
 
   return (
     <section
       className="
         w-full
-        px-(--global-padding-x)
-        py-(--section-padding-y)
+        space-y-10
       "
     >
-      {/* Header */}
-
-      <div
-        className="
-          mx-auto
-          flex
-          w-full
-          flex-col
-          items-center
-          text-center
-        "
-      >
-        <h1>Projects</h1>
+      <div className="text-center">
+        <h2>Other Projects</h2>
 
         <p
           className="
+            mx-auto
             mt-4
             max-w-2xl
             text-(--text-medium-emphasis)
           "
         >
-          Browse all projects ranging from web
-          development, UI/UX, branding, graphic design,
-          and experimental work.
+          Explore more projects to discover different
+          technologies, design approaches, and
+          solutions.
         </p>
       </div>
 
-      {/* Projects */}
-
       <div
         className="
-          mt-12
           grid
-          w-full
           grid-cols-1
           gap-[clamp(1.5rem,3vw,2.5rem)]
           md:grid-cols-2
-          lg:grid-cols-[repeat(3,minmax(280px,1fr))]
+          lg:grid-cols-3
         "
       >
         {projects.map((project) => (
@@ -82,7 +68,6 @@ export default async function Page() {
               focus-visible:ring-2
               focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
             "
-            aria-label={`View ${project.title}`}
             prefetch={false}
           >
             <Card className="h-full">
@@ -115,7 +100,8 @@ export default async function Page() {
                   >
                     <span
                       className="
-                        size-2
+                        h-2
+                        w-2
                         rounded-full
                         bg-green-500
                       "
@@ -151,7 +137,11 @@ export default async function Page() {
                             alt={attribute.name}
                             width={20}
                             height={20}
-                            className="h-5 w-5 object-contain"
+                            className="
+                              h-5
+                              w-5
+                              object-contain
+                            "
                           />
                         </div>
                       ))}
@@ -169,42 +159,67 @@ export default async function Page() {
                     )}
                   </div>
 
-                  {project.contributors.length > 0 && (
+                  {project.contributors.length >
+                    0 && (
                     <div className="flex items-center">
                       {project.contributors
                         .slice(0, 3)
-                        .map((contributor, index) => (
-                          <div
-                            key={contributor.id}
-                            title={contributor.name}
-                            className={`
-                              relative
-                              h-9
-                              w-9
-                              overflow-hidden
-                              rounded-full
-                              border-2
-                              border-(--color-surface)
-                              bg-(--color-surface)
-                              ${index !== 0 ? "-ml-3" : ""}
-                            `}
-                            style={{
-                              zIndex: 3 - index,
-                            }}
-                          >
-                            {contributor.profileImageUrl && (
-                              <CardImage
-                                src={contributor.profileImageUrl}
-                                alt={contributor.name}
-                                width={36}
-                                height={36}
-                                className="h-full w-full rounded-full object-cover"
-                              />
-                            )}
-                          </div>
-                        ))}
+                        .map(
+                          (
+                            contributor,
+                            index
+                          ) => (
+                            <div
+                              key={
+                                contributor.id
+                              }
+                              title={
+                                contributor.name
+                              }
+                              className={`
+                                relative
+                                h-9
+                                w-9
+                                overflow-hidden
+                                rounded-full
+                                border-2
+                                border-(--color-surface)
+                                bg-(--color-surface)
+                                ${
+                                  index !== 0
+                                    ? "-ml-3"
+                                    : ""
+                                }
+                              `}
+                              style={{
+                                zIndex:
+                                  3 - index,
+                              }}
+                            >
+                              {contributor.profileImageUrl && (
+                                <CardImage
+                                  src={
+                                    contributor.profileImageUrl
+                                  }
+                                  alt={
+                                    contributor.name
+                                  }
+                                  width={36}
+                                  height={36}
+                                  className="
+                                    h-full
+                                    w-full
+                                    rounded-full
+                                    object-cover
+                                  "
+                                />
+                              )}
+                            </div>
+                          )
+                        )}
 
-                      {project.contributors.length > 3 && (
+                      {project.contributors
+                        .length > 3 && (
                         <div
                           className="
                             ml-2
@@ -221,7 +236,10 @@ export default async function Page() {
                             text-(--text-medium-emphasis)
                           "
                         >
-                          +{project.contributors.length - 3}
+                          +
+                          {project
+                            .contributors
+                            .length - 3}
                         </div>
                       )}
                     </div>

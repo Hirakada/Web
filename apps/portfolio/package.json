@@ -15,11 +15,13 @@
     "@iconify/react": "^6.0.2",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
+    "colorthief": "^3.4.0",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.27.0",
     "next": "16.2.10",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
     "typed.js": "^3.0.0"
   },
   "devDependencies": {
