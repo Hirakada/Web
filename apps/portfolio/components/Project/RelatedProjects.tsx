@@ -59,7 +59,7 @@ export default function RelatedProjects({
         {projects.map((project) => (
           <Link
             key={project.id}
-            href={`${DOMAIN.portfolio}/projects/${project.id}`}
+            href={`${DOMAIN.portfolio}/${project.id}`}
             className="
               block
               h-full
