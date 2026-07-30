@@ -59,8 +59,17 @@ export default function Footer({
               },
             },
           }}
-          className="flex flex-wrap items-center justify-center gap-8 text-sm"
-        >
+          className="
+            flex
+            flex-nowrap
+            items-center
+            justify-center
+            gap-2
+            sm:gap-4
+            md:gap-6
+            lg:gap-8
+            overflow-x-auto
+          ">
           {navigation.map((item) => (
             <motion.div
               key={item.label}
