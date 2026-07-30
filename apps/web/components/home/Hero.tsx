@@ -3,13 +3,17 @@
 import { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import { Icon } from "@iconify/react";
+import { socialLinks } from "@hirakada/config";
 import { motion } from "framer-motion";
+
+import { HEADER_HEIGHT } from "@hirakada/ui";
 
 import {
   SocialButton,
   SocialButtonGroup,
 } from "@hirakada/ui";
 
+import LaserFlow from "@/components/effects/LaserFlow";
 
 export default function Hero() {
   const roleRef = useRef<HTMLSpanElement>(null);
@@ -47,21 +51,48 @@ export default function Hero() {
     <section
       className="
         hero-section
-
+        relative
         flex
         w-full
-        min-h-screen
-        flex-col
         items-center
         justify-center
-
-        gap-[clamp(1.5rem,4vw,2rem)]
-
+        overflow-hidden
         px-(--global-padding-x)
-
         text-center
       "
+      style={{
+        height: `calc(100dvh - ${HEADER_HEIGHT})`,
+      }}
     >
+    <div
+      className="
+        pointer-events-none
+        absolute
+        inset-x-0
+        bottom-10
+        -z-10
+        h-[180px]
+        md:h-[240px]
+        lg:h-[320px]
+        overflow-hidden
+      "
+    >
+      <LaserFlow
+        color="#585858"
+        wispDensity={1}
+        flowSpeed={0.45}
+        verticalSizing={5}
+        horizontalSizing={0.7}
+        fogIntensity={0.5}
+        fogScale={0.44}
+        wispSpeed={19}
+        wispIntensity={13.7}
+        flowStrength={0.46}
+        decay={3}
+        horizontalBeamOffset={0}
+        verticalBeamOffset={-0.5}
+      />
+    </div>
 
       <motion.div
         initial={{
@@ -123,8 +154,6 @@ export default function Hero() {
 
       </motion.div>
 
-
-
       <motion.div
         initial={{
           opacity: 0,
@@ -142,65 +171,33 @@ export default function Hero() {
         }}
       >
 
-        <SocialButtonGroup
-          className="
-            social-list
-
-            mt-4
-
-            flex
-
-            w-fit
-
-            items-center
-
-            justify-center
-
-            gap-4.5
-
-            mx-auto
-          "
-        >
-
+      <SocialButtonGroup
+        className="
+          social-list
+          mt-4
+          mx-auto
+          flex
+          w-fit
+          items-center
+          justify-center
+          gap-4.5
+        "
+      >
+        {socialLinks.map((social) => (
           <SocialButton
-            href="https://linkedin.com/in/hirakada"
-            label="LinkedIn"
+            key={social.label}
+            href={social.href}
+            label={social.label}
             icon={
               <Icon
-                icon="mdi:linkedin"
+                icon={social.icon}
                 width="24"
                 height="24"
               />
             }
           />
-
-
-          <SocialButton
-            href="https://instagram.com/hirakada"
-            label="Instagram"
-            icon={
-              <Icon
-                icon="mdi:instagram"
-                width="24"
-                height="24"
-              />
-            }
-          />
-
-
-          <SocialButton
-            href="https://github.com/Hirakada"
-            label="GitHub"
-            icon={
-              <Icon
-                icon="mdi:github"
-                width="24"
-                height="24"
-              />
-            }
-          />
-
-        </SocialButtonGroup>
+        ))}
+      </SocialButtonGroup>
 
       </motion.div>
 

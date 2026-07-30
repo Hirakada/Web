@@ -14,6 +14,7 @@ import {
 
 
 import AppHeader from "@/components/AppHeader";
+import AppFooter from "@/components/AppFooter";
 
 
 export const metadata: Metadata = {
@@ -108,6 +109,7 @@ export default function RootLayout({
           {children}
         </main>
 
+        <AppFooter/>
       </body>
 
     </html>

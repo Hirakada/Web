@@ -9,8 +9,8 @@ import {
   Hero,
   Skills,
   FeaturedProject,
+  About,
 } from "@/components/home";
-
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -27,11 +27,14 @@ export default async function HomePage() {
 
   return (
     <>
+
       <Hero />
 
       <Skills
         attributes={attributes}
       />
+
+      <About/>
 
       <FeaturedProject
         projects={projects}
