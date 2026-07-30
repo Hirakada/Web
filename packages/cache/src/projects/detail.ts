@@ -4,15 +4,20 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getProjectById } from "@hirakada/database";
 
-export const getCachedProject = (
+export function getCachedProject(
   supabase: SupabaseClient,
   id: string
-) =>
-  unstable_cache(
-    async () => getProjectById(supabase, id),
-    ["project", id],
+) {
+  const cached = unstable_cache(
+    async (projectId: string) => {
+      return getProjectById(supabase, projectId);
+    },
+    ["project"],
     {
-      tags: ["projects", `project:${id}`],
+      tags: [`project:${id}`, "projects"],
       revalidate: 60 * 60,
     }
-  )();
+  );
+
+  return cached(id);
+}

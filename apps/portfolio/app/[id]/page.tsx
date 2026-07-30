@@ -4,10 +4,6 @@ import { createClient } from "@/lib/Supabase/server";
 
 import { getCachedProject, getCachedProjectCards } from "@hirakada/cache";
 
-import {
-  getProjectById,
-} from "@hirakada/database";
-
 import RelatedProjects from "@/components/Project/RelatedProjects";
 import ProjectCard from "@/components/Project/ProjectCard";
 
@@ -27,7 +23,7 @@ export default async function Page({
   const supabase = await createClient();
 
   const [project, projects] = await Promise.all([
-    getProjectById(supabase, id),
+    getCachedProject(supabase, id),
     getCachedProjectCards(supabase),
   ]);
 
