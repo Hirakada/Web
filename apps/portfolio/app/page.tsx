@@ -20,6 +20,8 @@ import {
   CardFooter,
   CardImage,
   CardTitle,
+  CardContributor,
+  CardAttribute
 } from "@hirakada/ui";
 
 const statusVariants = {
@@ -124,102 +126,14 @@ export default async function Page() {
                 </CardTitle>
 
                 <CardFooter>
-                  <div className="flex items-center gap-2">
-                    {project.attributes
-                      .filter((attribute) => attribute.iconUrl)
-                      .slice(0, 3)
-                      .map((attribute) => (
-                        <div
-                          key={attribute.id}
-                          title={attribute.name}
-                          className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                          "
-                        >
-                          <CardImage
-                            src={attribute.iconUrl!}
-                            alt={attribute.name}
-                            width={20}
-                            height={20}
-                            className="h-5 w-5 object-contain"
-                          />
-                        </div>
-                      ))}
+                  <CardAttribute
+                    attributes={project.attributes}
+                  />
 
-                    {project.attributes.length > 3 && (
-                      <span
-                        className="
-                          text-sm
-                          font-semibold
-                          text-(--text-medium-emphasis)
-                        "
-                      >
-                        +{project.attributes.length - 3}
-                      </span>
-                    )}
-                  </div>
+                  <CardContributor 
+                    contributors={project.contributors}
+                  />
 
-                  {project.contributors.length > 0 && (
-                    <div className="flex items-center">
-                      {project.contributors
-                        .slice(0, 3)
-                        .map((contributor, index) => (
-                          <div
-                            key={contributor.id}
-                            title={contributor.name}
-                            className={`
-                              relative
-                              h-9
-                              w-9
-                              overflow-hidden
-                              rounded-full
-                              border-2
-                              border-(--color-surface)
-                              bg-(--color-surface)
-                              ${index !== 0 ? "-ml-3" : ""}
-                            `}
-                            style={{
-                              zIndex: 3 - index,
-                            }}
-                          >
-                            {contributor.profileImageUrl && (
-                              <CardImage
-                                src={contributor.profileImageUrl}
-                                alt={contributor.name}
-                                width={36}
-                                height={36}
-                                className="h-full w-full rounded-full object-cover"
-                              />
-                            )}
-                          </div>
-                        ))}
-
-                      {project.contributors.length > 3 && (
-                        <div
-                          className="
-                            ml-2
-                            flex
-                            h-9
-                            min-w-9
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-[rgba(var(--color-primary-rgb),0.08)]
-                            px-2
-                            text-xs
-                            font-semibold
-                            text-(--text-medium-emphasis)
-                          "
-                        >
-                          +{project.contributors.length - 3}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </CardFooter>
               </CardContent>
             </Card>

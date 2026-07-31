@@ -12,3 +12,9 @@ export type { CardFooterProps } from "./CardFooter";
 
 export { default as CardTitle } from "./CardTitle";
 export type { CardTitleProps } from "./CardTitle";
+
+export { default as CardContributor } from "./CardContributor";
+export type { CardContributorProps } from "./CardContributor"
+
+export { default as CardAttribute } from "./CardAttribute"
+export type { CardAttributeProps } from "./CardAttribute"
