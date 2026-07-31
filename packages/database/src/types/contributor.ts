@@ -5,4 +5,6 @@ export interface Contributor {
   websiteUrl?: string;
   linkedinUrl?: string;
   profileImageUrl?: string;
+
+  roles?: string[];
 }

@@ -2,6 +2,8 @@ import type { Project } from "@hirakada/database";
 
 import { Card } from "@hirakada/ui";
 
+import { Icon } from "@iconify/react";
+
 import ProjectHero from "./ProjectHero";
 import ProjectContent from "./ProjectContent";
 
@@ -24,7 +26,9 @@ export default function ProjectCard({
         shadow-sm
       "
     >
-      <ProjectHero project={project} />
+      <ProjectHero
+        project={project}
+      />
 
       <div
         className="
@@ -34,7 +38,9 @@ export default function ProjectCard({
         "
       />
 
-      <ProjectContent project={project} />
+      <ProjectContent
+        project={project}
+      />
     </Card>
   );
 }

@@ -18,8 +18,6 @@ export default async function Page({
 }: PageProps) {
   const { id } = await params;
 
-  console.log("Route ID:", id);
-
   const supabase = await createClient();
 
   const [project, projects] = await Promise.all([
@@ -27,16 +25,13 @@ export default async function Page({
     getCachedProjectCards(supabase),
   ]);
 
-  const relatedProjects = projects
-      .filter((p) => p.id !== id)
-      .slice(0, 3);
-
-  console.log("Project:", project);
-
   if (!project) {
-    throw new Error(`Project "${id}" not found`);
-    // atau notFound();
+    notFound();
   }
+
+  const relatedProjects = projects
+    .filter((item) => item.id !== id)
+    .slice(0, 3);
 
   return (
     <main
@@ -51,7 +46,9 @@ export default async function Page({
         py-(--section-padding-y)
       "
     >
-      <ProjectCard project={project} />
+      <ProjectCard
+        project={project}
+      />
 
       <RelatedProjects
         projects={relatedProjects}

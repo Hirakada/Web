@@ -205,23 +205,11 @@
   section {
 
     width: 100%;
-
-
     display: flex;
-
-
     flex-direction: column;
-
-
     justify-content: center;
-
-
     align-items: center;
-
-
     position: relative;
-
-
     padding:
 
       var(--section-padding-y)
@@ -230,49 +218,31 @@
 
   }
 
-
-
   article,
   aside,
   footer {
-
     width: 100%;
-
   }
-
-
-
   footer {
-
     padding:
-
       var(--footer-padding-y)
-
       var(--global-padding-x);
-
   }
-
-
 
   /* ==========================================================
      Typography
   ========================================================== */
-
-
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-
     color:
       var(--text-heading);
-
-
+      
     font-family:
       var(--font-heading);
-
 
     font-style:
       normal;

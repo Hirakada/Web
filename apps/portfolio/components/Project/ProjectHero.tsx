@@ -4,16 +4,9 @@ import { useEffect, useState } from "react";
 
 import type { Project } from "@hirakada/database";
 
-import {
-  BulletTag,
-  CardImage,
-} from "@hirakada/ui";
+import { CardImage } from "@hirakada/ui";
 
-import {
-  getDominantColor,
-} from "@/lib/project-detail/spotlight";
-
-import ProjectActions from "./ProjectActions";
+import { getDominantColor } from "@/lib/project-detail/spotlight";
 
 export interface ProjectHeroProps {
   project: Project;
@@ -29,12 +22,14 @@ export default function ProjectHero({
     let mounted = true;
 
     async function loadSpotlight() {
-      if (!project.coverImage) return;
+      if (!project.coverImage) {
+        setSpotlight(null);
+        return;
+      }
 
-      const color =
-        await getDominantColor(
-          project.coverImage
-        );
+      const color = await getDominantColor(
+        project.coverImage
+      );
 
       if (mounted) {
         setSpotlight(color);
@@ -49,18 +44,33 @@ export default function ProjectHero({
   }, [project.coverImage]);
 
   return (
-    <header className="relative overflow-hidden">
+    <div
+      className="
+        relative
+        overflow-hidden
+        rounded-t-3xl
+      "
+    >
       {spotlight && (
         <div
           className="
             pointer-events-none
             absolute
             inset-0
-            opacity-40
+            z-0
+            opacity-60
             blur-3xl
+            transition-opacity
+            duration-700
           "
           style={{
-            background: `radial-gradient(circle at top, ${spotlight}, transparent 70%)`,
+            background: `
+              radial-gradient(
+                circle at top,
+                ${spotlight},
+                transparent 70%
+              )
+            `,
           }}
         />
       )}
@@ -71,46 +81,16 @@ export default function ProjectHero({
           alt={project.title}
           width={1600}
           height={900}
+          priority
           className="
-            h-[clamp(280px,50vh,560px)]
+            relative
+            z-10
+            h-[clamp(320px,55vh,620px)]
             w-full
             object-cover
           "
         />
       )}
-
-      <div
-        className="
-          relative
-          z-10
-          flex
-          flex-col
-          gap-6
-          p-[clamp(1.5rem,3vw,3rem)]
-        "
-      >
-        <BulletTag variant="success">
-          {project.status}
-        </BulletTag>
-
-        <div className="max-w-4xl">
-          <h1>{project.title}</h1>
-
-          <p
-            className="
-              mt-4
-              text-lg
-              text-(--text-medium-emphasis)
-            "
-          >
-            {project.description}
-          </p>
-        </div>
-
-        <ProjectActions
-          project={project}
-        />
-      </div>
-    </header>
+    </div>
   );
 }

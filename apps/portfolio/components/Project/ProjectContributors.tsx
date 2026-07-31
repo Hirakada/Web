@@ -1,10 +1,6 @@
-import Link from "next/link";
-
 import type { Contributor } from "@hirakada/database";
 
-import { CardImage } from "@hirakada/ui";
-
-import { Icon } from "@iconify/react";
+import ContributorCard from "./ContributorCard";
 
 export interface ProjectContributorsProps {
   contributors: Contributor[];
@@ -14,129 +10,135 @@ export default function ProjectContributors({
   contributors,
 }: ProjectContributorsProps) {
   return (
-    <div className="space-y-5">
-      <h2>Contributors</h2>
-
-      <div
+    <section
+      className="
+        flex
+        flex-col
+        items-center
+        space-y-10
+      "
+    >
+      {/* Header */}
+      <header
         className="
-          grid
-          gap-4
-          sm:grid-cols-2
-          lg:grid-cols-3
+          flex
+          flex-col
+          items-center
+          text-center
         "
       >
-        {contributors.map((contributor) => (
-          <article
-            key={contributor.id}
-            className="
-              flex
-              items-center
-              gap-4
-              rounded-2xl
-              border
-              border-[rgba(var(--color-secondary-rgb),0.08)]
-              bg-(--color-surface)
-              p-4
-              transition-colors
-              hover:border-[rgba(var(--color-primary-rgb),0.20)]
-            "
-          >
+        <div
+          className="
+            flex
+            items-center
+            gap-2
+            rounded-full
+            border
+            border-[rgba(var(--color-primary-rgb),0.16)]
+            bg-[rgba(var(--color-primary-rgb),0.08)]
+            px-3
+            py-1.5
+            text-xs
+            font-semibold
+            uppercase
+            tracking-[0.2em]
+            text-(--color-primary)
+          "
+        >
+          <span>
+            Contributors
+          </span>
+        </div>
+
+        <h2
+          className="
+            mt-6
+            text-3xl
+            font-bold
+            tracking-tight
+            md:text-4xl
+          "
+        >
+          Project Contributors
+        </h2>
+
+        <p
+          className="
+            max-w-3xl
+            text-base
+            leading-7
+            text-(--text-medium-emphasis)
+          "
+        >
+          Meet the talented people behind this project—from planning
+          and design to development and delivery.
+        </p>
+      </header>
+
+      {/* Mobile Carousel */}
+      <div
+        className="
+          w-full
+          overflow-x-auto
+          scrollbar-hide
+          md:hidden
+        "
+      >
+        <div
+          className="
+            flex
+            gap-3
+            pb-2
+          "
+        >
+          {contributors.map((contributor) => (
             <div
+              key={contributor.id}
               className="
-                h-14
-                w-14
-                overflow-hidden
-                rounded-full
-                bg-(--color-surface-secondary)
+                w-72
                 shrink-0
               "
             >
-              {contributor.profileImageUrl ? (
-                <CardImage
-                  src={contributor.profileImageUrl}
-                  alt={contributor.name}
-                  width={56}
-                  height={56}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div
-                  className="
-                    flex
-                    h-full
-                    w-full
-                    items-center
-                    justify-center
-                    text-lg
-                    font-semibold
-                  "
-                >
-                  {contributor.name.charAt(0)}
-                </div>
-              )}
+              <ContributorCard
+                contributor={contributor}
+              />
             </div>
-
-            <div className="min-w-0 flex-1">
-              <h3
-                className="
-                  truncate
-                  text-base
-                  font-semibold
-                "
-              >
-                {contributor.name}
-              </h3>
-
-              <div
-                className="
-                  mt-2
-                  flex
-                  items-center
-                  gap-3
-                "
-              >
-                {contributor.websiteUrl && (
-                  <Link
-                    href={contributor.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${contributor.name} website`}
-                  >
-                    <Icon
-                      icon="mdi:web"
-                      className="
-                        text-xl
-                        text-(--text-medium-emphasis)
-                        transition-colors
-                        hover:text-(--color-primary)
-                      "
-                    />
-                  </Link>
-                )}
-
-                {contributor.linkedinUrl && (
-                  <Link
-                    href={contributor.linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${contributor.name} LinkedIn`}
-                  >
-                    <Icon
-                      icon="mdi:linkedin"
-                      className="
-                        text-xl
-                        text-(--text-medium-emphasis)
-                        transition-colors
-                        hover:text-(--color-primary)
-                      "
-                    />
-                  </Link>
-                )}
-              </div>
-            </div>
-          </article>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+
+      {/* Desktop Grid */}
+      <div
+        className="
+          hidden
+          w-full
+          md:flex
+          justify-center
+        "
+      >
+        <div
+          className="
+            grid
+            gap-6
+
+            md:grid-cols-[repeat(2,18rem)]
+            lg:grid-cols-[repeat(4,18rem)]
+          "
+        >
+          {contributors.map((contributor) => (
+            <div
+              key={contributor.id}
+              className="
+                w-72
+              "
+            >
+              <ContributorCard
+                contributor={contributor}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

@@ -1,44 +1,41 @@
 import type { ReactNode } from "react";
+
 import { motion } from "framer-motion";
 
-
 interface SocialButtonProps {
-  href:string;
-  icon:ReactNode;
-  label:string;
+  href: string;
+  icon: ReactNode;
+  label: string;
 }
-
 
 export default function SocialButton({
   href,
   icon,
   label,
-}:SocialButtonProps){
-
-  return(
+}: SocialButtonProps) {
+  return (
     <motion.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-
       whileHover={{
-        y:-2,
-        scale:1.05,
+        y: -2,
+        scale: 1.05,
       }}
-
       transition={{
-        duration:0.3,
+        duration: 0.3,
       }}
-
       className="
-        group
+        group/social
         relative
         flex
+        h-10
+        w-10
         items-center
         justify-center
+        rounded-full
         bg-transparent
-        p-2
         text-2xl
         text-(--text-high-emphasis)
         transition-colors
@@ -46,9 +43,7 @@ export default function SocialButton({
         hover:text-(--color-primary)
       "
     >
-
       {icon}
-
 
       <span
         className="
@@ -61,10 +56,9 @@ export default function SocialButton({
           bg-(--color-primary)
           transition-all
           duration-300
-          group-hover:w-full
+          group-hover/social:w-full
         "
       />
-
     </motion.a>
   );
 }

@@ -26,6 +26,8 @@ type ProjectAttributeRow = {
 
 
 type ProjectContributorRow = {
+  role_on_project: string[] | null;
+
   contributors: {
     id: string;
     name: string;
@@ -54,6 +56,7 @@ type ProjectRow = ProjectBaseRow & {
   project_url: string | null;
   github_url: string | null;
 };
+
 function mapProjectDetail(project: ProjectRow): Project {
   const sortedImages = [
     ...(project.project_images ?? []),
@@ -130,7 +133,10 @@ function mapProjectDetail(project: ProjectRow): Project {
     ),
 
     contributors: (project.project_contributors ?? []).map(
-      ({ contributors }) => ({
+      ({
+        contributors,
+        role_on_project,
+      }) => ({
         id: contributors.id,
 
         name: contributors.name,
@@ -144,8 +150,11 @@ function mapProjectDetail(project: ProjectRow): Project {
         }),
 
         ...(contributors.profile_image_url && {
-          profileImageUrl: contributors.profile_image_url,
+          profileImageUrl:
+            contributors.profile_image_url,
         }),
+
+        roles: role_on_project ?? [],
       })
     ),
   };
@@ -258,6 +267,7 @@ export async function getProjectById(
         attributes(*)
       ),
       project_contributors(
+        role_on_project,
         contributors(*)
       ),
       project_images(*)
@@ -272,7 +282,10 @@ export async function getProjectById(
 
     throw error;
   }
-
+  console.log(
+    JSON.stringify(data.project_contributors, null, 2)
+  );
+  
   return mapProjectDetail(data as ProjectRow);
 }
 

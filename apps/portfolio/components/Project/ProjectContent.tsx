@@ -1,11 +1,12 @@
 import type { Project } from "@hirakada/database";
 
-import ReactMarkdown from "react-markdown";
+import {
+  AttributeTag,
+  BulletTag,
+} from "@hirakada/ui";
 
-import { AttributeTag } from "@hirakada/ui";
-
+import ProjectActions from "./ProjectActions";
 import ProjectContributors from "./ProjectContributors";
-import ProjectGallery from "./ProjectGallery";
 
 export interface ProjectContentProps {
   project: Project;
@@ -19,74 +20,70 @@ export default function ProjectContent({
       className="
         flex
         flex-col
+        items-center
         gap-12
         p-[clamp(1.5rem,3vw,3rem)]
+        text-center
       "
     >
-      {/* Overview */}
+      {/* Actions */}
+      <ProjectActions
+        project={project}
+      />
 
-      <div className="space-y-4">
-        <h2>Overview</h2>
+      {/* Header */}
+      <div
+        className="
+          flex
+          w-full
+          flex-col
+          items-center
+          space-y-6
+          text-center
+        "
+      >
+        <BulletTag
+          variant="success"
+          className="w-fit"
+        >
+          {project.status}
+        </BulletTag>
 
-        <p className="text-(--text-medium-emphasis)">
-          {project.description}
+        <h1 className="text-wrap">
+          {project.title}
+        </h1>
+
+        <p
+          className="
+            max-w-4xl
+            text-center
+          "
+        >
+          {project.longDescription}
         </p>
       </div>
 
-      {/* Information */}
-
-      <div
-        className="
-          grid
-          gap-6
-          md:grid-cols-3
-        "
-      >
-        <div>
-          <p className="text-sm text-(--text-medium-emphasis)">
-            Status
-          </p>
-
-          <p className="mt-2 font-medium">
-            {project.status}
-          </p>
-        </div>
-
-        {project.category && (
-          <div>
-            <p className="text-sm text-(--text-medium-emphasis)">
-              Category
-            </p>
-
-            <p className="mt-2 font-medium">
-              {project.category}
-            </p>
-          </div>
-        )}
-
-        {project.completionDate && (
-          <div>
-            <p className="text-sm text-(--text-medium-emphasis)">
-              Completion
-            </p>
-
-            <p className="mt-2 font-medium">
-              {project.completionDate}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Technologies */}
-
+      {/* Technology */}
       {project.attributes.length > 0 && (
-        <div className="space-y-5">
-          <h2>Technology Stack</h2>
+        <div
+          className="
+            flex
+            w-full
+            flex-col
+            items-center
+            space-y-5
+            text-center
+          "
+        >
+          <h2>
+            Technology Stack
+          </h2>
 
           <div
             className="
               flex
               flex-wrap
+              justify-center
               gap-3
             "
           >
@@ -103,40 +100,10 @@ export default function ProjectContent({
       )}
 
       {/* Contributors */}
-
       {project.contributors.length > 0 && (
         <ProjectContributors
           contributors={project.contributors}
         />
-      )}
-
-      {/* Gallery */}
-
-      {project.images.length > 0 && (
-        <ProjectGallery
-          images={project.images}
-        />
-      )}
-
-      {/* Long Description */}
-
-      {project.longDescription && (
-        <div className="space-y-6">
-          <h2>Details</h2>
-
-          <div
-            className="
-              prose
-              prose-neutral
-              max-w-none
-              dark:prose-invert
-            "
-          >
-            <ReactMarkdown>
-              {project.longDescription}
-            </ReactMarkdown>
-          </div>
-        </div>
       )}
     </section>
   );
