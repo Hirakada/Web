@@ -1,17 +1,21 @@
 import Link from "next/link";
 
-import type { ProjectCard } from "@hirakada/database";
+import {
+  PROJECT_STATUS_META,
+  type ProjectCard,
+} from "@hirakada/database";
 
 import { DOMAIN } from "@hirakada/config";
 
 import {
+  BulletTag,
   Card,
+  CardAttribute,
   CardContent,
+  CardContributor,
   CardFooter,
   CardImage,
   CardTitle,
-  CardContributor,
-  CardAttribute
 } from "@hirakada/ui";
 
 export interface RelatedProjectsProps {
@@ -58,79 +62,68 @@ export default function RelatedProjects({
           lg:grid-cols-3
         "
       >
-        {projects.map((project) => (
-          <Link
-            key={project.id}
-            href={`${DOMAIN.portfolio}/${project.id}`}
-            className="
-              block
-              h-full
-              rounded-3xl
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
-            "
-            prefetch={false}
-          >
-            <Card className="h-full">
-              {project.coverImage && (
-                <CardImage
-                  src={project.coverImage}
-                  alt={project.title}
-                  width={800}
-                  height={450}
-                />
-              )}
+        {projects.map((project) => {
+          const status =
+            PROJECT_STATUS_META[
+              project.status
+            ];
 
-              <CardContent>
-                <div>
-                  <span
-                    className="
-                      inline-flex
-                      items-center
-                      gap-2
-                      rounded-lg
-                      border
-                      border-green-500/30
-                      bg-green-500/10
-                      px-3
-                      py-1.5
-                      text-sm
-                      font-medium
-                      text-green-400
-                    "
+          return (
+            <Link
+              key={project.id}
+              href={`${DOMAIN.portfolio}/${project.id}`}
+              className="
+                block
+                h-full
+                rounded-3xl
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+              "
+              prefetch={false}
+            >
+              <Card className="h-full">
+                {project.coverImage && (
+                  <CardImage
+                    src={project.coverImage}
+                    alt={project.title}
+                    width={800}
+                    height={450}
+                  />
+                )}
+
+                <CardContent>
+                  <BulletTag
+                    variant={status.variant}
+                    animated={
+                      status.animated
+                    }
                   >
-                    <span
-                      className="
-                        h-2
-                        w-2
-                        rounded-full
-                        bg-green-500
-                      "
+                    {project.status}
+                  </BulletTag>
+
+                  <CardTitle>
+                    {project.title}
+                  </CardTitle>
+
+                  <CardFooter>
+                    <CardAttribute
+                      attributes={
+                        project.attributes
+                      }
                     />
 
-                    {project.status}
-                  </span>
-                </div>
-
-                <CardTitle>
-                  {project.title}
-                </CardTitle>
-
-                <CardFooter>
-<CardAttribute
-  attributes={project.attributes}
-/>
-
-                  <CardContributor 
-                    contributors={project.contributors} 
-                  />
-
-                </CardFooter>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                    <CardContributor
+                      contributors={
+                        project.contributors
+                      }
+                    />
+                  </CardFooter>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

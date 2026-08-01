@@ -1,4 +1,8 @@
-import type { Project } from "@hirakada/database";
+import {
+  PROJECT_STATUS_META,
+  PROJECT_TYPE_META,
+  type Project,
+} from "@hirakada/database";
 
 import {
   AttributeTag,
@@ -15,6 +19,12 @@ export interface ProjectContentProps {
 export default function ProjectContent({
   project,
 }: ProjectContentProps) {
+  const status =
+    PROJECT_STATUS_META[project.status];
+
+  const type =
+    PROJECT_TYPE_META[project.type];
+
   return (
     <section
       className="
@@ -26,12 +36,10 @@ export default function ProjectContent({
         text-center
       "
     >
-      {/* Actions */}
       <ProjectActions
         project={project}
       />
 
-      {/* Header */}
       <div
         className="
           flex
@@ -42,12 +50,29 @@ export default function ProjectContent({
           text-center
         "
       >
-        <BulletTag
-          variant="success"
-          className="w-fit"
+        <div
+          className="
+            flex
+            flex-wrap
+            justify-center
+            gap-3
+          "
         >
-          {project.status}
-        </BulletTag>
+          <BulletTag
+            variant={status.variant}
+            animated={
+              status.animated
+            }
+          >
+            {project.status}
+          </BulletTag>
+
+          <BulletTag
+            variant={type.variant}
+          >
+            {project.type}
+          </BulletTag>
+        </div>
 
         <h1 className="text-wrap">
           {project.title}
@@ -63,7 +88,6 @@ export default function ProjectContent({
         </p>
       </div>
 
-      {/* Technology */}
       {project.attributes.length > 0 && (
         <div
           className="
@@ -87,22 +111,27 @@ export default function ProjectContent({
               gap-3
             "
           >
-            {project.attributes.map((attribute) => (
-              <AttributeTag
-                key={attribute.id}
-                iconUrl={attribute.iconUrl}
-              >
-                {attribute.name}
-              </AttributeTag>
-            ))}
+            {project.attributes.map(
+              (attribute) => (
+                <AttributeTag
+                  key={attribute.id}
+                  iconUrl={
+                    attribute.iconUrl
+                  }
+                >
+                  {attribute.name}
+                </AttributeTag>
+              )
+            )}
           </div>
         </div>
       )}
 
-      {/* Contributors */}
       {project.contributors.length > 0 && (
         <ProjectContributors
-          contributors={project.contributors}
+          contributors={
+            project.contributors
+          }
         />
       )}
     </section>

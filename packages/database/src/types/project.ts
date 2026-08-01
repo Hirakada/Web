@@ -1,5 +1,10 @@
 import type { Attribute } from "./attribute";
+import type { Category } from "./category";
 import type { Contributor } from "./contributor";
+import type {
+  ProjectStatus,
+  ProjectType,
+} from "./enums";
 
 export interface ProjectCard {
   id: string;
@@ -8,13 +13,20 @@ export interface ProjectCard {
 
   description: string;
 
-  status: string;
+  status: ProjectStatus;
+
+  type: ProjectType;
 
   isFeatured: boolean;
 
   completionDate?: string;
 
   coverImage?: string;
+
+  categories: Pick<
+    Category,
+    "id" | "name" | "icon" | "color"
+  >[];
 
   attributes: Pick<
     Attribute,
@@ -29,25 +41,44 @@ export interface ProjectCard {
 
 export interface Project {
   id: string;
+
   title: string;
+
   description: string;
+
   longDescription?: string;
-  category?: string;
-  projectUrl?: string;
-  githubUrl?: string;
-  status: string;
+
+  status: ProjectStatus;
+
+  type: ProjectType;
+
   isFeatured: boolean;
+
   completionDate?: string;
+
+  projectUrl?: string;
+
+  githubUrl?: string;
+
   coverImage?: string;
+
+  categories: Category[];
+
   attributes: Attribute[];
+
   contributors: Contributor[];
+
   images: ProjectImage[];
 }
 
 export interface ProjectImage {
   id: string;
+
   imageUrl: string;
+
   altText?: string;
+
   caption?: string;
+
   order: number;
 }

@@ -414,8 +414,12 @@ const LaserFlow: React.FC<Props> = ({
     mesh.frustumCulled = false;
     scene.add(mesh);
 
-    const clock = new THREE.Clock();
-    let prevTime = 0;
+    const timer = new THREE.Timer();
+    timer.connect(document);
+
+    timer.reset();
+    timer.update();
+
     let fade = hasFadedRef.current ? 1 : 0;
 
     const mouseTarget = new THREE.Vector2(0, 0);
@@ -535,9 +539,13 @@ const LaserFlow: React.FC<Props> = ({
       raf = requestAnimationFrame(animate);
       if (pausedRef.current || !inViewRef.current) return;
 
-      const t = clock.getElapsedTime();
-      const dt = Math.max(0, t - prevTime);
-      prevTime = t;
+      timer.update();
+
+      const dt = timer.getDelta();
+
+      uniforms.iTime.value += dt;
+
+      const t = uniforms.iTime.value as number;
 
       const dtMs = dt * 1000;
       emaDtRef.current = emaDtRef.current * 0.9 + dtMs * 0.1;

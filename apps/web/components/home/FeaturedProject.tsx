@@ -1,27 +1,23 @@
 import Link from "next/link";
 
 import { DOMAIN } from "@hirakada/config";
+
+import {
+  PROJECT_STATUS_META,
+  type ProjectCard,
+} from "@hirakada/database";
+
 import {
   AttributeTag,
   BulletTag,
   Card,
+  CardAttribute,
   CardContent,
+  CardContributor,
   CardFooter,
   CardImage,
   CardTitle,
-  CardContributor,
-  CardAttribute 
 } from "@hirakada/ui";
-
-const statusVariants = {
-  Live: "success",
-  Completed: "info",
-  Abandoned: "muted",
-} as const;
-
-import type {
-  ProjectCard,
-} from "@hirakada/database";
 
 interface FeaturedProjectProps {
   projects: ProjectCard[];
@@ -31,7 +27,7 @@ export default function FeaturedProject({
   projects,
 }: FeaturedProjectProps) {
   const featuredProjects = projects.filter(
-    (project) => project.isFeatured,
+    (project) => project.isFeatured
   );
 
   if (featuredProjects.length === 0) {
@@ -89,8 +85,14 @@ export default function FeaturedProject({
         "
       >
         <AttributeTag>UI/UX Design</AttributeTag>
-        <AttributeTag>Web Development</AttributeTag>
-        <AttributeTag>Graphic Design</AttributeTag>
+
+        <AttributeTag>
+          Web Development
+        </AttributeTag>
+
+        <AttributeTag>
+          Graphic Design
+        </AttributeTag>
       </div>
 
       {/* Projects */}
@@ -106,72 +108,69 @@ export default function FeaturedProject({
           lg:grid-cols-[repeat(3,minmax(280px,1fr))]
         "
       >
-        {featuredProjects.map((project) => (
-          <Link
-            key={project.id}
-            href={`${DOMAIN.portfolio}/${project.id}`}
-            className="
-              block
-              h-full
-              rounded-3xl
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
-            "
-            aria-label={`View ${project.title}`}
-            prefetch={false}
-          >
-            <Card className="h-full">
-              {/* Cover */}
+        {featuredProjects.map((project) => {
+          const status =
+            PROJECT_STATUS_META[
+              project.status
+            ];
 
-              {project.coverImage && (
-                <CardImage
-                  src={project.coverImage}
-                  alt={project.title}
-                  width={800}
-                  height={450}
-                />
-              )}
+          return (
+            <Link
+              key={project.id}
+              href={`${DOMAIN.portfolio}/${project.id}`}
+              className="
+                block
+                h-full
+                rounded-3xl
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+              "
+              aria-label={`View ${project.title}`}
+              prefetch={false}
+            >
+              <Card className="h-full">
+                {project.coverImage && (
+                  <CardImage
+                    src={project.coverImage}
+                    alt={project.title}
+                    width={800}
+                    height={450}
+                  />
+                )}
 
-              {/* Content */}
-
-              <CardContent>
-                {/* Status */}
-
-                <div>
+                <CardContent>
                   <BulletTag
-                    variant={statusVariants[project.status as keyof typeof statusVariants]}
+                    variant={status.variant}
+                    animated={
+                      status.animated
+                    }
                   >
                     {project.status}
                   </BulletTag>
-                </div>
 
-                {/* Title */}
+                  <CardTitle>
+                    {project.title}
+                  </CardTitle>
 
-                <CardTitle>
-                  {project.title}
-                </CardTitle>
+                  <CardFooter>
+                    <CardAttribute
+                      attributes={
+                        project.attributes
+                      }
+                    />
 
-                {/* Footer */}
-
-                <CardFooter>
-                  {/* Attributes */}
-
-                  <CardAttribute
-                    attributes={project.attributes}
-                  />
-
-                  {/* Contributors */}
-
-                  <CardContributor 
-                    contributors={project.contributors} 
-                  />
-
-                </CardFooter>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                    <CardContributor
+                      contributors={
+                        project.contributors
+                      }
+                    />
+                  </CardFooter>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

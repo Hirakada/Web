@@ -194,6 +194,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@hirakada/ui':
+        specifier: workspace:*
+        version: link:../ui
       '@supabase/ssr':
         specifier: ^0.12.3
         version: 0.12.3(@supabase/supabase-js@2.110.8)
