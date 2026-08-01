@@ -47,59 +47,6 @@ export default function Footer({
         }}
       >
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 ">
-        <motion.nav
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            show: {
-              transition: {
-                staggerChildren: 0.08,
-              },
-            },
-          }}
-          className="
-            flex
-            flex-nowrap
-            items-center
-            justify-center
-            gap-2
-            sm:gap-4
-            md:gap-6
-            lg:gap-8
-            overflow-x-auto
-            overflow-y-hidden
-            [-ms-overflow-style:none]
-            [scrollbar-width:none]
-            [&::-webkit-scrollbar]:hidden
-          ">
-          {navigation.map((item) => (
-            <motion.div
-              key={item.label}
-              variants={{
-                hidden: { opacity: 0, y: 8 },
-                show: { opacity: 1, y: 0 },
-              }}
-            >
-              <motion.div
-                whileHover={{ y: -2 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 20,
-                }}
-              >
-                <Link
-                  href={item.href}
-                  className="text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
-                >
-                  {item.label}
-                </Link>
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.nav>
 
         {socials.length > 0 && (
           <motion.div
