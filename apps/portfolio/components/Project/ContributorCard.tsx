@@ -31,6 +31,7 @@ export default function ContributorCard({
   const [showRoles, setShowRoles] = useState(false);
 
   const roles = contributor.roles ?? [];
+  const primaryRole = roles[0];
 
   return (
     <article
@@ -84,7 +85,6 @@ export default function ContributorCard({
         "
       />
 
-      {/* Content */}
       <div
         className="
           relative
@@ -157,21 +157,27 @@ export default function ContributorCard({
               flex
               flex-col
               items-center
-              gap-1.5
+              gap-2
             "
           >
-            {/* Main Role */}
             <span
               className="
-                text-sm
+                rounded-full
+                px-3
+                py-1
+                text-xs
                 font-semibold
-                text-(--color-primary)
+                text-white
               "
+              style={{
+                backgroundColor:
+                  primaryRole?.color ??
+                  "rgb(var(--color-primary-rgb))",
+              }}
             >
-              {roles[0]}
+              {primaryRole?.name}
             </span>
 
-            {/* Additional Roles */}
             {roles.length > 1 && (
               <button
                 type="button"
@@ -184,7 +190,7 @@ export default function ContributorCard({
                   hover:text-(--color-primary)
                 "
               >
-                +{roles.length - 1} more
+                +{roles.length - 1} more roles
               </button>
             )}
           </div>
@@ -196,46 +202,46 @@ export default function ContributorCard({
               text-(--text-medium-emphasis)
             "
           >
-            No roles available.
+            No roles available
           </span>
         )}
 
         {/* Social */}
         {(contributor.websiteUrl ||
-        contributor.linkedinUrl) && (
-        <SocialButtonGroup
+          contributor.linkedinUrl) && (
+          <SocialButtonGroup
             className="
-            mt-auto
-            gap-3
-            pt-6
+              mt-auto
+              gap-3
+              pt-6
             "
-        >
+          >
             {contributor.websiteUrl && (
-            <SocialButton
+              <SocialButton
                 href={contributor.websiteUrl}
                 icon={
-                <Icon
+                  <Icon
                     icon="mdi:web"
                     className="text-lg"
-                />
+                  />
                 }
                 label={`${contributor.name} website`}
-            />
+              />
             )}
 
             {contributor.linkedinUrl && (
-            <SocialButton
+              <SocialButton
                 href={contributor.linkedinUrl}
                 icon={
-                <Icon
+                  <Icon
                     icon="mdi:linkedin"
                     className="text-lg"
-                />
+                  />
                 }
                 label={`${contributor.name} LinkedIn`}
-            />
+              />
             )}
-        </SocialButtonGroup>
+          </SocialButtonGroup>
         )}
       </div>
 
@@ -275,22 +281,38 @@ export default function ContributorCard({
             <div
               className="
                 flex
-                flex-col
+                flex-wrap
+                justify-center
                 gap-2
-                text-sm
-                text-(--text-medium-emphasis)
               "
             >
               {roles.map((role) => (
-                <span key={role}>
-                  {role}
+                <span
+                  key={role.id}
+                  className="
+                    rounded-full
+                    px-3
+                    py-1
+                    text-xs
+                    font-semibold
+                    text-white
+                  "
+                  style={{
+                    backgroundColor:
+                      role.color ??
+                      "rgb(var(--color-primary-rgb))",
+                  }}
+                >
+                  {role.name}
                 </span>
               ))}
             </div>
 
             <button
               type="button"
-              onClick={() => setShowRoles(false)}
+              onClick={() =>
+                setShowRoles(false)
+              }
               className="
                 cursor-pointer
                 rounded-full

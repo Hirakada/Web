@@ -7,6 +7,6 @@
   "dependencies": {
     "@hirakada/database": "workspace:*",
     "@supabase/supabase-js": "^2.x",
-    "next": "^15.x"
+    "next": "16.2.10"
   }
 }

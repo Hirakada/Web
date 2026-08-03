@@ -19,6 +19,8 @@ import {
   CardTitle,
 } from "@hirakada/ui";
 
+console.log(CardContributor);
+
 interface FeaturedProjectProps {
   projects: ProjectCard[];
 }
