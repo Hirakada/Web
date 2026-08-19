@@ -43,9 +43,11 @@ export interface HeaderItem {
 }
 
 
+import React from "react"; 
+
 export interface HeaderProps {
   /**
-   * Logo image.
+   * Logo component or image node.
    */
   logo: string;
 
@@ -90,6 +92,7 @@ export interface HeaderProps {
    */
   bordered?: boolean;
 }
+
 
 
 export interface HeaderMobileMenuProps {

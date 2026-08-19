@@ -92,24 +92,23 @@ export default function Header({
       >
 
         {/* Logo */}
-
         <Link
           href={logoHref}
           aria-label="Home"
-          className="relative z-20 shrink-0"
+          className="relative z-20 shrink-0 block"
         >
-
-          <Image
-            src={logo}
-            alt={logoAlt}
-            width={160}
-            height={40}
-            priority
-            className="h-8 w-auto"
+          <div 
+            className="h-8 w-40 bg-current transition-colors duration-200"
+            style={{
+              maskImage: `url(${logo})`,
+              WebkitMaskImage: `url(${logo})`,
+              maskSize: 'contain',
+              WebkitMaskSize: 'contain',
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+            }}
           />
-
         </Link>
-
 
         {/* Desktop Navigation */}
 
