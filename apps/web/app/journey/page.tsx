@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
   BriefcaseBusiness,
@@ -6,6 +9,8 @@ import {
   GraduationCap,
   Rocket,
 } from "lucide-react";
+
+import { DOMAIN } from "@hirakada/config";
 
 const journey = [
   {
@@ -55,6 +60,15 @@ const journey = [
   },
 ];
 
+const filters = [
+  "All",
+  "Education",
+  "Experience",
+  "Entrepreneurship",
+  "Research",
+  "Building",
+] as const;
+
 const principles = [
   {
     title: "Explore",
@@ -74,10 +88,21 @@ const principles = [
 ];
 
 export default function JourneyPage() {
+  const [activeFilter, setActiveFilter] =
+    useState<(typeof filters)[number]>("All");
+
+  const filteredJourney = useMemo(() => {
+    if (activeFilter === "All") {
+      return journey;
+    }
+
+    return journey.filter((item) => item.type === activeFilter);
+  }, [activeFilter]);
+
   return (
     <>
       {/* Hero */}
-      <section className="mx-auto max-w-7xl px-6 pb-24 pt-24 sm:px-8 lg:px-12 lg:pt-32">
+      <section className="mx-auto max-w-7xl px-6 pb-16 pt-24 sm:px-8 lg:px-12 lg:pt-32">
         <div className="max-w-4xl">
           <p className="mb-5 text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
             Journey
@@ -98,86 +123,122 @@ export default function JourneyPage() {
         </div>
       </section>
 
+      {/* Filter */}
+      <section className="mx-auto max-w-7xl px-6 pb-16 sm:px-8 lg:px-12">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {filters.map((filter) => {
+            const isActive = activeFilter === filter;
+
+            return (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                className={[
+                  "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground",
+                ].join(" ")}
+              >
+                {filter}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Timeline */}
       <section className="mx-auto max-w-7xl px-6 pb-32 sm:px-8 lg:px-12">
-        <div className="relative">
-          <div className="absolute bottom-0 left-[7px] top-0 w-px bg-border md:left-1/2" />
+        {filteredJourney.length > 0 ? (
+          <div className="relative">
+            <div className="absolute bottom-0 left-[7px] top-0 w-px bg-border md:left-1/2" />
 
-          <div className="space-y-16 md:space-y-24">
-            {journey.map((item, index) => {
-              const Icon = item.icon;
-              const isRight = index % 2 === 1;
+            <div className="space-y-16 md:space-y-24">
+              {filteredJourney.map((item, index) => {
+                const Icon = item.icon;
+                const isRight = index % 2 === 1;
 
-              return (
-                <article
-                  key={`${item.year}-${item.title}`}
-                  className="relative grid md:grid-cols-2 md:gap-16"
-                >
-                  <div
-                    className={`hidden md:block ${
-                      isRight ? "order-2 text-left" : "text-right"
-                    }`}
+                return (
+                  <article
+                    key={`${item.year}-${item.title}`}
+                    className="relative grid md:grid-cols-2 md:gap-16"
                   >
-                    <span className="text-sm font-medium tracking-wide text-muted-foreground">
-                      {item.year}
-                    </span>
-                  </div>
-
-                  <div className="absolute left-0 top-1 z-10 flex size-4 -translate-x-1/2 items-center justify-center rounded-full border-4 border-background bg-foreground md:left-1/2" />
-
-                  <div
-                    className={`pl-8 md:pl-0 ${
-                      isRight ? "md:order-1 md:text-right" : ""
-                    }`}
-                  >
+                    {/* Year */}
                     <div
-                      className={`mb-3 flex items-center gap-3 ${
-                        isRight ? "md:justify-end" : ""
+                      className={`hidden md:block ${
+                        isRight ? "order-2 text-left" : "text-right"
                       }`}
                     >
-                      <Icon className="size-4 text-muted-foreground" />
-
-                      <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                        {item.type}
-                      </span>
-
-                      <span className="text-xs text-muted-foreground md:hidden">
-                        · {item.year}
+                      <span className="text-sm font-medium tracking-wide text-muted-foreground">
+                        {item.year}
                       </span>
                     </div>
 
-                    <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                      {item.title}
-                    </h2>
+                    {/* Timeline dot */}
+                    <div className="absolute left-0 top-1 z-10 flex size-4 -translate-x-1/2 items-center justify-center rounded-full border-4 border-background bg-foreground md:left-1/2" />
 
-                    <p
-                      className={`mt-4 max-w-xl text-base leading-7 text-muted-foreground ${
-                        isRight ? "md:ml-auto" : ""
-                      }`}
-                    >
-                      {item.description}
-                    </p>
-
+                    {/* Content */}
                     <div
-                      className={`mt-5 flex flex-wrap gap-2 ${
-                        isRight ? "md:justify-end" : ""
+                      className={`pl-8 md:pl-0 ${
+                        isRight ? "md:order-1 md:text-right" : ""
                       }`}
                     >
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
-                        >
-                          {tag}
+                      <div
+                        className={`mb-3 flex items-center gap-3 ${
+                          isRight ? "md:justify-end" : ""
+                        }`}
+                      >
+                        <Icon className="size-4 text-muted-foreground" />
+
+                        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                          {item.type}
                         </span>
-                      ))}
+
+                        <span className="text-xs text-muted-foreground md:hidden">
+                          · {item.year}
+                        </span>
+                      </div>
+
+                      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                        {item.title}
+                      </h2>
+
+                      <p
+                        className={`mt-4 max-w-xl text-base leading-7 text-muted-foreground ${
+                          isRight ? "md:ml-auto" : ""
+                        }`}
+                      >
+                        {item.description}
+                      </p>
+
+                      <div
+                        className={`mt-5 flex flex-wrap gap-2 ${
+                          isRight ? "md:justify-end" : ""
+                        }`}
+                      >
+                        {item.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+                  </article>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex min-h-40 items-center justify-center rounded-2xl border border-dashed border-border">
+            <p className="text-sm text-muted-foreground">
+              No journey entries found.
+            </p>
+          </div>
+        )}
       </section>
 
       {/* Principles */}
@@ -234,10 +295,11 @@ export default function JourneyPage() {
             </div>
 
             <Link
-              href="/portfolio"
+              href={DOMAIN.portfolio}
               className="group inline-flex items-center gap-2 text-sm font-medium"
             >
               Explore my work
+
               <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </div>
