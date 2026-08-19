@@ -10,10 +10,6 @@ export const navigation = [
     href: DOMAIN.portfolio,
   },
   {
-    label: "Documentation",
-    href: `${DOMAIN.web}/documentation`,
-  },
-  {
     label: "Journey",
     href: `${DOMAIN.web}/journey`,
   },
