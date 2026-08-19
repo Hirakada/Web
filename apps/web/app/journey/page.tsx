@@ -14,7 +14,8 @@ import { DOMAIN } from "@hirakada/config";
 
 const journey = [
   {
-    year: "2026",
+    startDate: "2026-01",
+    endDate: null,
     type: "Building",
     title: "Hirakada",
     description:
@@ -23,7 +24,8 @@ const journey = [
     tags: ["Next.js", "TypeScript", "Supabase"],
   },
   {
-    year: "2026",
+    startDate: "2026-02",
+    endDate: null,
     type: "Entrepreneurship",
     title: "Matcha Kun",
     description:
@@ -32,7 +34,8 @@ const journey = [
     tags: ["Entrepreneurship", "Branding", "Digital Business"],
   },
   {
-    year: "2026",
+    startDate: "2026-01",
+    endDate: null,
     type: "Research",
     title: "IoT & Entrepreneurship Research",
     description:
@@ -41,7 +44,8 @@ const journey = [
     tags: ["SLR", "Gioia", "Delphi"],
   },
   {
-    year: "2025",
+    startDate: "2025-08",
+    endDate: "2026-01",
     type: "Experience",
     title: "Digital Marketing Internship",
     description:
@@ -50,7 +54,8 @@ const journey = [
     tags: ["Digital Marketing", "UGC", "KOL"],
   },
   {
-    year: "2022 — Present",
+    startDate: "2022-09",
+    endDate: null,
     type: "Education",
     title: "Digital Business Innovation",
     description:
@@ -87,16 +92,52 @@ const principles = [
   },
 ];
 
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+  }).format(new Date(`${date}-01`));
+}
+
+function formatPeriod(
+  startDate: string,
+  endDate: string | null,
+) {
+  const start = formatDate(startDate);
+
+  if (!endDate) {
+    return `${start} — Present`;
+  }
+
+  return `${start} — ${formatDate(endDate)}`;
+}
+
 export default function JourneyPage() {
   const [activeFilter, setActiveFilter] =
     useState<(typeof filters)[number]>("All");
 
   const filteredJourney = useMemo(() => {
-    if (activeFilter === "All") {
-      return journey;
-    }
+    const filtered =
+      activeFilter === "All"
+        ? journey
+        : journey.filter((item) => item.type === activeFilter);
 
-    return journey.filter((item) => item.type === activeFilter);
+    return [...filtered].sort((a, b) => {
+      // Ongoing entries always come first
+      if (a.endDate === null && b.endDate !== null) {
+        return -1;
+      }
+
+      if (a.endDate !== null && b.endDate === null) {
+        return 1;
+      }
+
+      // Within the same status, newest start date first
+      return (
+        new Date(`${b.startDate}-01`).getTime() -
+        new Date(`${a.startDate}-01`).getTime()
+      );
+    });
   }, [activeFilter]);
 
   return (
@@ -152,6 +193,7 @@ export default function JourneyPage() {
       <section className="mx-auto max-w-7xl px-6 pb-32 sm:px-8 lg:px-12">
         {filteredJourney.length > 0 ? (
           <div className="relative">
+            {/* Timeline line */}
             <div className="absolute bottom-0 left-[7px] top-0 w-px bg-border md:left-1/2" />
 
             <div className="space-y-16 md:space-y-24">
@@ -161,17 +203,17 @@ export default function JourneyPage() {
 
                 return (
                   <article
-                    key={`${item.year}-${item.title}`}
+                    key={`${item.startDate}-${item.title}`}
                     className="relative grid md:grid-cols-2 md:gap-16"
                   >
-                    {/* Year */}
+                    {/* Date */}
                     <div
                       className={`hidden md:block ${
                         isRight ? "order-2 text-left" : "text-right"
                       }`}
                     >
                       <span className="text-sm font-medium tracking-wide text-muted-foreground">
-                        {item.year}
+                        {formatPeriod(item.startDate, item.endDate)}
                       </span>
                     </div>
 
@@ -184,6 +226,7 @@ export default function JourneyPage() {
                         isRight ? "md:order-1 md:text-right" : ""
                       }`}
                     >
+                      {/* Type */}
                       <div
                         className={`mb-3 flex items-center gap-3 ${
                           isRight ? "md:justify-end" : ""
@@ -196,14 +239,16 @@ export default function JourneyPage() {
                         </span>
 
                         <span className="text-xs text-muted-foreground md:hidden">
-                          · {item.year}
+                          · {formatPeriod(item.startDate, item.endDate)}
                         </span>
                       </div>
 
+                      {/* Title */}
                       <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                         {item.title}
                       </h2>
 
+                      {/* Description */}
                       <p
                         className={`mt-4 max-w-xl text-base leading-7 text-muted-foreground ${
                           isRight ? "md:ml-auto" : ""
@@ -212,6 +257,7 @@ export default function JourneyPage() {
                         {item.description}
                       </p>
 
+                      {/* Tags */}
                       <div
                         className={`mt-5 flex flex-wrap gap-2 ${
                           isRight ? "md:justify-end" : ""
@@ -258,7 +304,9 @@ export default function JourneyPage() {
             <div className="grid gap-10 sm:grid-cols-3">
               {principles.map((item) => (
                 <div key={item.title}>
-                  <h3 className="text-xl font-semibold">{item.title}</h3>
+                  <h3 className="text-xl font-semibold">
+                    {item.title}
+                  </h3>
 
                   <p className="mt-3 text-sm leading-6 text-muted-foreground">
                     {item.description}
