@@ -47,8 +47,11 @@ export default function ProjectHero({
     <div
       className="
         relative
+        aspect-square
         overflow-hidden
         rounded-t-3xl
+        md:aspect-auto
+        md:h-[clamp(320px,55vh,620px)]
       "
     >
       {spotlight && (
@@ -85,7 +88,7 @@ export default function ProjectHero({
           className="
             relative
             z-10
-            h-[clamp(320px,55vh,620px)]
+            h-full
             w-full
             object-cover
           "

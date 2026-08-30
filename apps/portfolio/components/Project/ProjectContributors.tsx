@@ -9,6 +9,9 @@ export interface ProjectContributorsProps {
 export default function ProjectContributors({
   contributors,
 }: ProjectContributorsProps) {
+  const isFewContributors =
+    contributors.length <= 2;
+
   return (
     <section
       className="
@@ -80,16 +83,26 @@ export default function ProjectContributors({
         className="
           w-full
           overflow-x-auto
+          overscroll-x-contain
           scrollbar-hide
+          snap-x
+          snap-mandatory
           md:hidden
         "
       >
         <div
-          className="
+          className={`
             flex
+            min-w-max
+            items-stretch
             gap-3
             pb-2
-          "
+            ${
+              isFewContributors
+                ? "justify-center px-[calc((100vw-18rem)/2)]"
+                : "justify-start px-0"
+            }
+          `}
         >
           {contributors.map((contributor) => (
             <div
@@ -97,6 +110,7 @@ export default function ProjectContributors({
               className="
                 w-72
                 shrink-0
+                snap-center
               "
             >
               <ContributorCard
@@ -112,15 +126,14 @@ export default function ProjectContributors({
         className="
           hidden
           w-full
-          md:flex
           justify-center
+          md:flex
         "
       >
         <div
           className="
             grid
             gap-6
-
             md:grid-cols-[repeat(2,18rem)]
             lg:grid-cols-[repeat(4,18rem)]
           "

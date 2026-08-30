@@ -55,18 +55,22 @@ export default function RelatedProjects({
 
       <div
         className="
-          grid
-          grid-cols-1
+          flex
           gap-[clamp(1.5rem,3vw,2.5rem)]
+          overflow-x-auto
+          snap-x
+          snap-mandatory
+          pb-2
+          md:grid
           md:grid-cols-2
+          md:overflow-visible
+          md:pb-0
           lg:grid-cols-3
         "
       >
         {projects.map((project) => {
           const status =
-            PROJECT_STATUS_META[
-              project.status
-            ];
+            PROJECT_STATUS_META[project.status];
 
           return (
             <Link
@@ -75,10 +79,15 @@ export default function RelatedProjects({
               className="
                 block
                 h-full
+                w-[85%]
+                shrink-0
+                snap-start
                 rounded-3xl
                 focus-visible:outline-none
                 focus-visible:ring-2
                 focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+                md:w-auto
+                md:shrink
               "
               prefetch={false}
             >
@@ -95,9 +104,7 @@ export default function RelatedProjects({
                 <CardContent>
                   <BulletTag
                     variant={status.variant}
-                    animated={
-                      status.animated
-                    }
+                    animated={status.animated}
                   >
                     {project.status}
                   </BulletTag>
@@ -108,15 +115,11 @@ export default function RelatedProjects({
 
                   <CardFooter>
                     <CardAttribute
-                      attributes={
-                        project.attributes
-                      }
+                      attributes={project.attributes}
                     />
 
                     <CardContributor
-                      contributors={
-                        project.contributors
-                      }
+                      contributors={project.contributors}
                     />
                   </CardFooter>
                 </CardContent>
