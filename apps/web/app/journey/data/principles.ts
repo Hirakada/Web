@@ -7,7 +7,7 @@ export const principles = [
   {
     title: "Learn",
     description:
-      "Gain knowledge through experiences, challenges, experiments, and the people encountered along the way.",
+      "Gain knowledge through experiences, challenges, experiments, and the people I encounter along the way.",
   },
   {
     title: "Grow",

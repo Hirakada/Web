@@ -1,6 +1,7 @@
 import {
   BriefcaseBusiness,
-  Users,
+  MapPin,
+  ArrowUpRight,
 } from "lucide-react";
 
 interface Organization {
@@ -16,9 +17,9 @@ interface Organization {
   country: string;
 }
 
-interface Experience {
+interface ExperienceItem {
   id: string;
-  experience_type: "work" | "organization";
+  experience_type: "work";
   title: string;
   role: string | null;
   description: string | null;
@@ -26,7 +27,12 @@ interface Experience {
   end_date: string | null;
   location: string | null;
   url: string | null;
+  sort_order: number;
   organizations: Organization | null;
+}
+
+export interface ExperienceProps {
+  experiences: ExperienceItem[];
 }
 
 function formatDate(date: string) {
@@ -36,106 +42,118 @@ function formatDate(date: string) {
   }).format(new Date(`${date}T00:00:00`));
 }
 
-function formatPeriod(start: string, end: string | null) {
+function formatPeriod(
+  start: string,
+  end: string | null,
+) {
   return `${formatDate(start)} — ${
     end ? formatDate(end) : "Present"
   }`;
-}
-
-export interface ExperienceProps {
-  experiences: Experience[];
 }
 
 export function Experience({
   experiences,
 }: ExperienceProps) {
   return (
-    <section className="mx-auto max-w-7xl px-6 pb-32 sm:px-8 lg:px-12">
-      <div className="mb-12">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-          Experience
-        </p>
+    <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
+      <div className="w-full">
+        <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+          <header className="flex max-w-sm flex-col items-start self-start text-left">
+            <p className="text-label text-muted uppercase tracking-widest">
+              Work
+            </p>
 
-        <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-          Work & organizations.
-        </h2>
-      </div>
+            <h2 className="text-display mt-3">
+              Work experiences.
+            </h2>
 
-      <div className="relative">
-        <div className="absolute bottom-0 left-[7px] top-0 w-px bg-border" />
+            <p className="text-body text-muted mt-4">
+              Roles and experiences that have shaped how I
+              work, collaborate, build, and create.
+            </p>
+          </header>
 
-        <div className="space-y-12">
-          {experiences.map((item) => {
-            const isWork = item.experience_type === "work";
-            const Icon = isWork ? BriefcaseBusiness : Users;
-
-            return (
+          <div className="min-w-0">
+            {experiences.map((item, index) => (
               <article
                 key={item.id}
-                className="relative pl-8"
+                className={`grid gap-5 py-8 sm:py-10 lg:grid-cols-[150px_minmax(0,1fr)] lg:gap-8 ${
+                  index !== 0
+                    ? "border-t border-border"
+                    : ""
+                }`}
               >
-                <div className="absolute left-0 top-1 z-10 flex size-4 -translate-x-1/2 items-center justify-center rounded-full border-4 border-background bg-foreground" />
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <Icon className="size-4 text-muted-foreground" />
-
-                  <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                    {isWork ? "Work" : "Organization"}
-                  </span>
-
-                  <span className="text-sm text-muted-foreground">
-                    {formatPeriod(item.start_date, item.end_date)}
-                  </span>
+                <div className="text-sm leading-6 text-muted">
+                  {formatPeriod(
+                    item.start_date,
+                    item.end_date,
+                  )}
                 </div>
 
-                <h3 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-                  {item.title}
-                </h3>
-
-                {item.role && (
-                  <p className="mt-2 text-sm font-medium">
-                    {item.role}
-                  </p>
-                )}
-
-                {item.organizations && (
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                    <span>{item.organizations.name}</span>
-
-                    <span aria-hidden="true">·</span>
-
-                    <span>
-                      {item.organizations.city},{" "}
-                      {item.organizations.country}
-                    </span>
+                <div className="min-w-0">
+                  <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-blue-600 dark:text-blue-400">
+                    <BriefcaseBusiness className="size-4" />
+                    <span>Work</span>
                   </div>
-                )}
 
-                {item.location && (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {item.location}
-                  </p>
-                )}
+                  <h3 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+                    {item.title}
+                  </h3>
 
-                {item.description && (
-                  <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">
-                    {item.description}
-                  </p>
-                )}
+                  {item.role && (
+                    <p className="mt-2 text-sm font-medium text-foreground/80">
+                      {item.role}
+                    </p>
+                  )}
 
-                {item.url && (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-4 inline-flex text-sm font-medium underline-offset-4 hover:underline"
-                  >
-                    Learn more
-                  </a>
-                )}
+                  {item.organizations && (
+                    <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+                      <span className="font-medium text-foreground/80">
+                        {item.organizations.name}
+                      </span>
+
+                      <span aria-hidden="true">
+                        ·
+                      </span>
+
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="size-3.5 shrink-0" />
+                        {item.organizations.city},{" "}
+                        {item.organizations.country}
+                      </span>
+                    </div>
+                  )}
+
+                  {item.location &&
+                    !item.organizations && (
+                      <p className="mt-3 flex items-center gap-1.5 text-sm text-muted">
+                        <MapPin className="size-3.5" />
+                        {item.location}
+                      </p>
+                    )}
+
+                  {item.description && (
+                    <p className="text-body text-muted mt-5 max-w-2xl">
+                      {item.description}
+                    </p>
+                  )}
+
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group mt-5 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+                    >
+                      View experience
+
+                      <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </a>
+                  )}
+                </div>
               </article>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     </section>

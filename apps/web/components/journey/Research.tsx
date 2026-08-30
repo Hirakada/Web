@@ -1,6 +1,7 @@
 import {
   ArrowUpRight,
   FlaskConical,
+  ExternalLink,
 } from "lucide-react";
 
 interface ResearchLink {
@@ -11,7 +12,7 @@ interface ResearchLink {
   sort_order: number;
 }
 
-interface Research {
+interface ResearchItem {
   id: string;
   title: string;
   description: string | null;
@@ -22,6 +23,10 @@ interface Research {
   research_links: ResearchLink[];
 }
 
+export interface ResearchProps {
+  research: ResearchItem[];
+}
+
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -29,89 +34,70 @@ function formatDate(date: string) {
   }).format(new Date(`${date}T00:00:00`));
 }
 
-function formatPeriod(start: string, end: string | null) {
+function formatPeriod(
+  start: string,
+  end: string | null,
+) {
   return `${formatDate(start)} — ${
     end ? formatDate(end) : "Present"
   }`;
-}
-
-function getStatus(research: Research) {
-  const hasPublication =
-    Boolean(research.doi) ||
-    research.research_links.some(
-      (link) =>
-        link.type === "doi" ||
-        link.type === "publication",
-    );
-
-  return hasPublication ? "Published" : "Ongoing";
-}
-
-export interface ResearchProps {
-  research: Research[];
 }
 
 export function Research({
   research,
 }: ResearchProps) {
   return (
-    <section className="mx-auto max-w-7xl px-6 py-24 sm:px-8 lg:px-12 lg:py-32">
-      <div className="mb-12">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-          Research
-        </p>
+    <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
+      <div className="w-full">
+        <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+          <header className="flex max-w-sm flex-col items-start self-start text-left">
+            <p className="text-label text-muted uppercase tracking-widest">
+              Research
+            </p>
 
-        <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-          Questions worth exploring.
-        </h2>
+            <h2 className="text-display mt-3">
+              Research & exploration.
+            </h2>
 
-        <p className="mt-5 max-w-2xl text-muted-foreground">
-          Research projects exploring ideas at the intersection of
-          technology, business, and entrepreneurship.
-        </p>
-      </div>
+            <p className="text-body text-muted mt-4">
+              Research work exploring ideas at the intersection
+              of technology, entrepreneurship, and digital innovation.
+            </p>
+          </header>
 
-      <div className="space-y-12">
-        {research.map((item) => {
-          const status = getStatus(item);
+          <div className="min-w-0">
+            {research.map((item, index) => (
+              <article
+                key={item.id}
+                className={`grid gap-5 py-8 sm:py-10 lg:grid-cols-[150px_minmax(0,1fr)] lg:gap-8 ${
+                  index !== 0
+                    ? "border-t border-border"
+                    : ""
+                }`}
+              >
+                <div className="text-sm leading-6 text-muted">
+                  {formatPeriod(
+                    item.start_date,
+                    item.end_date,
+                  )}
+                </div>
 
-          const links = [...item.research_links].sort(
-            (a, b) => a.sort_order - b.sort_order,
-          );
+                <div className="min-w-0">
+                  <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-amber-600 dark:text-amber-400">
+                    <FlaskConical className="size-4" />
+                    <span>Research</span>
+                  </div>
 
-          return (
-            <article
-              key={item.id}
-              className="border-t border-border pt-8"
-            >
-              <div className="flex flex-wrap items-center gap-3">
-                <FlaskConical className="size-4 text-muted-foreground" />
+                  <h3 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+                    {item.title}
+                  </h3>
 
-                <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                  Research
-                </span>
+                  {item.description && (
+                    <p className="text-body text-muted mt-5 max-w-2xl">
+                      {item.description}
+                    </p>
+                  )}
 
-                <span className="text-sm text-muted-foreground">
-                  {formatPeriod(item.start_date, item.end_date)}
-                </span>
-
-                <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-                  {status}
-                </span>
-              </div>
-
-              <h3 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                {item.title}
-              </h3>
-
-              {item.description && (
-                <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">
-                  {item.description}
-                </p>
-              )}
-
-              {(item.doi || links.length > 0) && (
-                <div className="mt-6 flex flex-wrap gap-3">
                   {item.doi && (
                     <a
                       href={
@@ -121,30 +107,38 @@ export function Research({
                       }
                       target="_blank"
                       rel="noreferrer"
-                      className="group inline-flex items-center gap-2 text-sm font-medium"
+                      className="group mt-5 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
                     >
                       DOI
-                      <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+
+                      <ExternalLink className="size-3.5" />
                     </a>
                   )}
 
-                  {links.map((link) => (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group inline-flex items-center gap-2 text-sm font-medium"
-                    >
-                      {link.label}
-                      <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </a>
-                  ))}
+                  {item.research_links?.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {item.research_links.map(
+                        (link) => (
+                          <a
+                            key={link.id}
+                            href={link.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-foreground hover:text-background"
+                          >
+                            {link.label}
+
+                            <ArrowUpRight className="size-3.5" />
+                          </a>
+                        ),
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
-            </article>
-          );
-        })}
+              </article>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

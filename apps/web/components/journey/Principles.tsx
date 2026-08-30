@@ -1,40 +1,52 @@
-interface Principles {
+interface Principle {
   title: string;
   description: string;
 }
 
-interface PrincipleProps {
-  principles: readonly Principles[];
+export interface PrinciplesProps {
+  principles: readonly Principle[];
 }
 
 export function Principles({
   principles,
-}: PrincipleProps) {
+}: PrinciplesProps) {
   return (
-    <section className="border-y border-border">
-      <div className="mx-auto max-w-7xl px-6 py-24 sm:px-8 lg:px-12">
-        <div className="grid gap-12 lg:grid-cols-[1fr_2fr]">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
+    <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
+      <div className="w-full">
+        <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+          <header className="flex max-w-sm flex-col items-start self-start text-left">
+            <p className="text-label text-muted uppercase tracking-widest">
               Principles
             </p>
 
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h2 className="text-display mt-3">
               Keep moving.
             </h2>
-          </div>
 
-          <div className="grid gap-10 sm:grid-cols-3">
-            {principles.map((item) => (
-              <div key={item.title}>
-                <h3 className="text-xl font-semibold">
+            <p className="text-body text-muted mt-4">
+              A simple framework for how I approach learning,
+              creating, and growing.
+            </p>
+          </header>
+
+          <div className="grid min-w-0 gap-4 sm:grid-cols-3">
+            {principles.map((item, index) => (
+              <article
+                key={item.title}
+                className="rounded-2xl border border-border p-5 sm:p-6"
+              >
+                <span className="text-xs font-medium text-muted">
+                  0{index + 1}
+                </span>
+
+                <h3 className="mt-8 text-xl font-semibold tracking-tight">
                   {item.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                <p className="text-body text-muted mt-3">
                   {item.description}
                 </p>
-              </div>
+              </article>
             ))}
           </div>
         </div>

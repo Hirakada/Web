@@ -3,6 +3,7 @@ import { createClient } from "@/lib/Supabase/server";
 import {
   JourneyHero,
   Experience,
+  Organizations,
   Education,
   Research,
   Principles,
@@ -33,9 +34,11 @@ function sortJourney<
   });
 }
 
-function normalizeOrganization<T extends { organizations: unknown }>(
-  items: T[],
-) {
+function normalizeOrganization<
+  T extends {
+    organizations: unknown;
+  },
+>(items: T[]) {
   return items.map((item) => ({
     ...item,
     organizations: Array.isArray(item.organizations)
@@ -86,6 +89,7 @@ export default async function JourneyPage() {
       .select(`
         id,
         section,
+        experience_type,
         title,
         role,
         description,
@@ -141,22 +145,40 @@ export default async function JourneyPage() {
     throw new Error(researchError.message);
   }
 
-const sortedExperiences = normalizeOrganization(
-  sortJourney(experiences ?? []),
-);
+  const normalizedExperiences = normalizeOrganization(
+    experiences ?? [],
+  );
 
-const sortedEducation = normalizeOrganization(
-  sortJourney(education ?? []),
-);
+  const sortedExperiences = sortJourney(
+    normalizedExperiences,
+  );
 
-const sortedResearch = sortJourney(research ?? []);
+  const work = sortedExperiences.filter(
+    (item) => item.experience_type === "work",
+  );
+
+  const organizations = sortedExperiences.filter(
+    (item) => item.experience_type === "organization",
+  );
+
+  const sortedEducation = sortJourney(
+    normalizeOrganization(education ?? []),
+  );
+
+  const sortedResearch = sortJourney(
+    research ?? [],
+  );
 
   return (
     <>
       <JourneyHero />
 
       <Experience
-        experiences={sortedExperiences}
+        experiences={work}
+      />
+
+      <Organizations
+        organizations={organizations}
       />
 
       <Education

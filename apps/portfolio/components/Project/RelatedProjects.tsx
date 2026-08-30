@@ -56,21 +56,25 @@ export default function RelatedProjects({
       <div
         className="
           flex
+          w-full
           gap-[clamp(1.5rem,3vw,2.5rem)]
           overflow-x-auto
+          overscroll-x-contain
+          scrollbar-hide
           snap-x
           snap-mandatory
-          pb-2
           md:grid
           md:grid-cols-2
           md:overflow-visible
-          md:pb-0
+          md:snap-none
           lg:grid-cols-3
         "
       >
         {projects.map((project) => {
           const status =
-            PROJECT_STATUS_META[project.status];
+            PROJECT_STATUS_META[
+              project.status
+            ];
 
           return (
             <Link
@@ -79,7 +83,7 @@ export default function RelatedProjects({
               className="
                 block
                 h-full
-                w-[85%]
+                w-full
                 shrink-0
                 snap-start
                 rounded-3xl
@@ -119,7 +123,9 @@ export default function RelatedProjects({
                     />
 
                     <CardContributor
-                      contributors={project.contributors}
+                      contributors={
+                        project.contributors
+                      }
                     />
                   </CardFooter>
                 </CardContent>

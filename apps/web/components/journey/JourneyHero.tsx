@@ -1,23 +1,25 @@
 export function JourneyHero() {
   return (
-    <section className="mx-auto max-w-7xl px-6 pb-24 pt-24 sm:px-8 lg:px-12 lg:pt-32">
-      <div className="max-w-4xl">
-        <p className="mb-5 text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-          Journey
-        </p>
+    <section className="flex w-full items-start px-(--global-padding-x) py-section">
+      <div className="w-full">
+        <div className="max-w-5xl">
+          <p className="text-label text-muted uppercase tracking-widest">
+            Journey
+          </p>
 
-        <h1 className="text-balance text-5xl font-semibold tracking-tight sm:text-6xl lg:text-8xl">
-          A journey of
-          <br />
-          <span className="text-muted-foreground">
-            exploring & growing.
-          </span>
-        </h1>
+          <h1 className="text-display mt-6 max-w-4xl">
+            A collection of
+            <br />
+            <span className="text-muted">
+              experiences & growth.
+            </span>
+          </h1>
 
-        <p className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-          Every experience, project, and challenge becomes part of the
-          journey — shaping how I think, learn, and grow.
-        </p>
+          <p className="text-body text-muted mt-8 max-w-2xl">
+            Exploring technology, business, creativity, and
+            everything in between — one experience at a time.
+          </p>
+        </div>
       </div>
     </section>
   );

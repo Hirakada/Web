@@ -19,8 +19,6 @@ import {
   CardTitle,
 } from "@hirakada/ui";
 
-console.log(CardContributor);
-
 interface FeaturedProjectProps {
   projects: ProjectCard[];
 }
@@ -86,7 +84,9 @@ export default function FeaturedProject({
           gap-[clamp(1rem,2vw,1.75rem)]
         "
       >
-        <AttributeTag>UI/UX Design</AttributeTag>
+        <AttributeTag>
+          UI/UX Design
+        </AttributeTag>
 
         <AttributeTag>
           Web Development
@@ -102,11 +102,18 @@ export default function FeaturedProject({
       <div
         className="
           mt-12
-          grid
+          flex
           w-full
-          grid-cols-1
           gap-[clamp(1.5rem,3vw,2.5rem)]
+          overflow-x-auto
+          overscroll-x-contain
+          scrollbar-hide
+          snap-x
+          snap-mandatory
+          md:grid
           md:grid-cols-2
+          md:overflow-visible
+          md:snap-none
           lg:grid-cols-[repeat(3,minmax(280px,1fr))]
         "
       >
@@ -123,10 +130,15 @@ export default function FeaturedProject({
               className="
                 block
                 h-full
+                w-full
+                shrink-0
+                snap-start
                 rounded-3xl
                 focus-visible:outline-none
                 focus-visible:ring-2
                 focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+                md:w-auto
+                md:shrink
               "
               aria-label={`View ${project.title}`}
               prefetch={false}
@@ -144,9 +156,7 @@ export default function FeaturedProject({
                 <CardContent>
                   <BulletTag
                     variant={status.variant}
-                    animated={
-                      status.animated
-                    }
+                    animated={status.animated}
                   >
                     {project.status}
                   </BulletTag>
