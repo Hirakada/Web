@@ -11,14 +11,10 @@ export function Principles({
   principles,
 }: PrinciplesProps) {
   return (
-    <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
+    <section className="flex w-full items-start px-(--global-padding-x) py-section">
       <div className="w-full">
         <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
           <header className="flex max-w-sm flex-col items-start self-start text-left">
-            <p className="text-label text-muted uppercase tracking-widest">
-              Principles
-            </p>
-
             <h2 className="text-display mt-3">
               Keep moving.
             </h2>
@@ -33,7 +29,7 @@ export function Principles({
             {principles.map((item, index) => (
               <article
                 key={item.title}
-                className="rounded-2xl border border-border p-5 sm:p-6"
+                className="p-5 sm:p-6"
               >
                 <span className="text-xs font-medium text-muted">
                   0{index + 1}

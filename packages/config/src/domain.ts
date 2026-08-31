@@ -5,5 +5,5 @@ export const DOMAIN = {
 
   portfolio:
     process.env.NEXT_PUBLIC_PORTFOLIO_URL ??
-    "http://localhost:3001",
+    "http://localhost:3000",
 } as const;

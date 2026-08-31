@@ -6,11 +6,8 @@ import {
   Organizations,
   Education,
   Research,
-  Principles,
   CurrentChapter,
 } from "@/components/journey";
-
-import { principles } from "./data/principles";
 
 function sortJourney<
   T extends {
@@ -187,10 +184,6 @@ export default async function JourneyPage() {
 
       <Research
         research={sortedResearch}
-      />
-
-      <Principles
-        principles={principles}
       />
 
       <CurrentChapter />

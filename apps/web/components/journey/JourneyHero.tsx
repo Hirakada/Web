@@ -1,13 +1,9 @@
 export function JourneyHero() {
   return (
-    <section className="flex w-full items-start px-(--global-padding-x) py-section">
-      <div className="w-full">
-        <div className="max-w-5xl">
-          <p className="text-label text-muted uppercase tracking-widest">
-            Journey
-          </p>
-
-          <h1 className="text-display mt-6 max-w-4xl">
+    <section className="flex w-full items-center">
+      <div className="w-full items-center justify-center text-center">
+        <div className="w-full">
+          <h1 className="text-display mt-6">
             A collection of
             <br />
             <span className="text-muted">
@@ -15,7 +11,7 @@ export function JourneyHero() {
             </span>
           </h1>
 
-          <p className="text-body text-muted mt-8 max-w-2xl">
+          <p className="text-body text-muted mt-8">
             Exploring technology, business, creativity, and
             everything in between — one experience at a time.
           </p>

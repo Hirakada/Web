@@ -12,6 +12,8 @@ import {
   FeaturedProject,
   About,
 } from "@/components/home";
+import { principles } from "./journey/data/principles";
+import { Principles } from "@/components/home/Principles";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -39,6 +41,10 @@ export default async function HomePage() {
 
       <FeaturedProject
         projects={projects}
+      />
+
+      <Principles
+        principles={principles}
       />
     </>
   );

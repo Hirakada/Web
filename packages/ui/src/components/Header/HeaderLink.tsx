@@ -83,12 +83,6 @@ export default function HeaderLink({
     </>
   );
 
-
-  /*
-    External website:
-    GitHub, LinkedIn, etc.
-    Open new tab
-  */
   if (isExternal) {
     return (
       <a
@@ -103,14 +97,6 @@ export default function HeaderLink({
     );
   }
 
-
-  /*
-    Internal domain:
-    hirakada.vercel.app
-    potfoliohirakada.vercel.app
-
-    Same tab
-  */
   if (isInternalDomain) {
     return (
       <a
@@ -123,10 +109,6 @@ export default function HeaderLink({
     );
   }
 
-
-  /*
-    Next.js internal route
-  */
   return (
     <Link
       href={item.href}
