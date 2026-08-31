@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   ArrowUpRight,
   GraduationCap,
@@ -54,11 +57,25 @@ function formatPeriod(
 export function Education({
   education,
 }: EducationProps) {
+  const [flipped, setFlipped] = useState<string | null>(
+    null,
+  );
+
   return (
-    <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
+    <section
+      className="
+        flex
+        w-full
+        items-start
+        border-t
+        border-border
+        px-(--global-padding-x)
+        py-section
+      "
+    >
       <div className="w-full">
-        <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-          <header className="flex max-w-sm flex-col items-start self-start text-left">
+        <div className="grid items-start gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+          <header className="flex max-w-sm flex-col items-start text-left">
             <p className="text-label text-muted uppercase tracking-widest">
               Education
             </p>
@@ -68,91 +85,203 @@ export function Education({
             </h2>
 
             <p className="text-body text-muted mt-4">
-              Academic experiences that continue to shape how
-              I understand technology, business, and innovation.
+              The academic experiences that continue to shape
+              how I think, build, and approach new challenges.
             </p>
           </header>
 
-          <div className="min-w-0">
-            {education.map((item, index) => (
-              <article
-                key={item.id}
-                className={`grid gap-5 py-8 sm:py-10 lg:grid-cols-[150px_minmax(0,1fr)] lg:gap-8 ${
-                  index !== 0
-                    ? "border-t border-border"
-                    : ""
-                }`}
-              >
-                <div className="text-sm leading-6 text-muted">
-                  {formatPeriod(
-                    item.start_date,
-                    item.end_date,
-                  )}
-                </div>
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+            {education.map((item) => {
+              const isFlipped = flipped === item.id;
 
-                <div className="min-w-0">
-                  <div className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400">
-                    <GraduationCap className="size-4" />
-                    <span>Education</span>
-                  </div>
-
-                  <h3 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-                    {item.title}
-                  </h3>
-
-                  {item.role && (
-                    <p className="mt-2 text-sm font-medium text-foreground/80">
-                      {item.role}
-                    </p>
-                  )}
-
-                  {item.organizations && (
-                    <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
-                      <span className="font-medium text-foreground/80">
-                        {item.organizations.name}
-                      </span>
-
-                      <span aria-hidden="true">
-                        ·
-                      </span>
-
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="size-3.5 shrink-0" />
-                        {item.organizations.city},{" "}
-                        {item.organizations.country}
-                      </span>
-                    </div>
-                  )}
-
-                  {item.location &&
-                    !item.organizations && (
-                      <p className="mt-3 flex items-center gap-1.5 text-sm text-muted">
-                        <MapPin className="size-3.5" />
-                        {item.location}
-                      </p>
-                    )}
-
-                  {item.description && (
-                    <p className="text-body text-muted mt-5 max-w-2xl">
-                      {item.description}
-                    </p>
-                  )}
-
-                  {item.url && (
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group mt-5 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+              return (
+                <div
+                  key={item.id}
+                  className="
+                    group
+                    h-72
+                    [perspective:1200px]
+                    sm:h-80
+                  "
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFlipped(
+                        isFlipped ? null : item.id,
+                      )
+                    }
+                    aria-label={
+                      isFlipped
+                        ? `Show details for ${item.title}`
+                        : `Show description for ${item.title}`
+                    }
+                    className="
+                      relative
+                      h-full
+                      w-full
+                      text-left
+                      [transform-style:preserve-3d]
+                      transition-transform
+                      duration-500
+                      ease-out
+                      group-hover:[transform:rotateY(180deg)]
+                      focus-visible:outline-none
+                      focus-visible:ring-2
+                      focus-visible:ring-foreground
+                      focus-visible:ring-offset-4
+                      focus-visible:ring-offset-background
+                    "
+                    style={{
+                      transform: isFlipped
+                        ? "rotateY(180deg)"
+                        : undefined,
+                    }}
+                  >
+                    <div
+                      className="
+                        absolute
+                        inset-0
+                        flex
+                        h-full
+                        w-full
+                        flex-col
+                        rounded-2xl
+                        border
+                        border-border
+                        bg-background
+                        p-5
+                        [backface-visibility:hidden]
+                        sm:p-6
+                      "
                     >
-                      View education
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex size-10 items-center justify-center rounded-xl border border-border">
+                          <GraduationCap className="size-4 text-muted-foreground" />
+                        </div>
 
-                      <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </a>
-                  )}
+                        <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted">
+                          Education
+                        </span>
+                      </div>
+
+                      <div className="mt-auto">
+                        <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted">
+                          {formatPeriod(
+                            item.start_date,
+                            item.end_date,
+                          )}
+                        </p>
+
+                        <h3 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
+                          {item.title}
+                        </h3>
+
+                        {item.role && (
+                          <p className="mt-2 text-sm font-medium text-foreground/80">
+                            {item.role}
+                          </p>
+                        )}
+
+                        {item.organizations && (
+                          <div className="mt-4">
+                            <p className="text-sm font-medium">
+                              {item.organizations.name}
+                            </p>
+
+                            <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted">
+                              <MapPin className="size-3.5 shrink-0" />
+
+                              {item.organizations.city},{" "}
+                              {item.organizations.country}
+                            </p>
+                          </div>
+                        )}
+
+                        <p className="mt-5 text-xs text-muted">
+                          Hover or tap to explore
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      className="
+                        absolute
+                        inset-0
+                        flex
+                        h-full
+                        w-full
+                        flex-col
+                        rounded-2xl
+                        border
+                        border-border
+                        bg-foreground
+                        p-5
+                        text-background
+                        [backface-visibility:hidden]
+                        [transform:rotateY(180deg)]
+                        sm:p-6
+                      "
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-[0.12em] opacity-60">
+                            About
+                          </p>
+
+                          <h3 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">
+                            {item.title}
+                          </h3>
+                        </div>
+
+                        {item.url && (
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(event) =>
+                              event.stopPropagation()
+                            }
+                            aria-label={`View ${item.title}`}
+                            className="
+                              flex
+                              size-9
+                              shrink-0
+                              items-center
+                              justify-center
+                              rounded-full
+                              border
+                              border-background/20
+                              transition-colors
+                              hover:bg-background
+                              hover:text-foreground
+                            "
+                          >
+                            <ArrowUpRight className="size-4" />
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="mt-auto">
+                        {item.description ? (
+                          <p className="text-sm leading-6 opacity-80">
+                            {item.description}
+                          </p>
+                        ) : (
+                          <p className="text-sm opacity-60">
+                            No description available.
+                          </p>
+                        )}
+
+                        <p className="mt-6 text-xs opacity-50">
+                          Tap to go back
+                        </p>
+                      </div>
+                    </div>
+                  </button>
                 </div>
-              </article>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
