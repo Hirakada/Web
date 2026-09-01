@@ -7,11 +7,17 @@ export interface CardImageProps extends ImageProps {}
 export default function CardImage({
   className,
   alt,
+  loading = "lazy",
+  decoding = "async",
+  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   ...props
 }: CardImageProps) {
   return (
     <Image
       alt={alt}
+      loading={loading}
+      decoding={decoding}
+      sizes={sizes}
       className={cn(
         "block",
         "w-full",

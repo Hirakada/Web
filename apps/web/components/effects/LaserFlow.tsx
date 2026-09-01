@@ -26,30 +26,6 @@ type Props = {
   color?: string;
 };
 
-type Uniforms = {
-  iTime: THREE.IUniform;
-  iResolution: THREE.IUniform;
-  iMouse: THREE.IUniform;
-  uWispDensity: THREE.IUniform;
-  uTiltScale: THREE.IUniform;
-  uFlowTime: THREE.IUniform;
-  uFogTime: THREE.IUniform;
-  uBeamXFrac: THREE.IUniform;
-  uBeamYFrac: THREE.IUniform;
-  uFlowSpeed: THREE.IUniform;
-  uVLenFactor: THREE.IUniform;
-  uHLenFactor: THREE.IUniform;
-  uFogIntensity: THREE.IUniform;
-  uFogScale: THREE.IUniform;
-  uWSpeed: THREE.IUniform;
-  uWIntensity: THREE.IUniform;
-  uFlowStrength: THREE.IUniform;
-  uDecay: THREE.IUniform;
-  uFalloffStart: THREE.IUniform;
-  uFogFallSpeed: THREE.IUniform;
-  uColor: THREE.IUniform;
-  uFade: THREE.IUniform;
-};
 
 const VERT = `
 precision highp float;
@@ -334,14 +310,25 @@ const LaserFlow: React.FC<Props> = ({
   const emaDtRef = useRef<number>(16.7);
   const pausedRef = useRef<boolean>(false);
   const inViewRef = useRef<boolean>(true);
+  const reduceMotionRef = useRef<boolean>(false);
+  const frameRef = useRef<number>(0);
 
   const mouseSmoothTimeRef = useRef(mouseSmoothTime);
   useEffect(() => {
     mouseSmoothTimeRef.current = mouseSmoothTime;
   }, [mouseSmoothTime]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const mount = mountRef.current!;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateReducedMotion = () => {
+      reduceMotionRef.current = mediaQuery.matches;
+    };
+
+    updateReducedMotion();
+    mediaQuery.addEventListener('change', updateReducedMotion);
+
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: false,
@@ -355,7 +342,7 @@ const LaserFlow: React.FC<Props> = ({
     });
     rendererRef.current = renderer;
 
-    baseDprRef.current = Math.min(dpr ?? (window.devicePixelRatio || 1), 2);
+    baseDprRef.current = Math.min(dpr ?? (window.devicePixelRatio || 1), reduceMotionRef.current ? 1.25 : 2);
     currentDprRef.current = baseDprRef.current;
 
     renderer.setPixelRatio(currentDprRef.current);
@@ -428,7 +415,7 @@ const LaserFlow: React.FC<Props> = ({
     const setSizeNow = () => {
       const w = mount.clientWidth || 1;
       const h = mount.clientHeight || 1;
-      const pr = currentDprRef.current;
+      const pr = reduceMotionRef.current ? Math.min(currentDprRef.current, 1) : currentDprRef.current;
 
       const last = lastSizeRef.current;
       const sizeChanged = Math.abs(w - last.width) > 0.5 || Math.abs(h - last.height) > 0.5;
@@ -479,7 +466,7 @@ const LaserFlow: React.FC<Props> = ({
       mouseTarget.set(x * ratio, hb - y * ratio);
     };
     const onMove = (ev: PointerEvent) => updateMouse(ev.clientX, ev.clientY);
-    const onLeave = (_ev: PointerEvent) => mouseTarget.set(0, 0);
+    const onLeave = () => mouseTarget.set(0, 0);
     canvas.addEventListener('pointermove', onMove, { passive: true });
     canvas.addEventListener('pointerdown', onMove, { passive: true });
     canvas.addEventListener('pointerenter', onMove, { passive: true });
@@ -539,6 +526,10 @@ const LaserFlow: React.FC<Props> = ({
       raf = requestAnimationFrame(animate);
       if (pausedRef.current || !inViewRef.current) return;
 
+      frameRef.current += 1;
+      const shouldSkipFrame = reduceMotionRef.current && frameRef.current % 2 === 1;
+      if (shouldSkipFrame) return;
+
       timer.update();
 
       const dt = timer.getDelta();
@@ -583,6 +574,7 @@ const LaserFlow: React.FC<Props> = ({
 
       ro.disconnect();
       io.disconnect();
+      mediaQuery.removeEventListener('change', updateReducedMotion);
       document.removeEventListener('visibilitychange', onVis);
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerdown', onMove);
@@ -604,21 +596,23 @@ const LaserFlow: React.FC<Props> = ({
     const uniforms = uniformsRef.current;
     if (!uniforms) return;
 
-    uniforms.uWispDensity!.value = wispDensity;
-    uniforms.uTiltScale!.value = mouseTiltStrength;
+    const motionScale = reduceMotionRef.current ? 0.45 : 1;
+
+    uniforms.uWispDensity!.value = wispDensity * motionScale;
+    uniforms.uTiltScale!.value = mouseTiltStrength * motionScale;
     uniforms.uBeamXFrac!.value = horizontalBeamOffset;
     uniforms.uBeamYFrac!.value = verticalBeamOffset;
-    uniforms.uFlowSpeed!.value = flowSpeed;
-    uniforms.uVLenFactor!.value = verticalSizing;
-    uniforms.uHLenFactor!.value = horizontalSizing;
-    uniforms.uFogIntensity!.value = fogIntensity;
-    uniforms.uFogScale!.value = fogScale;
-    uniforms.uWSpeed!.value = wispSpeed;
-    uniforms.uWIntensity!.value = wispIntensity;
-    uniforms.uFlowStrength!.value = flowStrength;
-    uniforms.uDecay!.value = decay;
-    uniforms.uFalloffStart!.value = falloffStart;
-    uniforms.uFogFallSpeed!.value = fogFallSpeed;
+    uniforms.uFlowSpeed!.value = flowSpeed * (reduceMotionRef.current ? 0.7 : 1);
+    uniforms.uVLenFactor!.value = verticalSizing * (reduceMotionRef.current ? 0.8 : 1);
+    uniforms.uHLenFactor!.value = horizontalSizing * (reduceMotionRef.current ? 0.8 : 1);
+    uniforms.uFogIntensity!.value = fogIntensity * (reduceMotionRef.current ? 0.65 : 1);
+    uniforms.uFogScale!.value = fogScale * (reduceMotionRef.current ? 0.8 : 1);
+    uniforms.uWSpeed!.value = wispSpeed * (reduceMotionRef.current ? 0.7 : 1);
+    uniforms.uWIntensity!.value = wispIntensity * (reduceMotionRef.current ? 0.55 : 1);
+    uniforms.uFlowStrength!.value = flowStrength * (reduceMotionRef.current ? 0.7 : 1);
+    uniforms.uDecay!.value = decay * (reduceMotionRef.current ? 0.9 : 1);
+    uniforms.uFalloffStart!.value = falloffStart * (reduceMotionRef.current ? 0.9 : 1);
+    uniforms.uFogFallSpeed!.value = fogFallSpeed * (reduceMotionRef.current ? 0.75 : 1);
 
     const { r, g, b } = hexToRGB(color || '#FFFFFF');
     uniforms.uColor!.value.set(r, g, b);

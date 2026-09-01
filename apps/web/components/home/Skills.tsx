@@ -76,7 +76,7 @@ export default function Skills({
           z-10
           w-16
 
-          bg-gradient-to-r
+          bg-linear-to-r
           from-(--color-background)
           to-transparent
         "
@@ -93,7 +93,7 @@ export default function Skills({
           z-10
           w-16
 
-          bg-gradient-to-l
+          bg-linear-to-l
           from-(--color-background)
           to-transparent
         "

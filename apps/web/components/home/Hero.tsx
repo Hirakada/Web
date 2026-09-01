@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import { Icon } from "@iconify/react";
 import { socialLinks } from "@hirakada/config";
-import { motion } from "framer-motion";
 
 import { HEADER_HEIGHT } from "@hirakada/ui";
 
@@ -94,21 +93,12 @@ export default function Hero() {
       />
     </div>
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 20,
-        }}
-
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-
-        transition={{
-          duration: 0.8,
-          ease: [0.47, 0, 0.23, 1.38],
-        }}
+      <div
+        className="
+          transition-all
+          duration-700
+          ease-[cubic-bezier(0.47,0,0.23,1.38)]
+        "
       >
 
         <h2
@@ -152,29 +142,21 @@ export default function Hero() {
 
         </h1>
 
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 20,
-        }}
-
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-
-        transition={{
-          duration: 0.8,
-          delay: 0.3,
-        }}
+      <div
+        className="
+          mt-4
+          transition-all
+          duration-700
+          delay-300
+          ease-[cubic-bezier(0.47,0,0.23,1.38)]
+        "
       >
 
       <SocialButtonGroup
         className="
           social-list
-          mt-4
           mx-auto
           flex
           w-fit
@@ -199,7 +181,7 @@ export default function Hero() {
         ))}
       </SocialButtonGroup>
 
-      </motion.div>
+      </div>
 
 
     </section>

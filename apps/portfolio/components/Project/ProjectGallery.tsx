@@ -55,6 +55,9 @@ export default function ProjectGallery({
               }
               width={1600}
               height={900}
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 768px) 100vw, 80vw"
               className="
                 w-full
                 object-cover

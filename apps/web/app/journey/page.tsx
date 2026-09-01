@@ -3,9 +3,7 @@ import { createClient } from "@/lib/Supabase/server";
 import {
   JourneyHero,
   Experience,
-  Organizations,
   Education,
-  Research,
   CurrentChapter,
 } from "@/components/journey";
 
@@ -154,16 +152,8 @@ export default async function JourneyPage() {
     (item) => item.experience_type === "work",
   );
 
-  const organizations = sortedExperiences.filter(
-    (item) => item.experience_type === "organization",
-  );
-
   const sortedEducation = sortJourney(
     normalizeOrganization(education ?? []),
-  );
-
-  const sortedResearch = sortJourney(
-    research ?? [],
   );
 
   return (

@@ -52,16 +52,6 @@ export default function About() {
           }}
           className="image flex justify-center"
         >
-          <motion.div
-            animate={{
-              y: [-8, 8, -8],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
           <div className="relative aspect-4/5 w-full max-w-xl overflow-hidden rounded-3xl">
             <Image
               src="/img/profile.webp"
@@ -69,6 +59,7 @@ export default function About() {
               width={700}
               height={875}
               priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="
                 aspect-4/5
                 w-full
@@ -78,7 +69,6 @@ export default function About() {
               "
             />
           </div>
-          </motion.div>
         </motion.div>
 
         {/* Content */}

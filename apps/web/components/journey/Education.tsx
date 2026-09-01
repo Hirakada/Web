@@ -3,7 +3,6 @@
 import {
   ArrowUpRight,
   GraduationCap,
-  MapPin,
 } from "lucide-react";
 
 import { Card, CardTitle, CardFooter } from "@hirakada/ui";

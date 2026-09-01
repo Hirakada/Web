@@ -137,13 +137,13 @@ export function brightenColor(
   rgb: [number, number, number],
   amount = 15
 ): [number, number, number] {
-  let [h, s, l] = rgbToHsl(
+  const [h, s, l] = rgbToHsl(
     rgb[0],
     rgb[1],
     rgb[2]
   );
 
-  l = Math.min(
+  const lightness = Math.min(
     100,
     l + amount
   );
@@ -151,7 +151,7 @@ export function brightenColor(
   return hslToRgb(
     h,
     s,
-    l
+    lightness
   );
 }
 

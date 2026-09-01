@@ -2,8 +2,6 @@ import type { Project } from "@hirakada/database";
 
 import { Card } from "@hirakada/ui";
 
-import { Icon } from "@iconify/react";
-
 import ProjectHero from "./ProjectHero";
 import ProjectContent from "./ProjectContent";
 
