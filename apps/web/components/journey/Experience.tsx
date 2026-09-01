@@ -66,18 +66,6 @@ function formatDate(date: string) {
   }).format(new Date(`${date}T00:00:00`));
 }
 
-function formatMonth(date: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-  }).format(new Date(`${date}T00:00:00`));
-}
-
-function formatYear(date: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-  }).format(new Date(`${date}T00:00:00`));
-}
-
 function formatPeriod(
   start: string,
   end: string | null,
@@ -98,8 +86,7 @@ function TimelineDate({
   item: ExperienceItem;
   align: "left" | "right" | "center";
 }) {
-  const isCurrent =
-    item.end_date === null;
+  const isCurrent = item.end_date === null;
 
   return (
     <div
@@ -214,9 +201,7 @@ function ExperienceCard({
         >
           <BriefcaseBusiness className="size-4" />
 
-          <span>
-            Work
-          </span>
+          <span>Work</span>
         </div>
 
         {item.url && (
@@ -303,9 +288,7 @@ function ExperienceCard({
             {item.organizations.name}
           </span>
 
-          <span aria-hidden="true">
-            ·
-          </span>
+          <span aria-hidden="true">·</span>
 
           <span
             className="
@@ -379,15 +362,12 @@ function ExperienceCard({
 
 function TimelineDot({
   item,
-  lastDotRef,
   shouldReduceMotion,
 }: {
   item: ExperienceItem;
-  lastDotRef?: React.RefObject<HTMLSpanElement | null>;
   shouldReduceMotion: boolean;
 }) {
-  const isCurrent =
-    item.end_date === null;
+  const isCurrent = item.end_date === null;
 
   return (
     <div
@@ -444,7 +424,6 @@ function TimelineDot({
       )}
 
       <motion.span
-        ref={lastDotRef}
         aria-hidden="true"
         initial={{
           scale: shouldReduceMotion ? 1 : 0,
@@ -485,7 +464,23 @@ function TimelineDot({
           }
         `}
       >
-        <span className="size-1 rounded-full bg-background" />
+        {/*
+          IMPORTANT:
+          This is the actual visual center of the bullet.
+
+          The line measurement below uses this element instead
+          of the outer size-5 bullet. Therefore the vertical
+          line ends exactly at the center hole.
+        */}
+        <span
+          data-timeline-center="true"
+          className="
+            size-1
+            shrink-0
+            rounded-full
+            bg-background
+          "
+        />
       </motion.span>
     </div>
   );
@@ -501,19 +496,15 @@ export function Experience({
   const timelineRef =
     useRef<HTMLDivElement>(null);
 
-  const lastDotRef =
-    useRef<HTMLSpanElement>(null);
-
-  const [
-    lineHeight,
-    setLineHeight,
-  ] = useState(0);
-
   const shouldReduceMotion =
     useReducedMotion();
 
+  const [lineTop, setLineTop] = useState(0);
+  const [lineHeight, setLineHeight] =
+    useState(0);
+
   /* =======================================================
-     SCROLL
+     SCROLL PROGRESS
      ======================================================= */
 
   const { scrollYProgress } =
@@ -533,7 +524,20 @@ export function Experience({
     });
 
   /* =======================================================
-     MEASURE LINE TO LAST BULLET
+     MEASURE THE ACTUAL CENTER HOLES
+
+     We deliberately measure:
+
+       [data-timeline-center="true"]
+
+     instead of the outer size-5 bullet.
+
+     Every experience has a desktop and mobile copy.
+     `offsetParent !== null` removes the hidden responsive
+     copy from the measurement.
+
+     This gives us the exact visual point where the line
+     should begin and end.
      ======================================================= */
 
   useLayoutEffect(() => {
@@ -541,31 +545,59 @@ export function Experience({
       const timeline =
         timelineRef.current;
 
-      const lastDot =
-        lastDotRef.current;
-
-      if (!timeline || !lastDot) {
+      if (!timeline) {
         return;
       }
+
+      const centers = Array.from(
+        timeline.querySelectorAll<HTMLElement>(
+          '[data-timeline-center="true"]',
+        ),
+      ).filter(
+        (element) =>
+          element.offsetParent !== null,
+      );
+
+      if (centers.length === 0) {
+        setLineTop(0);
+        setLineHeight(0);
+        return;
+      }
+
+      const firstCenter = centers[0]!;
+      const lastCenter =
+        centers[centers.length - 1]!;
 
       const timelineRect =
         timeline.getBoundingClientRect();
 
-      const dotRect =
-        lastDot.getBoundingClientRect();
-
       /*
-       * Center of the final bullet relative
-       * to the timeline container.
+       * Measure the actual 4px center hole.
+       *
+       * Its geometric center is the exact visual
+       * center of the bullet.
        */
 
-      const height =
-        dotRect.top +
-        dotRect.height / 2 -
+      const firstRect =
+        firstCenter.getBoundingClientRect();
+
+      const lastRect =
+        lastCenter.getBoundingClientRect();
+
+      const start =
+        firstRect.top +
+        firstRect.height / 2 -
         timelineRect.top;
 
+      const end =
+        lastRect.top +
+        lastRect.height / 2 -
+        timelineRect.top;
+
+      setLineTop(start);
+
       setLineHeight(
-        Math.max(0, height),
+        Math.max(0, end - start),
       );
     };
 
@@ -577,12 +609,6 @@ export function Experience({
     if (timelineRef.current) {
       observer.observe(
         timelineRef.current,
-      );
-    }
-
-    if (lastDotRef.current) {
-      observer.observe(
-        lastDotRef.current,
       );
     }
 
@@ -623,103 +649,112 @@ export function Experience({
         "
       >
         {/* ===================================================
-            LINE
+            DESKTOP VERTICAL LINE
             =================================================== */}
 
         {lineHeight > 0 && (
-          <>
-            {/* Base */}
+          <div
+            aria-hidden="true"
+            className="
+              pointer-events-none
+              absolute
+              left-1/2
+              z-0
+              hidden
+              w-px
+              -translate-x-1/2
+              md:block
+            "
+            style={{
+              top: lineTop,
+              height: lineHeight,
+            }}
+          >
+            {/* Base line */}
 
             <div
-              aria-hidden="true"
-              style={{
-                height: lineHeight,
-              }}
               className="
-                pointer-events-none
                 absolute
-                left-1/2
-                top-0
-                z-0
-                hidden
-                w-px
-                -translate-x-1/2
+                inset-0
                 bg-white/20
-                md:block
               "
             />
 
-            {/* Active */}
+            {/* Active line */}
 
             <motion.div
-              aria-hidden="true"
-              style={{
-                height: lineHeight,
-                scaleY: shouldReduceMotion
-                  ? 1
-                  : smoothProgress,
-              }}
               className="
-                pointer-events-none
                 absolute
-                left-1/2
+                inset-x-0
                 top-0
-                z-0
-                hidden
-                w-px
-                origin-top
-                -translate-x-1/2
-                bg-white
-                md:block
-              "
-            />
-
-            {/* Mobile base */}
-
-            <div
-              aria-hidden="true"
-              style={{
-                height: lineHeight,
-              }}
-              className="
-                pointer-events-none
-                absolute
-                left-4
-                top-0
-                z-0
-                w-px
-                bg-white/20
-                md:hidden
-              "
-            />
-
-            {/* Mobile active */}
-
-            <motion.div
-              aria-hidden="true"
-              style={{
-                height: lineHeight,
-                scaleY: shouldReduceMotion
-                  ? 1
-                  : smoothProgress,
-              }}
-              className="
-                pointer-events-none
-                absolute
-                left-4
-                top-0
-                z-0
-                w-px
+                h-full
                 origin-top
                 bg-white
-                md:hidden
               "
+              style={{
+                scaleY:
+                  shouldReduceMotion
+                    ? 1
+                    : smoothProgress,
+              }}
             />
-          </>
+          </div>
         )}
 
         {/* ===================================================
-            ITEMS
+            MOBILE VERTICAL LINE
+            =================================================== */}
+
+        {lineHeight > 0 && (
+          <div
+            aria-hidden="true"
+            className="
+              pointer-events-none
+              absolute
+              left-4
+              z-0
+              w-px
+              -translate-x-1/2
+              md:hidden
+            "
+            style={{
+              top: lineTop,
+              height: lineHeight,
+            }}
+          >
+            {/* Base line */}
+
+            <div
+              className="
+                absolute
+                inset-0
+                bg-white/20
+              "
+            />
+
+            {/* Active line */}
+
+            <motion.div
+              className="
+                absolute
+                inset-x-0
+                top-0
+                h-full
+                origin-top
+                bg-white
+              "
+              style={{
+                scaleY:
+                  shouldReduceMotion
+                    ? 1
+                    : smoothProgress,
+              }}
+            />
+          </div>
+        )}
+
+        {/* ===================================================
+            EXPERIENCE ITEMS
             =================================================== */}
 
         <div
@@ -743,7 +778,6 @@ export function Experience({
 
               /* =================================================
                  LAST ITEM
-                 BULLET → DATE → CARD
                  ================================================= */
 
               if (isLast) {
@@ -782,7 +816,9 @@ export function Experience({
                       relative
                     "
                   >
-                    {/* Desktop */}
+                    {/* ===============================
+                        DESKTOP
+                        =============================== */}
 
                     <div
                       className="
@@ -792,13 +828,10 @@ export function Experience({
                         md:flex
                       "
                     >
-                      {/* LAST BULLET */}
+                      {/* Final bullet */}
 
                       <TimelineDot
                         item={item}
-                        lastDotRef={
-                          lastDotRef
-                        }
                         shouldReduceMotion={
                           Boolean(
                             shouldReduceMotion,
@@ -806,7 +839,7 @@ export function Experience({
                         }
                       />
 
-                      {/* DATE BELOW BULLET */}
+                      {/* Date */}
 
                       <div className="mt-5">
                         <TimelineDate
@@ -815,7 +848,7 @@ export function Experience({
                         />
                       </div>
 
-                      {/* CARD */}
+                      {/* Card */}
 
                       <div
                         className="
@@ -842,7 +875,9 @@ export function Experience({
                       </div>
                     </div>
 
-                    {/* Mobile */}
+                    {/* ===============================
+                        MOBILE
+                        =============================== */}
 
                     <div
                       className="
@@ -862,9 +897,6 @@ export function Experience({
                       >
                         <TimelineDot
                           item={item}
-                          lastDotRef={
-                            lastDotRef
-                          }
                           shouldReduceMotion={
                             Boolean(
                               shouldReduceMotion,
@@ -901,7 +933,7 @@ export function Experience({
               }
 
               /* =================================================
-                 NORMAL ITEMS
+                 NORMAL ITEM
                  ================================================= */
 
               return (
@@ -943,7 +975,9 @@ export function Experience({
                     relative
                   "
                 >
-                  {/* Desktop */}
+                  {/* ===============================
+                      DESKTOP
+                      =============================== */}
 
                   <div
                     className="
@@ -1003,6 +1037,8 @@ export function Experience({
                         justify-center
                       "
                     >
+                      {/* Horizontal connector */}
+
                       <motion.span
                         aria-hidden="true"
                         initial={{
@@ -1097,7 +1133,9 @@ export function Experience({
                     </div>
                   </div>
 
-                  {/* Mobile */}
+                  {/* ===============================
+                      MOBILE
+                      =============================== */}
 
                   <div
                     className="

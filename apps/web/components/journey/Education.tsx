@@ -68,8 +68,6 @@ export function Education({
         flex
         w-full
         items-start
-        border-t
-        border-border
         px-(--global-padding-x)
         py-section
       "

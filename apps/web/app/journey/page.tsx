@@ -174,16 +174,8 @@ export default async function JourneyPage() {
         experiences={work}
       />
 
-      <Organizations
-        organizations={organizations}
-      />
-
       <Education
         education={sortedEducation}
-      />
-
-      <Research
-        research={sortedResearch}
       />
 
       <CurrentChapter />

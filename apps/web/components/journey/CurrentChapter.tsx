@@ -39,7 +39,7 @@ export function CurrentChapter() {
             once: true,
             amount: 0.3,
           }}
-          className="group relative overflow-hidden rounded-[2rem] border border-border bg-background p-6 shadow-sm transition-shadow duration-500 hover:shadow-2xl sm:p-8 lg:p-12"
+          className="group relative overflow-hidden rounded-4xl border border-border bg-background p-6 shadow-sm transition-shadow duration-500 hover:shadow-2xl sm:p-8 lg:p-12"
         >
           <motion.div
             animate={{
