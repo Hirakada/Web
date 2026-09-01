@@ -70,10 +70,10 @@ export default function AttributeTag({
         <Image
           src={iconUrl}
           alt={`${children} icon`}
-
           width={24}
           height={24}
-
+          quality={70}
+          sizes="24px"
           className="
             tag-icon
 

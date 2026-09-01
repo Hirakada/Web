@@ -52,6 +52,8 @@ export function CardContributor({
               alt={contributor.name}
               width={size}
               height={size}
+              quality={70}
+              sizes={`${size}px`}
               className="h-full w-full rounded-full object-cover"
             />
           )}

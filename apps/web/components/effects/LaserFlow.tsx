@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 type Props = {
@@ -297,6 +297,7 @@ const LaserFlow: React.FC<Props> = ({
   fogFallSpeed = 0.6,
   color = '#FF79C6'
 }) => {
+  const [isEnabled, setIsEnabled] = useState(false);
   const mountRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const uniformsRef = useRef<Record<string, THREE.IUniform> | null>(null);
@@ -318,8 +319,27 @@ const LaserFlow: React.FC<Props> = ({
     mouseSmoothTimeRef.current = mouseSmoothTime;
   }, [mouseSmoothTime]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateEnabled = () => {
+      const reducedMotion = mediaQuery.matches || window.innerWidth < 768;
+      setIsEnabled(!reducedMotion);
+      reduceMotionRef.current = reducedMotion;
+    };
+
+    updateEnabled();
+    mediaQuery.addEventListener('change', updateEnabled);
+    window.addEventListener('resize', updateEnabled);
+
+    return () => {
+      mediaQuery.removeEventListener('change', updateEnabled);
+      window.removeEventListener('resize', updateEnabled);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isEnabled) return;
+
     const mount = mountRef.current!;
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const updateReducedMotion = () => {
@@ -583,14 +603,33 @@ const LaserFlow: React.FC<Props> = ({
       canvas.removeEventListener('webglcontextlost', onCtxLost);
       canvas.removeEventListener('webglcontextrestored', onCtxRestored);
 
-      scene.clear();
+        scene.clear();
       geometry.dispose();
       material.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       if (mount.contains(canvas)) mount.removeChild(canvas);
     };
-  }, [dpr]);
+  }, [
+    isEnabled,
+    dpr,
+    wispDensity,
+    mouseTiltStrength,
+    horizontalBeamOffset,
+    verticalBeamOffset,
+    flowSpeed,
+    verticalSizing,
+    horizontalSizing,
+    fogIntensity,
+    fogScale,
+    wispSpeed,
+    wispIntensity,
+    flowStrength,
+    decay,
+    falloffStart,
+    fogFallSpeed,
+    color,
+  ]);
 
   useEffect(() => {
     const uniforms = uniformsRef.current;
@@ -634,6 +673,10 @@ const LaserFlow: React.FC<Props> = ({
     fogFallSpeed,
     color
   ]);
+
+  if (!isEnabled) {
+    return null;
+  }
 
   return <div ref={mountRef} className={`w-full h-full relative ${className || ''}`} style={style} />;
 };

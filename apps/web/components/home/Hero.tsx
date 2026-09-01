@@ -19,29 +19,47 @@ export default function Hero() {
 
 
   useEffect(() => {
-    if (!roleRef.current) return;
+    const element = roleRef.current;
+    if (!element) return;
 
+    const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const typed = new Typed(roleRef.current, {
-      strings: [
-        "UI/UX Designer",
-        "Web Developer",
-        "Graphic Designer",
-      ],
+    if (shouldReduceMotion) {
+      element.textContent = "UI/UX Designer";
+      return;
+    }
 
-      typeSpeed: 80,
-      backSpeed: 50,
-      backDelay: 1000,
-
-      loop: true,
-      showCursor: false,
-    });
-
-
-    return () => {
-      typed.destroy();
+    let typed: Typed | null = null;
+    const startTyping = () => {
+      typed = new Typed(element, {
+        strings: [
+          "UI/UX Designer",
+          "Web Developer",
+          "Graphic Designer",
+        ],
+        typeSpeed: 80,
+        backSpeed: 50,
+        backDelay: 1000,
+        loop: true,
+        showCursor: false,
+      });
     };
 
+    const scheduleTyping =
+      typeof window.requestIdleCallback === "function"
+        ? () => window.requestIdleCallback(startTyping)
+        : () => globalThis.setTimeout(startTyping, 150);
+
+    const idleHandle = scheduleTyping();
+
+    return () => {
+      if (typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleHandle as number);
+      } else {
+        globalThis.clearTimeout(idleHandle as number);
+      }
+      typed?.destroy();
+    };
   }, []);
 
 
@@ -120,7 +138,7 @@ export default function Hero() {
 
           <span
             ref={roleRef}
-
+            aria-label="UI / UX Designer"
             className="
               auto-type
 
@@ -134,11 +152,11 @@ export default function Hero() {
 
               wrap-break-word
 
-              opacity-0
-
-              animate-fade-in-typed
+              opacity-100
             "
-          />
+          >
+            UI/UX Designer
+          </span>
 
         </h1>
 

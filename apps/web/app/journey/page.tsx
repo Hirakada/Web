@@ -48,7 +48,6 @@ export default async function JourneyPage() {
   const [
     { data: experiences, error: experiencesError },
     { data: education, error: educationError },
-    { data: research, error: researchError },
   ] = await Promise.all([
     supabase
       .from("journey_entries")
@@ -108,24 +107,6 @@ export default async function JourneyPage() {
       `)
       .eq("section", "education"),
 
-    supabase
-      .from("journey_research")
-      .select(`
-        id,
-        title,
-        description,
-        start_date,
-        end_date,
-        doi,
-        sort_order,
-        research_links (
-          id,
-          type,
-          label,
-          url,
-          sort_order
-        )
-      `),
   ]);
 
   if (experiencesError) {
@@ -134,10 +115,6 @@ export default async function JourneyPage() {
 
   if (educationError) {
     throw new Error(educationError.message);
-  }
-
-  if (researchError) {
-    throw new Error(researchError.message);
   }
 
   const normalizedExperiences = normalizeOrganization(
