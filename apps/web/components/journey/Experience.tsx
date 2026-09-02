@@ -10,12 +10,13 @@ import {
   BriefcaseBusiness,
   MapPin,
   ArrowUpRight,
+  Rocket,
 } from "lucide-react";
 
 import {
   motion,
+  useMotionValue,
   useReducedMotion,
-  useScroll,
   useSpring,
 } from "framer-motion";
 
@@ -39,7 +40,7 @@ interface Organization {
 
 interface ExperienceItem {
   id: string;
-  experience_type: "work";
+  experience_type: "work" | "entrepreneur";
   title: string;
   role: string | null;
   description: string | null;
@@ -53,6 +54,7 @@ interface ExperienceItem {
 
 export interface ExperienceProps {
   experiences: ExperienceItem[];
+  id?: string;
 }
 
 /* =========================================================
@@ -82,17 +84,40 @@ function formatPeriod(
 function TimelineDate({
   item,
   align,
+  className,
 }: {
   item: ExperienceItem;
   align: "left" | "right" | "center";
+  className?: string;
 }) {
   const isCurrent = item.end_date === null;
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div
+    <motion.div
+      initial={{
+        opacity: shouldReduceMotion ? 1 : 0,
+        y: shouldReduceMotion ? 0 : 12,
+        scale: shouldReduceMotion ? 1 : 0.96,
+      }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.45,
+      }}
+      transition={{
+        duration: 0.9,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       className={`
+        w-full
         flex
         flex-col
+        ${className ?? ""}
         ${
           align === "right"
             ? "items-end text-right"
@@ -152,7 +177,7 @@ function TimelineDate({
           Current
         </span>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -165,19 +190,44 @@ function ExperienceCard({
 }: {
   item: ExperienceItem;
 }) {
+  const isEntrepreneur =
+    item.experience_type === "entrepreneur";
+  const shouldReduceMotion = useReducedMotion();
+
   return (
-    <Card
-      className="
-        h-fit
-        min-h-64
-        w-full
-        overflow-visible
-        p-5
-        transition-all
-        duration-300
-        group-hover:-translate-y-1
-      "
+    <motion.div
+      initial={{
+        opacity: shouldReduceMotion ? 1 : 0,
+        y: shouldReduceMotion ? 0 : 24,
+        scale: shouldReduceMotion ? 1 : 0.94,
+      }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.3,
+      }}
+      transition={{
+        duration: 1.15,
+        ease: [0.22, 1, 0.36, 1],
+      }}
     >
+      <Card
+        className="
+          h-fit
+          w-full
+          max-w-126
+          min-w-0
+          overflow-visible
+          p-4
+          transition-all
+          duration-300
+          group-hover:-translate-y-1
+        "
+      >
       <div
         className="
           flex
@@ -199,9 +249,21 @@ function ExperienceCard({
             dark:text-blue-400
           "
         >
-          <BriefcaseBusiness className="size-4" />
+          {isEntrepreneur ? (
+            <Rocket className="size-4 text-amber-500 dark:text-amber-400" />
+          ) : (
+            <BriefcaseBusiness className="size-4" />
+          )}
 
-          <span>Work</span>
+          <span
+            className={
+              isEntrepreneur
+                ? "text-amber-600 dark:text-amber-400"
+                : undefined
+            }
+          >
+            {isEntrepreneur ? "Entrepreneur" : "Work"}
+          </span>
         </div>
 
         {item.url && (
@@ -352,7 +414,8 @@ function ExperienceCard({
           />
         </a>
       )}
-    </Card>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -425,13 +488,13 @@ function TimelineDot({
 
       <motion.span
         aria-hidden="true"
+        data-timeline-center="true"
+        style={{ isolation: "isolate" }}
         initial={{
-          scale: shouldReduceMotion ? 1 : 0,
-          opacity: shouldReduceMotion ? 1 : 0,
+          scale: shouldReduceMotion ? 1 : 0.4,
         }}
         whileInView={{
           scale: 1,
-          opacity: 1,
         }}
         viewport={{
           once: true,
@@ -444,44 +507,24 @@ function TimelineDot({
         }
         transition={{
           type: "spring",
-          stiffness: 300,
-          damping: 18,
+          stiffness: 220,
+          damping: 24,
         }}
         className={`
           relative
-          z-20
+          z-30
           flex
           size-5
           items-center
           justify-center
           rounded-full
-          border-4
-          border-background
           ${
             isCurrent
-              ? "bg-blue-600 ring-1 ring-blue-500/50 dark:bg-blue-400"
-              : "bg-foreground ring-1 ring-border"
+              ? "bg-blue-600 dark:bg-blue-400"
+              : "bg-foreground"
           }
         `}
-      >
-        {/*
-          IMPORTANT:
-          This is the actual visual center of the bullet.
-
-          The line measurement below uses this element instead
-          of the outer size-5 bullet. Therefore the vertical
-          line ends exactly at the center hole.
-        */}
-        <span
-          data-timeline-center="true"
-          className="
-            size-1
-            shrink-0
-            rounded-full
-            bg-background
-          "
-        />
-      </motion.span>
+      />
     </div>
   );
 }
@@ -492,53 +535,29 @@ function TimelineDot({
 
 export function Experience({
   experiences,
+  id,
 }: ExperienceProps) {
   const timelineRef =
     useRef<HTMLDivElement>(null);
 
   const shouldReduceMotion =
     useReducedMotion();
+  const lineProgress = useMotionValue(0);
 
   const [lineTop, setLineTop] = useState(0);
   const [lineHeight, setLineHeight] =
     useState(0);
+  const [lineLeft, setLineLeft] = useState(0);
 
   /* =======================================================
      SCROLL PROGRESS
      ======================================================= */
 
-  const { scrollYProgress } =
-    useScroll({
-      target: timelineRef,
-      offset: [
-        "start 80%",
-        "end 20%",
-      ],
-    });
-
-  const smoothProgress =
-    useSpring(scrollYProgress, {
+  const smoothProgress = useSpring(lineProgress, {
       stiffness: 100,
       damping: 30,
       mass: 0.2,
     });
-
-  /* =======================================================
-     MEASURE THE ACTUAL CENTER HOLES
-
-     We deliberately measure:
-
-       [data-timeline-center="true"]
-
-     instead of the outer size-5 bullet.
-
-     Every experience has a desktop and mobile copy.
-     `offsetParent !== null` removes the hidden responsive
-     copy from the measurement.
-
-     This gives us the exact visual point where the line
-     should begin and end.
-     ======================================================= */
 
   useLayoutEffect(() => {
     const update = () => {
@@ -561,6 +580,8 @@ export function Experience({
       if (centers.length === 0) {
         setLineTop(0);
         setLineHeight(0);
+        setLineLeft(0);
+        lineProgress.set(0);
         return;
       }
 
@@ -570,13 +591,6 @@ export function Experience({
 
       const timelineRect =
         timeline.getBoundingClientRect();
-
-      /*
-       * Measure the actual 4px center hole.
-       *
-       * Its geometric center is the exact visual
-       * center of the bullet.
-       */
 
       const firstRect =
         firstCenter.getBoundingClientRect();
@@ -589,12 +603,37 @@ export function Experience({
         firstRect.height / 2 -
         timelineRect.top;
 
+      const centerX =
+        firstRect.left +
+        firstRect.width / 2 -
+        timelineRect.left;
+
       const end =
         lastRect.top +
         lastRect.height / 2 -
         timelineRect.top;
 
+      const firstCenterTop =
+        firstRect.top + firstRect.height / 2;
+      const lastCenterTop =
+        lastRect.top + lastRect.height / 2;
+      const activationRange =
+        window.innerHeight * 0.3;
+      const progressRange =
+        lastCenterTop -
+        firstCenterTop +
+        activationRange;
+      const progress =
+        progressRange > 0
+          ? (window.innerHeight * 0.8 - firstCenterTop) /
+            progressRange
+          : 0;
+
       setLineTop(start);
+      setLineLeft(centerX);
+      lineProgress.set(
+        Math.min(1, Math.max(0, progress)),
+      );
 
       setLineHeight(
         Math.max(0, end - start),
@@ -617,6 +656,12 @@ export function Experience({
       update,
     );
 
+    window.addEventListener(
+      "scroll",
+      update,
+      { passive: true },
+    );
+
     return () => {
       observer.disconnect();
 
@@ -624,8 +669,13 @@ export function Experience({
         "resize",
         update,
       );
+
+      window.removeEventListener(
+        "scroll",
+        update,
+      );
     };
-  }, [experiences.length]);
+  }, [experiences.length, lineProgress]);
 
   if (experiences.length === 0) {
     return null;
@@ -633,7 +683,9 @@ export function Experience({
 
   return (
     <section
+      id={id}
       className="
+        scroll-mt-24
         w-full
         px-(--global-padding-x)
         py-section
@@ -658,7 +710,6 @@ export function Experience({
             className="
               pointer-events-none
               absolute
-              left-1/2
               z-0
               hidden
               w-px
@@ -666,6 +717,7 @@ export function Experience({
               md:block
             "
             style={{
+              left: lineLeft,
               top: lineTop,
               height: lineHeight,
             }}
@@ -711,13 +763,13 @@ export function Experience({
             className="
               pointer-events-none
               absolute
-              left-4
               z-0
               w-px
-              -translate-x-1/2
+                -translate-x-1/2
               md:hidden
             "
             style={{
+              left: lineLeft,
               top: lineTop,
               height: lineHeight,
             }}
@@ -785,14 +837,8 @@ export function Experience({
                   <motion.article
                     key={item.id}
                     initial={{
-                      opacity:
-                        shouldReduceMotion
-                          ? 1
-                          : 0,
-                      y:
-                        shouldReduceMotion
-                          ? 0
-                          : 40,
+                      opacity: 1,
+                      y: 0,
                     }}
                     whileInView={{
                       opacity: 1,
@@ -823,6 +869,7 @@ export function Experience({
                     <div
                       className="
                         hidden
+                        w-full
                         flex-col
                         items-center
                         md:flex
@@ -841,7 +888,7 @@ export function Experience({
 
                       {/* Date */}
 
-                      <div className="mt-5">
+                      <div className="mt-5 flex w-full max-w-126 justify-center">
                         <TimelineDate
                           item={item}
                           align="center"
@@ -852,9 +899,9 @@ export function Experience({
 
                       <div
                         className="
-                          mt-6
+                          mt-5
                           w-full
-                          max-w-2xl
+                          max-w-126
                         "
                       >
                         <motion.div
@@ -940,14 +987,8 @@ export function Experience({
                 <motion.article
                   key={item.id}
                   initial={{
-                    opacity:
-                      shouldReduceMotion
-                        ? 1
-                        : 0,
-                    y:
-                      shouldReduceMotion
-                        ? 0
-                        : 40,
+                    opacity: 1,
+                    y: 0,
                   }}
                   whileInView={{
                     opacity: 1,
@@ -991,7 +1032,10 @@ export function Experience({
 
                     <div
                       className={`
+                        flex
                         min-w-0
+                        flex-col
+                        items-end
                         ${
                           isLeft
                             ? "pr-10"
@@ -1002,11 +1046,12 @@ export function Experience({
                       {isLeft && (
                         <>
                           <TimelineDate
+                            className="relative -top-1.5"
                             item={item}
                             align="right"
                           />
 
-                          <div className="mt-6">
+                          <div className="mt-5 flex w-full max-w-126 justify-end">
                             <motion.div
                               whileHover={
                                 shouldReduceMotion
@@ -1055,7 +1100,7 @@ export function Experience({
                           amount: 0.3,
                         }}
                         transition={{
-                          duration: 0.5,
+                          duration: 0.8,
                           delay:
                             shouldReduceMotion
                               ? 0
@@ -1096,7 +1141,10 @@ export function Experience({
 
                     <div
                       className={`
+                        flex
                         min-w-0
+                        flex-col
+                        items-start
                         ${
                           !isLeft
                             ? "pl-10"
@@ -1107,11 +1155,12 @@ export function Experience({
                       {!isLeft && (
                         <>
                           <TimelineDate
+                            className="relative -top-1.5"
                             item={item}
                             align="left"
                           />
 
-                          <div className="mt-6">
+                          <div className="mt-5 flex w-full max-w-126 justify-start">
                             <motion.div
                               whileHover={
                                 shouldReduceMotion

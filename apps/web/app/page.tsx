@@ -30,7 +30,6 @@ export default async function HomePage() {
 
   return (
     <>
-
       <Hero />
 
       <Skills

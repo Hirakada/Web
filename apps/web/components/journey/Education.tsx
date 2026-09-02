@@ -36,6 +36,7 @@ interface EducationItem {
 
 export interface EducationProps {
   education: EducationItem[];
+  id?: string;
 }
 
 function formatDate(date: string) {
@@ -56,6 +57,7 @@ function formatPeriod(
 
 export function Education({
   education,
+  id,
 }: EducationProps) {
   if (education.length === 0) {
     return null;
@@ -63,7 +65,9 @@ export function Education({
 
   return (
     <section
+      id={id}
       className="
+        scroll-mt-24
         flex
         w-full
         items-start

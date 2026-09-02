@@ -6,9 +6,13 @@ import { motion } from "framer-motion";
 
 import { DOMAIN } from "@hirakada/config";
 
-export function CurrentChapter() {
+export function CurrentChapter({
+  id,
+}: {
+  id?: string;
+}) {
   return (
-    <section className="flex w-full items-start px-(--global-padding-x) py-section">
+    <section id={id} className="scroll-mt-24 flex w-full items-start px-(--global-padding-x) py-section">
       <div className="w-full">
         <header className="mb-6 flex max-w-sm flex-col items-start text-left">
           <p className="text-label text-muted uppercase tracking-widest">

@@ -6,6 +6,7 @@ import {
   Education,
   CurrentChapter,
 } from "@/components/journey";
+import { JourneyQuickTabs } from "@/components/journey/JourneyQuickTabs";
 
 function sortJourney<
   T extends {
@@ -125,27 +126,27 @@ export default async function JourneyPage() {
     normalizedExperiences,
   );
 
-  const work = sortedExperiences.filter(
-    (item) => item.experience_type === "work",
-  );
-
   const sortedEducation = sortJourney(
     normalizeOrganization(education ?? []),
   );
 
   return (
     <>
+      <JourneyQuickTabs />
+
       <JourneyHero />
 
       <Experience
-        experiences={work}
+        id="journey-experience"
+        experiences={sortedExperiences}
       />
 
       <Education
+        id="journey-education"
         education={sortedEducation}
       />
 
-      <CurrentChapter />
+      <CurrentChapter id="journey-current" />
     </>
   );
 }
