@@ -13,4 +13,9 @@ export const navigation = [
     label: "Journey",
     href: `${DOMAIN.web}/journey`,
   },
+  {
+    label: "Contact",
+    href: "mailto:hirakada.id@gmail.com",
+    variant: "button",
+  },
 ] as const;

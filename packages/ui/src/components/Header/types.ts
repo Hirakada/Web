@@ -12,6 +12,11 @@ export interface HeaderItem {
   href: string;
 
   /**
+   * Visual treatment for the navigation item.
+   */
+  variant?: "default" | "button";
+
+  /**
    * Force external behaviour.
    */
   external?: boolean;

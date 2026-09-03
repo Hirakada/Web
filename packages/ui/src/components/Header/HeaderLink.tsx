@@ -34,8 +34,8 @@ export default function HeaderLink({
 
 
   const isExternal =
-    isHttpUrl &&
-    !isInternalDomain;
+    (isHttpUrl && !isInternalDomain) ||
+    item.href.startsWith("mailto:");
 
 
   const isActive =
@@ -56,7 +56,9 @@ export default function HeaderLink({
     "transition-all duration-200",
     "select-none",
 
-    item.disabled
+    item.variant === "button"
+      ? "bg-[var(--color-primary)] px-4 text-[var(--color-background)] shadow-sm hover:-translate-y-0.5 hover:opacity-90"
+      : item.disabled
       ? "pointer-events-none opacity-50"
       : "hover:bg-[rgba(var(--color-primary-rgb),0.08)]",
 
@@ -87,8 +89,8 @@ export default function HeaderLink({
     return (
       <a
         href={item.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={item.target ?? (item.href.startsWith("mailto:") ? "_self" : "_blank")}
+        rel={item.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
         className={className}
         {...(onClick ? { onClick } : {})}
       >

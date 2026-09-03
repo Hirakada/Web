@@ -24,9 +24,17 @@ function sortJourney<
       return 1;
     }
 
+    const endDateDifference =
+      new Date(`${b.end_date}T00:00:00`).getTime() -
+      new Date(`${a.end_date}T00:00:00`).getTime();
+
+    if (endDateDifference !== 0) {
+      return endDateDifference;
+    }
+
     return (
-      new Date(b.start_date).getTime() -
-      new Date(a.start_date).getTime()
+      new Date(`${b.start_date}T00:00:00`).getTime() -
+      new Date(`${a.start_date}T00:00:00`).getTime()
     );
   });
 }

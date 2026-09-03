@@ -1,16 +1,20 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
+
+import Image from "next/image";
 
 import {
   BriefcaseBusiness,
   MapPin,
   ArrowUpRight,
   Rocket,
+  X,
 } from "lucide-react";
 
 import {
@@ -28,7 +32,14 @@ import {
 interface Organization {
   id: string;
   name: string;
+  slug: string;
+  description: string | null;
+  logo_path: string | null;
+  website: string | null;
+  address: string | null;
   city: string;
+  state_province: string | null;
+  postal_code: string | null;
   country: string;
 }
 
@@ -44,6 +55,26 @@ interface ExperienceItem {
   url: string | null;
   sort_order: number;
   organizations: Organization | null;
+  attributes: {
+    id: string;
+    name: string;
+    type: string | null;
+    icon_url: string | null;
+    description: string | null;
+  }[];
+  images: {
+    id: string;
+    image_path: string;
+    alt: string | null;
+    type: string | null;
+    sort_order: number;
+  }[];
+  links: {
+    id: string;
+    label: string;
+    url: string;
+    sort_order: number;
+  }[];
 }
 
 export interface ExperienceProps {
@@ -69,6 +100,76 @@ function formatPeriod(
   return `${formatDate(start)} — ${
     end ? formatDate(end) : "Present"
   }`;
+}
+
+function getTimelineGap(
+  current: ExperienceItem,
+  previous: ExperienceItem | undefined,
+) {
+  if (!previous) {
+    return 0;
+  }
+
+  const currentDate = new Date(
+    `${current.start_date}T00:00:00`,
+  ).getTime();
+  const previousDate = new Date(
+    `${previous.start_date}T00:00:00`,
+  ).getTime();
+  const daysApart = Math.abs(
+    currentDate - previousDate,
+  ) / (1000 * 60 * 60 * 24);
+  const dateSeed =
+    (currentDate / (1000 * 60 * 60 * 24)) % 5;
+
+  return Math.min(
+    96,
+    Math.max(28, 28 + daysApart * 4 + dateSeed * 2),
+  );
+}
+
+function getTimelineSides(
+  experiences: ExperienceItem[],
+) {
+  const sideLoads = [0, 0];
+  const sides: Array<"left" | "right"> = [];
+
+  experiences.forEach((item, index) => {
+    if (index === experiences.length - 1) {
+      return;
+    }
+
+    const previous = experiences[index - 1];
+    const endDatesAreClose =
+      previous?.end_date && item.end_date
+        ? Math.abs(
+            new Date(
+              `${previous.end_date}T00:00:00`,
+            ).getTime() -
+              new Date(
+                `${item.end_date}T00:00:00`,
+              ).getTime(),
+          ) <=
+          1000 * 60 * 60 * 24 * 90
+        : false;
+
+    const previousSide = sides[index - 1];
+    const sideIndex = endDatesAreClose && previousSide
+      ? previousSide === "left"
+        ? 1
+        : 0
+      : sideLoads[0]! <= sideLoads[1]!
+        ? 0
+        : 1;
+
+    sides[index] =
+      sideIndex === 0 ? "left" : "right";
+    sideLoads[sideIndex] =
+      sideLoads[sideIndex]! +
+      140 + Math.min(220, (item.description?.length ?? 0) * 1.2);
+  });
+
+  return sides;
 }
 
 /* =========================================================
@@ -181,8 +282,10 @@ function TimelineDate({
 
 function ExperienceCard({
   item,
+  onOpen,
 }: {
   item: ExperienceItem;
+  onOpen: (item: ExperienceItem) => void;
 }) {
   const isEntrepreneur =
     item.experience_type === "entrepreneur";
@@ -208,9 +311,20 @@ function ExperienceCard({
         duration: 1.15,
         ease: [0.22, 1, 0.36, 1],
       }}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${item.title}`}
+      onClick={() => onOpen(item)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onOpen(item);
+        }
+      }}
     >
       <Card
         className="
+          cursor-pointer
           h-fit
           w-full
           max-w-126
@@ -266,6 +380,7 @@ function ExperienceCard({
             target="_blank"
             rel="noreferrer"
             aria-label={`View ${item.title}`}
+            onClick={(event) => event.stopPropagation()}
             className="
               group/link
               flex
@@ -384,6 +499,7 @@ function ExperienceCard({
           href={item.url}
           target="_blank"
           rel="noreferrer"
+          onClick={(event) => event.stopPropagation()}
           className="
             group/link
             mt-5
@@ -531,6 +647,9 @@ export function Experience({
   experiences,
   id,
 }: ExperienceProps) {
+  const timelineSides = getTimelineSides(experiences);
+  const [selectedExperience, setSelectedExperience] =
+    useState<ExperienceItem | null>(null);
   const timelineRef =
     useRef<HTMLDivElement>(null);
 
@@ -542,6 +661,45 @@ export function Experience({
   const [lineHeight, setLineHeight] =
     useState(0);
   const [lineLeft, setLineLeft] = useState(0);
+
+  useEffect(() => {
+    if (!selectedExperience) {
+      return;
+    }
+
+    const scrollY = window.scrollY;
+    const previousHtmlOverflow =
+      document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedExperience(null);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.documentElement.style.overflow =
+        previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [selectedExperience]);
 
   /* =======================================================
      SCROLL PROGRESS
@@ -809,18 +967,20 @@ export function Experience({
             z-10
             flex
             flex-col
-            gap-24
-            md:gap-32
           "
         >
           {experiences.map(
             (item, index) => {
+              const timelineGap = getTimelineGap(
+                item,
+                experiences[index - 1],
+              );
               const isLast =
                 index ===
                 experiences.length - 1;
 
               const isLeft =
-                index % 2 === 0;
+                timelineSides[index] === "left";
 
               /* =================================================
                  LAST ITEM
@@ -855,6 +1015,9 @@ export function Experience({
                       group
                       relative
                     "
+                    style={{
+                      marginTop: timelineGap,
+                    }}
                   >
                     {/* ===============================
                         DESKTOP
@@ -911,6 +1074,7 @@ export function Experience({
                         >
                           <ExperienceCard
                             item={item}
+                            onOpen={setSelectedExperience}
                           />
                         </motion.div>
                       </div>
@@ -965,6 +1129,7 @@ export function Experience({
                         >
                           <ExperienceCard
                             item={item}
+                            onOpen={setSelectedExperience}
                           />
                         </motion.div>
                       </div>
@@ -1009,6 +1174,9 @@ export function Experience({
                     group
                     relative
                   "
+                    style={{
+                      marginTop: timelineGap,
+                    }}
                 >
                   {/* ===============================
                       DESKTOP
@@ -1059,10 +1227,12 @@ export function Experience({
                             >
                               <ExperienceCard
                                 item={item}
+                                onOpen={setSelectedExperience}
                               />
                             </motion.div>
                           </div>
                         </>
+
                       )}
                     </div>
 
@@ -1168,6 +1338,7 @@ export function Experience({
                             >
                               <ExperienceCard
                                 item={item}
+                                onOpen={setSelectedExperience}
                               />
                             </motion.div>
                           </div>
@@ -1225,6 +1396,7 @@ export function Experience({
                       >
                         <ExperienceCard
                           item={item}
+                          onOpen={setSelectedExperience}
                         />
                       </motion.div>
                     </div>
@@ -1235,6 +1407,230 @@ export function Experience({
           )}
         </div>
       </div>
+
+      {selectedExperience && (
+        <div
+          className="
+            fixed
+            inset-0
+            z-50
+            flex
+            items-center
+            justify-center
+            bg-black/50
+            p-4
+            backdrop-blur-sm
+          "
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedExperience(null);
+            }
+          }}
+        >
+          <div
+            aria-modal="true"
+            aria-labelledby="experience-detail-title"
+            className="
+              relative
+              max-h-[min(720px,calc(100vh-2rem))]
+              w-full
+              max-w-2xl
+              overflow-y-auto
+              rounded-3xl
+              border
+              border-black/10
+              bg-background
+              p-6
+              shadow-[0_24px_80px_rgba(0,0,0,0.22)]
+              sm:p-8
+              dark:border-white/10
+            "
+            role="dialog"
+          >
+            <button
+              type="button"
+              aria-label="Close experience details"
+              onClick={() => setSelectedExperience(null)}
+              className="
+                absolute
+                right-4
+                top-4
+                flex
+                size-9
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-black/10
+                text-muted
+                transition-colors
+                hover:bg-foreground
+                hover:text-background
+                dark:border-white/10
+              "
+            >
+              <X className="size-4" />
+            </button>
+
+            <div className="pr-10">
+              <p
+                className="
+                  text-xs
+                  font-semibold
+                  uppercase
+                  tracking-[0.16em]
+                  text-blue-600
+                  dark:text-blue-400
+                "
+              >
+                {selectedExperience.experience_type ===
+                "entrepreneur"
+                  ? "Entrepreneur"
+                  : "Work"}
+              </p>
+
+              <h2
+                id="experience-detail-title"
+                className="mt-2 text-3xl font-semibold tracking-tight"
+              >
+                {selectedExperience.title}
+              </h2>
+
+              {selectedExperience.role && (
+                <p className="mt-2 text-base font-medium text-foreground/80">
+                  {selectedExperience.role}
+                </p>
+              )}
+            </div>
+
+            <div
+              className="
+                mt-6
+                grid
+                gap-4
+                border-y
+                border-black/10
+                py-5
+                text-sm
+                sm:grid-cols-2
+                dark:border-white/10
+              "
+            >
+              <div>
+                <p className="text-xs uppercase tracking-[0.12em] text-muted">
+                  Period
+                </p>
+                <p className="mt-1 font-medium">
+                  {formatPeriod(
+                    selectedExperience.start_date,
+                    selectedExperience.end_date,
+                  )}
+                </p>
+              </div>
+
+              {(selectedExperience.organizations ||
+                selectedExperience.location) && (
+                <div>
+                  <p className="text-xs uppercase tracking-[0.12em] text-muted">
+                    Location
+                  </p>
+                  <p className="mt-1 font-medium">
+                    {selectedExperience.organizations
+                      ? `${selectedExperience.organizations.name} · ${selectedExperience.organizations.city}, ${selectedExperience.organizations.country}`
+                      : selectedExperience.location}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {selectedExperience.organizations?.description && (
+              <p className="mt-5 text-sm leading-6 text-muted">
+                {selectedExperience.organizations.description}
+              </p>
+            )}
+
+            {selectedExperience.attributes?.length > 0 && (
+              <div className="mt-6">
+                <p className="text-xs uppercase tracking-[0.12em] text-muted">
+                  Attributes
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {selectedExperience.attributes?.map((attribute) => (
+                    <span
+                      key={attribute.id}
+                      title={attribute.description ?? undefined}
+                      className="rounded-full border border-black/10 px-3 py-1.5 text-sm font-medium dark:border-white/10"
+                    >
+                      {attribute.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedExperience.description && (
+              <p className="mt-6 whitespace-pre-wrap text-base leading-7 text-foreground/80">
+                {selectedExperience.description}
+              </p>
+            )}
+
+            {selectedExperience.images?.length > 0 && (
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {selectedExperience.images?.map((image) => (
+                  <Image
+                    key={image.id}
+                    src={image.image_path}
+                    alt={image.alt ?? selectedExperience.title}
+                    width={1200}
+                    height={675}
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="aspect-video w-full rounded-xl border border-black/10 object-cover dark:border-white/10"
+                  />
+                ))}
+              </div>
+            )}
+
+            {selectedExperience.links?.length > 0 && (
+              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3">
+                {selectedExperience.links?.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="size-4" />
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {selectedExperience.url && (
+              <a
+                href={selectedExperience.url}
+                target="_blank"
+                rel="noreferrer"
+                className="
+                  mt-6
+                  inline-flex
+                  items-center
+                  gap-2
+                  text-sm
+                  font-medium
+                  underline-offset-4
+                  hover:underline
+                "
+              >
+                View experience
+                <ArrowUpRight className="size-4" />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

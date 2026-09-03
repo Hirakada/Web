@@ -4,10 +4,10 @@
   "packageManager": "pnpm@11.15.1",
   "type": "module",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "node scripts/dev.mjs",
 
-    "dev:web": "turbo run dev --filter=web",
-    "dev:portfolio": "turbo run dev --filter=portfolio",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:portfolio": "npm --prefix apps/portfolio run dev",
 
     "build": "turbo run build",
     "build:web": "turbo run build --filter=web",

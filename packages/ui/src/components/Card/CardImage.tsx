@@ -10,14 +10,16 @@ export default function CardImage({
   loading = "lazy",
   decoding = "async",
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  priority = false,
   ...props
 }: CardImageProps) {
   return (
     <Image
       alt={alt}
-      loading={loading}
+      loading={priority ? undefined : loading}
       decoding={decoding}
       sizes={sizes}
+      priority={priority}
       className={cn(
         "block",
         "w-full",
