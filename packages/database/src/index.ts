@@ -12,6 +12,10 @@ export {
 } from "./constant/project";
 
 export { getAttributes } from "./repositories/attributes";
+export {
+  getJourneyEntries,
+  type JourneyEntry,
+} from "./repositories/journey";
 
 export {
   getProjectCards,

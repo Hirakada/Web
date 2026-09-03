@@ -28,13 +28,7 @@ import {
 interface Organization {
   id: string;
   name: string;
-  slug: string;
-  logo_path: string | null;
-  website: string | null;
-  address: string | null;
   city: string;
-  state_province: string | null;
-  postal_code: string | null;
   country: string;
 }
 

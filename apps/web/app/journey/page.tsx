@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/Supabase/server";
+import { getCachedJourneyEntries } from "@hirakada/cache";
 
 import {
   JourneyHero,
@@ -30,104 +31,23 @@ function sortJourney<
   });
 }
 
-function normalizeOrganization<
-  T extends {
-    organizations: unknown;
-  },
->(items: T[]) {
-  return items.map((item) => ({
-    ...item,
-    organizations: Array.isArray(item.organizations)
-      ? item.organizations[0] ?? null
-      : item.organizations ?? null,
-  }));
-}
-
 export default async function JourneyPage() {
   const supabase = await createClient();
 
   const [
-    { data: experiences, error: experiencesError },
-    { data: education, error: educationError },
+    experiences,
+    education,
   ] = await Promise.all([
-    supabase
-      .from("journey_entries")
-      .select(`
-        id,
-        section,
-        experience_type,
-        title,
-        role,
-        description,
-        start_date,
-        end_date,
-        location,
-        url,
-        sort_order,
-        organizations (
-          id,
-          name,
-          slug,
-          logo_path,
-          website,
-          address,
-          city,
-          state_province,
-          postal_code,
-          country
-        )
-      `)
-      .eq("section", "experience"),
-
-    supabase
-      .from("journey_entries")
-      .select(`
-        id,
-        section,
-        experience_type,
-        title,
-        role,
-        description,
-        start_date,
-        end_date,
-        location,
-        url,
-        sort_order,
-        organizations (
-          id,
-          name,
-          slug,
-          logo_path,
-          website,
-          address,
-          city,
-          state_province,
-          postal_code,
-          country
-        )
-      `)
-      .eq("section", "education"),
-
+    getCachedJourneyEntries(supabase, "experience"),
+    getCachedJourneyEntries(supabase, "education"),
   ]);
 
-  if (experiencesError) {
-    throw new Error(experiencesError.message);
-  }
-
-  if (educationError) {
-    throw new Error(educationError.message);
-  }
-
-  const normalizedExperiences = normalizeOrganization(
-    experiences ?? [],
-  );
-
   const sortedExperiences = sortJourney(
-    normalizedExperiences,
+    experiences,
   );
 
   const sortedEducation = sortJourney(
-    normalizeOrganization(education ?? []),
+    education,
   );
 
   return (

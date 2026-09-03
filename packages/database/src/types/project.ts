@@ -11,22 +11,11 @@ export interface ProjectCard {
 
   title: string;
 
-  description: string;
-
   status: ProjectStatus;
-
-  type: ProjectType;
 
   isFeatured: boolean;
 
-  completionDate?: string;
-
   coverImage?: string;
-
-  categories: Pick<
-    Category,
-    "id" | "name" | "icon" | "color"
-  >[];
 
   attributes: Pick<
     Attribute,

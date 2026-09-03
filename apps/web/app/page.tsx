@@ -1,10 +1,9 @@
 import { createClient } from "@/lib/Supabase/server";
 
-import { getCachedProjectCards } from "@hirakada/cache";
-
 import {
-  getAttributes,
-} from "@hirakada/database";
+  getCachedAttributes,
+  getCachedProjectCards,
+} from "@hirakada/cache";
 
 import {
   Hero,
@@ -23,7 +22,7 @@ export default async function HomePage() {
     attributes,
     projects,
   ] = await Promise.all([
-    getAttributes(supabase),
+    getCachedAttributes(supabase),
     getCachedProjectCards(supabase),
   ]);
 

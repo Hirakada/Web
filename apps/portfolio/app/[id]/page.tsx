@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/Supabase/server";
 
-import { getCachedProject, getCachedProjectCards } from "@hirakada/cache";
+import {
+  getCachedProject,
+  getCachedRelatedProjects,
+} from "@hirakada/cache";
 
 import RelatedProjects from "@/components/Project/RelatedProjects";
 import ProjectCard from "@/components/Project/ProjectCard";
@@ -20,18 +23,14 @@ export default async function Page({
 
   const supabase = await createClient();
 
-  const [project, projects] = await Promise.all([
+  const [project, relatedProjects] = await Promise.all([
     getCachedProject(supabase, id),
-    getCachedProjectCards(supabase),
+    getCachedRelatedProjects(supabase, id),
   ]);
 
   if (!project) {
     notFound();
   }
-
-  const relatedProjects = projects
-    .filter((item) => item.id !== id)
-    .slice(0, 3);
 
   return (
     <main

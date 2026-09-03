@@ -81,21 +81,11 @@ type ProjectBaseRow = {
 
   title: string;
 
-  description: string;
-
   status: ProjectStatus;
-
-  type: ProjectType;
 
   is_featured: boolean;
 
-  completion_date: string | null;
-
   project_images: ProjectImageRow[] | null;
-
-  project_categories:
-    | ProjectCategoryRow[]
-    | null;
 
   project_attributes:
     | ProjectAttributeRow[]
@@ -107,6 +97,16 @@ type ProjectBaseRow = {
 };
 
 type ProjectRow = ProjectBaseRow & {
+  description: string;
+
+  type: ProjectType;
+
+  completion_date: string | null;
+
+  project_categories:
+    | ProjectCategoryRow[]
+    | null;
+
   long_description: string | null;
 
   project_url: string | null;
@@ -117,27 +117,11 @@ type ProjectRow = ProjectBaseRow & {
 const PROJECT_CARD_SELECT = `
   id,
   title,
-  description,
   status,
-  type,
   is_featured,
-  completion_date,
 
   project_images(
-    id,
-    image_url,
-    alt_text,
-    caption,
-    order
-  ),
-
-  project_categories(
-    categories(
-      id,
-      name,
-      icon,
-      color
-    )
+    image_url
   ),
 
   project_attributes(
@@ -409,38 +393,13 @@ function mapProjectCard(
 
     title: project.title,
 
-    description: project.description,
-
     status: project.status,
 
-    type: project.type,
-
     isFeatured: project.is_featured,
-
-    ...(project.completion_date && {
-      completionDate:
-        project.completion_date,
-    }),
 
     ...(images[0] && {
       coverImage: images[0].imageUrl,
     }),
-
-    categories: mapCategories(
-      project.project_categories ?? []
-    ).map((category) => ({
-      id: category.id,
-
-      name: category.name,
-
-      ...(category.icon && {
-        icon: category.icon,
-      }),
-
-      ...(category.color && {
-        color: category.color,
-      }),
-    })),
 
     attributes: mapAttributes(
       project.project_attributes ?? []
