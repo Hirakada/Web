@@ -3,4 +3,3 @@ export { default as Skills } from "./Skills";
 export { default as FeaturedProject } from "./FeaturedProject";
 export { default as About } from "./About";
 export { Principles } from "../home/Principles";
-export { default as Contact } from "./Contact";

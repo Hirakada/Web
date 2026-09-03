@@ -5,6 +5,7 @@ import type { MouseEventHandler } from "react";
 import Link from "next/link";
 
 import { cn } from "../../lib/cn";
+import Button from "../Button/Button";
 import type { HeaderItem } from "./types";
 
 interface HeaderLinkProps {
@@ -86,6 +87,21 @@ export default function HeaderLink({
   );
 
   if (isExternal) {
+    if (item.variant === "button") {
+      return (
+        <Button asChild className={className}>
+          <a
+            href={item.href}
+            target={item.target ?? (item.href.startsWith("mailto:") ? "_self" : "_blank")}
+            rel={item.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+            {...(onClick ? { onClick } : {})}
+          >
+            {content}
+          </a>
+        </Button>
+      );
+    }
+
     return (
       <a
         href={item.href}

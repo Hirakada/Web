@@ -17,7 +17,12 @@
         "NEXT_PUBLIC_HIRAKADA_SUPABASE_URL",
         "NEXT_PUBLIC_HIRAKADA_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_WEB_URL",
-        "NEXT_PUBLIC_PORTFOLIO_URL"
+        "NEXT_PUBLIC_PORTFOLIO_URL",
+        "CONTACT_EMAIL",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SMTP_PASSWORD"
       ]
     },
     "lint": {}

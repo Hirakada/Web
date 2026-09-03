@@ -1,3 +1,4 @@
+import { CONTACT_MAILTO } from "./contact";
 import { DOMAIN } from "./domain";
 
 export const navigation = [
@@ -15,7 +16,7 @@ export const navigation = [
   },
   {
     label: "Contact",
-    href: "mailto:hirakada.id@gmail.com",
+    href: CONTACT_MAILTO,
     variant: "button",
   },
 ] as const;

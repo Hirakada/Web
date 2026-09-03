@@ -10,7 +10,6 @@ import {
   Skills,
   FeaturedProject,
   About,
-  Contact,
 } from "@/components/home";
 import { principles } from "./journey/data/principles";
 import { Principles } from "@/components/home/Principles";
@@ -41,8 +40,6 @@ export default async function HomePage() {
       <FeaturedProject
         projects={projects}
       />
-
-      <Contact />
 
       <Principles
         principles={principles}

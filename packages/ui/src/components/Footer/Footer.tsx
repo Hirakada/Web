@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+import Button from "../Button/Button";
 
 export interface NavigationItem {
   label: string;
