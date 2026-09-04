@@ -185,7 +185,6 @@ function TimelineDate({
   align: "left" | "right" | "center";
   className?: string;
 }) {
-  const isCurrent = item.end_date === null;
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -253,25 +252,6 @@ function TimelineDate({
         </div>
       </div>
 
-      {isCurrent && (
-        <span
-          className="
-            mt-1
-            inline-flex
-            items-center
-            gap-1.5
-            text-[10px]
-            font-medium
-            uppercase
-            tracking-[0.12em]
-            text-blue-600
-            dark:text-blue-400
-          "
-        >
-          <span className="size-1.5 rounded-full bg-current" />
-          Current
-        </span>
-      )}
     </motion.div>
   );
 }
@@ -289,6 +269,7 @@ function ExperienceCard({
 }) {
   const isEntrepreneur =
     item.experience_type === "entrepreneur";
+  const isCurrent = item.end_date === null;
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -409,6 +390,26 @@ function ExperienceCard({
             />
           </a>
         )}
+
+              {isCurrent && (
+        <span
+          className="
+            mt-1
+            inline-flex
+            items-center
+            gap-1.5
+            text-[10px]
+            font-medium
+            uppercase
+            tracking-[0.12em]
+            text-blue-600
+            dark:text-blue-400
+          "
+        >
+          <span className="size-1.5 rounded-full bg-current" />
+          Current
+        </span>
+      )}
       </div>
 
       <CardTitle
