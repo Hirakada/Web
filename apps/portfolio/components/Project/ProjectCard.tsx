@@ -22,6 +22,9 @@ export default function ProjectCard({
         border-[rgba(var(--color-secondary-rgb),0.08)]
         bg-(--color-surface)
         shadow-sm
+        hover:translate-y-0
+        hover:shadow-sm
+        hover:border-(--color-border)
       "
     >
       <ProjectHero

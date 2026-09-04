@@ -14,11 +14,11 @@ export function CurrentChapter({
   return (
     <section id={id} className="scroll-mt-24 flex w-full items-start px-(--global-padding-x) py-section">
       <div className="w-full">
-        <header className="mb-6 flex max-w-sm flex-col items-start text-left">
+        <div className="mb-6 flex max-w-sm flex-col items-start text-left">
           <p className="text-label text-muted uppercase tracking-widest">
             Current Chapter
           </p>
-        </header>
+        </div>
 
         <motion.div
           initial={{

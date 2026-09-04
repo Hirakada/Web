@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import type { Contributor } from "@hirakada/database";
 import { Icon } from "@iconify/react";
 
@@ -13,6 +11,8 @@ import {
 
 export interface ContributorCardProps {
   contributor: Contributor;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }
 
 function getInitials(name: string) {
@@ -27,309 +27,367 @@ function getInitials(name: string) {
 
 export default function ContributorCard({
   contributor,
+  onHoverStart,
+  onHoverEnd,
 }: ContributorCardProps) {
-  const [showRoles, setShowRoles] = useState(false);
-
   const roles = contributor.roles ?? [];
   const primaryRole = roles[0];
 
   return (
     <article
+      onMouseEnter={onHoverStart}
+      onMouseLeave={onHoverEnd}
       className="
-        group
+        group/contributor
         relative
-        flex
-        min-h-90
-        flex-col
-        overflow-hidden
+        h-full
+        w-full
         rounded-3xl
-        border
-        border-[rgba(var(--color-secondary-rgb),0.08)]
-        bg-(--color-surface)
-        p-6
-        text-center
-        transition-all
+        transition-transform
         duration-300
-        hover:-translate-y-1
-        hover:border-[rgba(var(--color-primary-rgb),0.16)]
-        hover:shadow-lg
+        ease-out
+        hover:z-100
+        hover:scale-[1.035]
       "
     >
-      {/* Background */}
+      {/* =========================
+          CARD SURFACE
+      ========================== */}
+
       <div
         className="
-          pointer-events-none
           absolute
           inset-0
+          overflow-hidden
           rounded-3xl
-          bg-[radial-gradient(circle_at_top,rgba(var(--color-primary-rgb),0.05),transparent_68%)]
-          opacity-80
-          transition-opacity
+          border
+          border-[rgba(var(--color-secondary-rgb),0.08)]
+          bg-(--color-surface)
+          shadow-sm
+          transition-all
           duration-300
-          group-hover:opacity-100
-        "
-      />
-
-      <div
-        className="
-          pointer-events-none
-          absolute
-          -bottom-24
-          left-1/2
-          h-64
-          w-64
-          -translate-x-1/2
-          rounded-full
-          bg-[rgba(var(--color-primary-rgb),0.025)]
-          blur-3xl
-        "
-      />
-
-      <div
-        className="
-          relative
-          flex
-          h-full
-          flex-1
-          flex-col
-          items-center
+          group-hover/contributor:border-[rgba(var(--color-primary-rgb),0.18)]
+          group-hover/contributor:shadow-xl
         "
       >
-        {/* Avatar */}
-        <div
-          className="
-            h-20
-            w-20
-            overflow-hidden
-            rounded-full
-            border
-            border-[rgba(var(--color-secondary-rgb),0.08)]
-            bg-(--color-surface-secondary)
-            shadow-sm
-          "
-        >
-          {contributor.profileImageUrl ? (
-            <CardImage
-              src={contributor.profileImageUrl}
-              alt={contributor.name}
-              width={80}
-              height={80}
-              className="
-                h-full
-                w-full
-                object-cover
-              "
-            />
-          ) : (
-            <div
-              className="
-                flex
-                h-full
-                w-full
-                items-center
-                justify-center
-                text-xl
-                font-bold
-              "
-            >
-              {getInitials(contributor.name)}
-            </div>
-          )}
-        </div>
+        {/* =========================
+            FRONT
+        ========================== */}
 
-        {/* Name */}
-        <h3
-          className="
-            mt-5
-            text-xl
-            font-semibold
-            tracking-tight
-          "
-        >
-          {contributor.name}
-        </h3>
-
-        {/* Roles */}
-        {roles.length > 0 ? (
-          <div
-            className="
-              mt-3
-              flex
-              flex-col
-              items-center
-              gap-2
-            "
-          >
-            <span
-              className="
-                rounded-full
-                px-3
-                py-1
-                text-xs
-                font-semibold
-                text-white
-              "
-              style={{
-                backgroundColor:
-                  primaryRole?.color ??
-                  "rgb(var(--color-primary-rgb))",
-              }}
-            >
-              {primaryRole?.name}
-            </span>
-
-            {roles.length > 1 && (
-              <button
-                type="button"
-                onClick={() => setShowRoles(true)}
-                className="
-                  cursor-pointer
-                  text-xs
-                  text-(--text-medium-emphasis)
-                  transition-colors
-                  hover:text-(--color-primary)
-                "
-              >
-                +{roles.length - 1} more roles
-              </button>
-            )}
-          </div>
-        ) : (
-          <span
-            className="
-              mt-3
-              text-sm
-              text-(--text-medium-emphasis)
-            "
-          >
-            No roles available
-          </span>
-        )}
-
-        {/* Social */}
-        {(contributor.websiteUrl ||
-          contributor.linkedinUrl) && (
-          <SocialButtonGroup
-            className="
-              mt-auto
-              gap-3
-              pt-6
-            "
-          >
-            {contributor.websiteUrl && (
-              <SocialButton
-                href={contributor.websiteUrl}
-                icon={
-                  <Icon
-                    icon="mdi:web"
-                    className="text-lg"
-                  />
-                }
-                label={`${contributor.name} website`}
-              />
-            )}
-
-            {contributor.linkedinUrl && (
-              <SocialButton
-                href={contributor.linkedinUrl}
-                icon={
-                  <Icon
-                    icon="mdi:linkedin"
-                    className="text-lg"
-                  />
-                }
-                label={`${contributor.name} LinkedIn`}
-              />
-            )}
-          </SocialButtonGroup>
-        )}
-      </div>
-
-      {/* Roles Popup */}
-      {showRoles && (
         <div
           className="
             absolute
             inset-0
-            z-20
-            flex
-            items-center
-            justify-center
-            rounded-3xl
-            bg-(--color-surface)/95
-            p-6
-            backdrop-blur-sm
+            transition-all
+            duration-300
+            group-hover/contributor:scale-[0.985]
+            group-hover/contributor:opacity-0
           "
         >
+          {/* Image */}
+          <div className="absolute inset-0">
+            {contributor.profileImageUrl ? (
+              <CardImage
+                src={
+                  contributor.profileImageUrl
+                }
+                alt={contributor.name}
+                width={400}
+                height={540}
+                  quality={75}
+                  sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 25vw"
+                className="
+                  h-full
+                  w-full
+                  object-cover
+                "
+              />
+            ) : (
+              <div
+                className="
+                  flex
+                  h-full
+                  w-full
+                  items-center
+                  justify-center
+                  bg-(--color-surface-secondary)
+                  text-5xl
+                  font-bold
+                "
+              >
+                {getInitials(
+                  contributor.name,
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Gradient */}
+          <div
+            className="
+              pointer-events-none
+              absolute
+              inset-0
+              bg-linear-to-t
+              from-black/80
+              via-black/25
+              to-transparent
+            "
+          />
+
+          {/* Main Information */}
+          <div
+            className="
+              absolute
+              inset-x-0
+              bottom-0
+              p-5
+              sm:p-6
+            "
+          >
+            <div
+              className="
+                flex
+                flex-col
+                items-start
+                gap-2.5
+              "
+            >
+              <div className="h-8">
+                {primaryRole && (
+                  <span
+                    className="inline-flex max-w-full items-center rounded-full border px-3 py-1.5 text-xs font-semibold leading-none text-white backdrop-blur-md"
+                    style={{
+                      borderColor:
+                        primaryRole.color ??
+                        "rgba(255,255,255,0.2)",
+                      backgroundColor:
+                        primaryRole.color
+                          ? `color-mix(in srgb, ${primaryRole.color} 45%, transparent)`
+                          : "rgba(0,0,0,0.25)",
+                    }}
+                  >
+                    <span className="truncate">
+                      {primaryRole.name}
+                    </span>
+                  </span>
+                )}
+              </div>
+
+              <h3
+                className="
+                  h-12
+                  max-w-full
+                  line-clamp-2
+                  text-left
+                  text-xl
+                  font-semibold
+                  leading-tight
+                  tracking-tight
+                  text-white
+                  sm:h-16
+                  sm:text-2xl
+                "
+              >
+                {contributor.name}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================
+            DETAIL
+        ========================== */}
+
+        <div
+          className="
+            absolute
+            inset-0
+            flex
+            flex-col
+            bg-(--color-surface)
+            p-5
+            opacity-0
+            transition-all
+            duration-300
+            ease-out
+            group-hover/contributor:opacity-100
+            sm:p-6
+          "
+        >
+          {/* Profile */}
           <div
             className="
               flex
-              flex-col
               items-center
               gap-4
             "
           >
-            <h4
-              className="
-                text-lg
-                font-semibold
-              "
-            >
-              Roles
-            </h4>
-
             <div
               className="
-                flex
-                flex-wrap
-                justify-center
-                gap-2
-              "
-            >
-              {roles.map((role) => (
-                <span
-                  key={role.id}
-                  className="
-                    rounded-full
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    text-white
-                  "
-                  style={{
-                    backgroundColor:
-                      role.color ??
-                      "rgb(var(--color-primary-rgb))",
-                  }}
-                >
-                  {role.name}
-                </span>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setShowRoles(false)
-              }
-              className="
-                cursor-pointer
-                rounded-full
+                size-14
+                shrink-0
+                overflow-hidden
+                rounded-2xl
                 border
                 border-[rgba(var(--color-secondary-rgb),0.08)]
-                px-4
-                py-2
-                text-xs
-                transition
-                hover:text-(--color-primary)
+                bg-(--color-surface-secondary)
               "
             >
-              Close
-            </button>
+              {contributor.profileImageUrl ? (
+                <CardImage
+                  src={
+                    contributor.profileImageUrl
+                  }
+                  alt={contributor.name}
+                  width={56}
+                  height={56}
+                  quality={75}
+                  sizes="56px"
+                  className="
+                    h-full
+                    w-full
+                    object-cover
+                  "
+                />
+              ) : (
+                <div
+                  className="
+                    flex
+                    h-full
+                    w-full
+                    items-center
+                    justify-center
+                    text-lg
+                    font-bold
+                  "
+                >
+                  {getInitials(
+                    contributor.name,
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="min-w-0">
+              <h3
+                className="
+                  truncate
+                  text-lg
+                  font-semibold
+                  tracking-tight
+                "
+              >
+                {contributor.name}
+              </h3>
+
+              {primaryRole && (
+                <p
+                  className="
+                    mt-1
+                    truncate
+                    text-sm
+                    text-(--text-medium-emphasis)
+                  "
+                >
+                  {primaryRole.name}
+                </p>
+              )}
+            </div>
           </div>
+
+          {/* Roles */}
+          {roles.length > 0 && (
+            <div className="mt-6">
+              <p
+                className="
+                  mb-3
+                  text-xs
+                  font-medium
+                  uppercase
+                  tracking-[0.15em]
+                  text-(--text-medium-emphasis)
+                "
+              >
+                Roles
+              </p>
+
+              <div
+                className="
+                  flex
+                  flex-wrap
+                  gap-2
+                "
+              >
+                {roles.map((role) => (
+                  <span
+                    key={role.id}
+                    className="
+                      inline-flex
+                      items-center
+                      rounded-full
+                      border
+                      px-3
+                      py-1.5
+                      text-xs
+                      font-semibold
+                    "
+                    style={{
+                      borderColor:
+                        role.color ??
+                        "var(--color-border-subtle)",
+                      backgroundColor:
+                        role.color
+                          ? `color-mix(in srgb, ${role.color} 12%, transparent)`
+                          : "var(--color-surface-secondary)",
+                    }}
+                  >
+                    {role.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Social */}
+          {(contributor.websiteUrl ||
+            contributor.linkedinUrl) && (
+            <div className="mt-auto pt-6">
+              <SocialButtonGroup className="gap-3">
+                {contributor.websiteUrl && (
+                  <SocialButton
+                    href={
+                      contributor.websiteUrl
+                    }
+                    icon={
+                      <Icon
+                        icon="mdi:web"
+                        className="text-lg"
+                      />
+                    }
+                    label={`${contributor.name} website`}
+                  />
+                )}
+
+                {contributor.linkedinUrl && (
+                  <SocialButton
+                    href={
+                      contributor.linkedinUrl
+                    }
+                    icon={
+                      <Icon
+                        icon="mdi:linkedin"
+                        className="text-lg"
+                      />
+                    }
+                    label={`${contributor.name} LinkedIn`}
+                  />
+                )}
+              </SocialButtonGroup>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </article>
   );
 }

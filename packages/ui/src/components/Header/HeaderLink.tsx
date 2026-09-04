@@ -61,13 +61,13 @@ export default function HeaderLink({
       ? "bg-[var(--color-primary)] px-4 text-[var(--color-background)] shadow-sm hover:-translate-y-0.5 hover:opacity-90"
       : item.disabled
       ? "pointer-events-none opacity-50"
-      : "hover:bg-[rgba(var(--color-primary-rgb),0.08)]",
+      : "hover:bg-(--color-primary-subtle)",
 
     isActive
       ? [
-          "bg-[rgba(var(--color-primary-rgb),0.10)]",
+          "bg-(--color-primary-subtle)",
           "text-[var(--text-high-emphasis)]",
-          "ring-1 ring-[rgba(var(--color-primary-rgb),0.20)]",
+          "ring-1 ring-(--color-border-strong)",
         ]
       : "text-[var(--text-disabled)]",
   );

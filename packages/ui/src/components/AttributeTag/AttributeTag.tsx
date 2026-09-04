@@ -30,19 +30,19 @@ export default function AttributeTag({
         "items-center",
         "justify-center",
 
-        // spacing (old CSS)
-        "gap-[0.6rem]",
+        // spacing
+        "gap-(--space-2)",
 
-        // padding (old CSS)
-        "px-[1.2rem]",
-        "py-[0.8rem]",
+        // padding
+        "px-(--button-padding-x)",
+        "py-(--space-3)",
 
         // shape
-        "rounded-lg",
+        "rounded-(--radius-button)",
 
-        // border (old CSS)
+        // border
         "border",
-        "border-[rgba(var(--color-secondary-rgb),0.1)]",
+        "border-(--color-border-subtle)",
 
         // colors
         "bg-(--color-surface)",
@@ -56,10 +56,10 @@ export default function AttributeTag({
         "transition-all",
         "duration-300",
 
-        // hover (old CSS)
+        // hover
         "hover:scale-105",
-        "hover:bg-[rgba(var(--color-primary-rgb),0.1)]",
-        "hover:border-[rgba(var(--color-secondary-rgb),0.3)]",
+        "hover:bg-(--color-primary-subtle)",
+        "hover:border-(--color-border-strong)",
 
         className,
 

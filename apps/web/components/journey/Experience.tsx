@@ -1413,7 +1413,7 @@ export function Experience({
           className="
             fixed
             inset-0
-            z-50
+            z-9999
             flex
             items-center
             justify-center
@@ -1440,7 +1440,7 @@ export function Experience({
               rounded-3xl
               border
               border-black/10
-              bg-background
+              bg-(--color-background)
               p-6
               shadow-[0_24px_80px_rgba(0,0,0,0.22)]
               sm:p-8

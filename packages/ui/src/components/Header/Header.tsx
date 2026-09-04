@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "../../lib/cn";
+import Button from "../Button/Button";
 
 import { HEADER_HEIGHT } from "./constants";
 import HeaderLink from "./HeaderLink";
@@ -20,6 +21,7 @@ export default function Header({
   logo,
   logoAlt = "Logo",
   logoHref = "/",
+  contactHref,
   items = [],
   internalUrls = [],
   className,
@@ -54,7 +56,9 @@ export default function Header({
   const desktopItems = useMemo(
     () =>
       items.filter(
-        (item) => !item.mobileOnly,
+        (item) =>
+          !item.mobileOnly &&
+          item.variant !== "button",
       ),
     [items],
   );
@@ -144,11 +148,20 @@ export default function Header({
         </nav>
 
 
+        {contactHref && (
+          <Button
+            asChild
+            className="relative z-20 ml-auto hidden md:inline-flex"
+          >
+            <a href={contactHref}>Contact</a>
+          </Button>
+        )}
+
         {/* Mobile Toggle */}
 
         <div
           className="
-            relative z-20 ml-auto md:hidden
+            relative z-20 ml-3 md:hidden
           "
         >
 

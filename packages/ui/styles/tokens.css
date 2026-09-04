@@ -12,6 +12,8 @@
   --footer-padding-y: clamp(1rem, 2vh, 2rem);
   --section-padding-y: clamp(2rem, 4vh, 6rem);
 
+  --space-section: var(--section-padding-y);
+
   --header-logo-height: 2.5rem;
 
   --header-height: calc(
@@ -46,6 +48,8 @@
   --radius-lg: 8px;
   --radius-xl: 12px;
   --radius-2xl: 16px;
+  --radius-card: var(--radius-xl);
+  --radius-button: var(--radius-lg);
   --radius-full: 9999px;
 
   /* ==========================================================================
@@ -58,10 +62,10 @@
   --button-padding-x: 1.5rem;
   --button-padding-y: 0.75rem;
 
-  --card-padding: 1.5rem;
-
   --header-link-padding-x: 0.75rem;
   --header-link-padding-y: 0.5rem;
+
+  --card-padding: 1.5rem;
 
   /* ==========================================================================
      Icon Size
@@ -131,6 +135,11 @@
   --color-on-surface-rgb: 224, 224, 224;
   --color-on-error-rgb: 224, 224, 224;
 
+  --color-border: rgba(var(--color-secondary-rgb), 0.15);
+  --color-border-subtle: rgba(var(--color-secondary-rgb), 0.1);
+  --color-border-strong: rgba(var(--color-primary-rgb), 0.3);
+  --color-primary-subtle: rgba(var(--color-primary-rgb), 0.1);
+
   /* ==========================================================================
      Typography
   ========================================================================== */
@@ -153,6 +162,9 @@
 
   --font-body: "Roboto", sans-serif;
   --font-heading: "Poppins", sans-serif;
+
+  --text-body: var(--font-body);
+  --text-display: var(--font-heading);
 
   /* ==========================================================================
      Glass

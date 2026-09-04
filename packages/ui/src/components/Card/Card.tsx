@@ -17,13 +17,13 @@ export default function Card({
         "group relative flex w-full h-fit flex-col overflow-hidden",
 
         // Shape
-        "rounded-3xl",
+        "rounded-(--radius-card)",
 
         // Surface
         "bg-(--color-surface)",
 
         // Border
-        "border border-[rgba(var(--color-secondary-rgb),0.15)]",
+        "border border-(--color-border)",
 
         // Shadow
         "shadow-sm",
@@ -34,11 +34,11 @@ export default function Card({
         // Hover
         "hover:-translate-y-1",
         "hover:shadow-lg",
-        "hover:border-[rgba(var(--color-primary-rgb),0.3)]",
+        "hover:border-(--color-border-strong)",
 
         // Accessibility
         "focus-within:ring-2",
-        "focus-within:ring-[rgba(var(--color-primary-rgb),0.3)]",
+        "focus-within:ring-(--color-border-strong)",
 
         className,
       )}

@@ -50,7 +50,7 @@ export function Research({
     <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
       <div className="w-full">
         <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-          <header className="flex max-w-sm flex-col items-start self-start text-left">
+          <div className="flex max-w-sm flex-col items-start self-start text-left">
             <p className="text-label text-muted uppercase tracking-widest">
               Research
             </p>
@@ -63,7 +63,7 @@ export function Research({
               Research work exploring ideas at the intersection
               of technology, entrepreneurship, and digital innovation.
             </p>
-          </header>
+          </div>
 
           <div className="min-w-0">
             {research.map((item, index) => (

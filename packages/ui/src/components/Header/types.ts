@@ -67,6 +67,11 @@ export interface HeaderProps {
   logoHref?: string;
 
   /**
+   * Contact action destination.
+   */
+  contactHref?: string;
+
+  /**
    * Navigation items.
    */
   items?: ReadonlyArray<HeaderItem>;

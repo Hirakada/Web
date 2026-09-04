@@ -68,7 +68,7 @@ export default function HeaderMobileMenu({
 
             "bg-(--color-background)",
 
-            "border-t border-[rgba(var(--color-secondary-rgb),0.12)]",
+            "border-t border-(--color-border-subtle)",
           )}
 
           style={{

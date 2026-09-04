@@ -70,7 +70,7 @@ export function Education({
       "
     >
       <div className="w-full">
-        <header
+        <div
           className="
             flex
             max-w-sm
@@ -93,7 +93,7 @@ export function Education({
           <h2 className="text-display mt-3">
             Learning & Education.
           </h2>
-        </header>
+        </div>
 
         <div
           className="

@@ -62,7 +62,7 @@ export function Organizations({
     <section className="flex w-full items-start border-t border-border px-(--global-padding-x) py-section">
       <div className="w-full">
         <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-          <header className="flex max-w-sm flex-col items-start self-start text-left">
+          <div className="flex max-w-sm flex-col items-start self-start text-left">
             <p className="text-label text-muted uppercase tracking-widest">
               Organizations
             </p>
@@ -75,7 +75,7 @@ export function Organizations({
               Communities and organizations that became part
               of my journey beyond formal work.
             </p>
-          </header>
+          </div>
 
           <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             {organizations.map((item) => {

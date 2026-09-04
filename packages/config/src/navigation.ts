@@ -1,4 +1,3 @@
-import { CONTACT_MAILTO } from "./contact";
 import { DOMAIN } from "./domain";
 
 export const navigation = [
@@ -13,10 +12,5 @@ export const navigation = [
   {
     label: "Journey",
     href: `${DOMAIN.web}/journey`,
-  },
-  {
-    label: "Contact",
-    href: CONTACT_MAILTO,
-    variant: "button",
   },
 ] as const;

@@ -14,7 +14,7 @@ export function Principles({
     <section className="flex w-full items-start px-(--global-padding-x) py-section">
       <div className="w-full">
         <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-          <header className="flex max-w-sm flex-col items-start self-start text-left">
+          <div className="flex max-w-sm flex-col items-start self-start text-left">
             <h2 className="text-display mt-3">
               Keep moving.
             </h2>
@@ -23,7 +23,7 @@ export function Principles({
               A simple framework for how I approach learning,
               creating, and growing.
             </p>
-          </header>
+          </div>
 
           <div className="grid min-w-0 gap-4 sm:grid-cols-3">
             {principles.map((item, index) => (
