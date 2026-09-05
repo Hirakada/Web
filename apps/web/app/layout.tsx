@@ -19,6 +19,7 @@ import {
 } from "@hirakada/ui";
 
 import AppFooter from "@/components/AppFooter";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = defaultMetadata;
 
@@ -54,6 +55,7 @@ export default function RootLayout({
         </main>
 
         <AppFooter/>
+        <Analytics />
       </body>
     </html>
   );
