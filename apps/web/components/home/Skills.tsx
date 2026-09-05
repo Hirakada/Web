@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { AttributeTag } from "@hirakada/ui";
 import type { Attribute } from "@hirakada/database";
 
@@ -18,23 +20,26 @@ const TYPE_ORDER = [
 export default function Skills({
   attributes,
 }: SkillsProps) {
-  const sortedAttributes = [...attributes].sort((a, b) => {
-    const indexA = TYPE_ORDER.indexOf(a.type ?? "");
-    const indexB = TYPE_ORDER.indexOf(b.type ?? "");
+  const sortedAttributes = useMemo(
+    () => [...attributes].sort((a, b) => {
+      const indexA = TYPE_ORDER.indexOf(a.type ?? "");
+      const indexB = TYPE_ORDER.indexOf(b.type ?? "");
 
-    if (indexA === -1 && indexB === -1) {
+      if (indexA === -1 && indexB === -1) {
+        return a.name.localeCompare(b.name);
+      }
+
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+
+      if (indexA !== indexB) {
+        return indexA - indexB;
+      }
+
       return a.name.localeCompare(b.name);
-    }
-
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-
-    if (indexA !== indexB) {
-      return indexA - indexB;
-    }
-
-    return a.name.localeCompare(b.name);
-  });
+    }),
+    [attributes],
+  );
 
   if (sortedAttributes.length === 0) {
     return null;
@@ -50,7 +55,7 @@ export default function Skills({
         bg-(--color-background)
 
         px-(--global-padding-x)
-        py-2
+        py-0
       "
     >
       <div
