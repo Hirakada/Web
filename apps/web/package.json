@@ -9,9 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hirakada/cache": "workspace:*",
     "@hirakada/config": "workspace:*",
     "@hirakada/database": "workspace:*",
-    "@hirakada/cache": "workspace:*",
     "@hirakada/ui": "workspace:*",
     "@iconify/react": "^6.0.2",
     "@supabase/ssr": "^0.12.3",
@@ -21,6 +21,7 @@
     "next": "16.2.10",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-use-measure": "^2.1.7",
     "three": "^0.185.1",
     "typed.js": "^3.0.0"
   },

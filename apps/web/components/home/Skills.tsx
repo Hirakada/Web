@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 import { AttributeTag } from "@hirakada/ui";
 import type { Attribute } from "@hirakada/database";
+
+import { InfiniteSlider } from "../ui/infinite-slider";
 
 interface SkillsProps {
   attributes: Attribute[];
@@ -40,18 +40,6 @@ export default function Skills({
     return null;
   }
 
-  const repeatCount =
-    sortedAttributes.length <= 10
-      ? 4
-      : sortedAttributes.length <= 20
-        ? 3
-        : 2;
-
-  const marqueeItems = Array.from(
-    { length: repeatCount },
-    () => sortedAttributes
-  ).flat();
-
   return (
     <section
       className="
@@ -65,16 +53,14 @@ export default function Skills({
         py-2
       "
     >
-      {/* Left Fade */}
-
       <div
         className="
           pointer-events-none
           absolute
           inset-y-0
-          left-0
+          left-32
           z-10
-          w-16
+          w-[calc(var(--global-padding-x)+12rem)]
 
           bg-linear-to-r
           from-(--color-background)
@@ -82,16 +68,14 @@ export default function Skills({
         "
       />
 
-      {/* Right Fade */}
-
       <div
         className="
           pointer-events-none
           absolute
           inset-y-0
-          right-0
+          right-32
           z-10
-          w-16
+          w-[calc(var(--global-padding-x)+12rem)]
 
           bg-linear-to-l
           from-(--color-background)
@@ -99,43 +83,15 @@ export default function Skills({
         "
       />
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 16,
-        }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-          amount: 0.2,
-        }}
-        transition={{
-          duration: 0.5,
-          ease: "easeOut",
-        }}
-      >
-        <motion.div
-          className="
-            flex
-            w-max
-            items-center
-            gap-[clamp(1rem,2vw,1.75rem)]
-          "
-          animate={{
-            x: ["0%", "-50%"],
-          }}
-          transition={{
-            duration: 60,
-            ease: "linear",
-            repeat: Infinity,
-          }}
+        <InfiniteSlider
+          gap={28}
+          duration={60}
+          durationOnHover={120}
+          className="w-full"
         >
-          {marqueeItems.map((attribute, index) => (
+          {sortedAttributes.map((attribute) => (
             <div
-              key={`${attribute.id}-${index}`}
+              key={attribute.id}
               className="shrink-0"
             >
               <AttributeTag
@@ -145,8 +101,7 @@ export default function Skills({
               </AttributeTag>
             </div>
           ))}
-        </motion.div>
-      </motion.div>
+        </InfiniteSlider>
     </section>
   );
 }
