@@ -129,7 +129,7 @@ export default function About() {
             viewport={{
               once: true,
             }}
-            className="mt-10 grid grid-cols-[max-content_max-content] gap-x-5 gap-y-5 text-sm md:text-base"
+            className="mt-10 grid grid-cols-1 gap-x-5 gap-y-5 text-sm sm:grid-cols-2 md:text-base"
           > 
             {[
               "UI / UX Design",

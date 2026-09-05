@@ -182,6 +182,7 @@ export default function Header({
         open={open}
         pathname={pathname}
         items={[...items]}
+        internalUrls={internalUrls}
         onNavigate={() => setOpen(false)}
       />
 

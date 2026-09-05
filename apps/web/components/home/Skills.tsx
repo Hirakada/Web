@@ -63,9 +63,12 @@ export default function Skills({
           pointer-events-none
           absolute
           inset-y-0
-          left-32
+          left-0
           z-10
-          w-[calc(var(--global-padding-x)+12rem)]
+          w-(--global-padding-x)
+
+          sm:left-32
+          sm:w-[calc(var(--global-padding-x)+12rem)]
 
           bg-linear-to-r
           from-(--color-background)
@@ -78,9 +81,12 @@ export default function Skills({
           pointer-events-none
           absolute
           inset-y-0
-          right-32
+          right-0
           z-10
-          w-[calc(var(--global-padding-x)+12rem)]
+          w-(--global-padding-x)
+
+          sm:right-32
+          sm:w-[calc(var(--global-padding-x)+12rem)]
 
           bg-linear-to-l
           from-(--color-background)
