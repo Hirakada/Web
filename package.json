@@ -5,19 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev.mjs",
-
     "dev:web": "npm --prefix apps/web run dev",
     "dev:portfolio": "npm --prefix apps/portfolio run dev",
-
     "build": "turbo run build",
     "build:web": "turbo run build --filter=web",
     "build:portfolio": "turbo run build --filter=portfolio",
-
     "lint": "turbo run lint",
     "lint:web": "turbo run lint --filter=web",
     "lint:portfolio": "turbo run lint --filter=portfolio"
   },
   "devDependencies": {
     "turbo": "^2.10.7"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0"
   }
 }

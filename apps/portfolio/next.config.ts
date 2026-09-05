@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         hostname: "haackkpsvjlpttequfou.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        protocol: "https",
+        hostname: "down-bs-id.img.susercontent.com",
+      },
     ],
   },
 };

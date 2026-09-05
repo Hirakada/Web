@@ -18,7 +18,7 @@ export function getCachedJourneyEntries<
   return unstable_cache(
     (requestedSection: JourneyEntry["section"]) =>
       getJourneyEntries(supabase, requestedSection),
-    ["journey-entries", "v1"],
+    ["journey-entries", "v4"],
     {
       tags: ["journey"],
       revalidate: ONE_HOUR,

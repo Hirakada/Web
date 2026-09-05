@@ -10,7 +10,7 @@ export async function getCachedProjectCards(
 ) {
   return unstable_cache(
     () => getProjectCards(supabase),
-    ["project-cards", "v3"],
+    ["project-cards", "v4"],
     {
       tags: ["projects"],
       revalidate: ONE_HOUR,

@@ -11,7 +11,7 @@ export function getCachedAttributes(
 ) {
   return unstable_cache(
     () => getAttributes(supabase),
-    ["attributes", "v1"],
+    ["attributes", "v4"],
     {
       tags: ["attributes"],
       revalidate: ONE_HOUR,
