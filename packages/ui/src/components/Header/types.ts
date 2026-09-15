@@ -47,9 +47,6 @@ export interface HeaderItem {
   disabled?: boolean;
 }
 
-
-import React from "react"; 
-
 export interface HeaderProps {
   /**
    * Logo component or image node.
@@ -67,6 +64,11 @@ export interface HeaderProps {
   logoHref?: string;
 
   /**
+   * Optional application label displayed beside the logo.
+   */
+  logoLabel?: string;
+
+  /**
    * Contact action destination.
    */
   contactHref?: string;
@@ -78,12 +80,6 @@ export interface HeaderProps {
 
   /**
    * Trusted internal URLs.
-   *
-   * Example:
-   * [
-   *   "https://hirakada.vercel.app",
-   *   "https://potfoliohirakada.vercel.app"
-   * ]
    */
   internalUrls?: ReadonlyArray<string>;
 
@@ -101,9 +97,12 @@ export interface HeaderProps {
    * Bottom border.
    */
   bordered?: boolean;
+
+  /**
+   * Affiliate action destination.
+   */
+  affiliateHref?: string;
 }
-
-
 
 export interface HeaderMobileMenuProps {
   /**

@@ -1,0 +1,26 @@
+@import "@hirakada/ui/styles/global.css";
+
+/* Affiliate-specific accessibility/interaction overrides. */
+.affiliate-app,
+.affiliate-app * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.affiliate-app button,
+.affiliate-app a,
+.affiliate-app select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.affiliate-app a,
+.affiliate-app button,
+.affiliate-app input,
+.affiliate-app select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.affiliate-app input::placeholder {
+  color: var(--text-muted);
+}

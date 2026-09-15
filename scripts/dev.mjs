@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import process from "node:process";
 
 const npmCommand = process.platform === "win32" ? (process.env.ComSpec ?? "cmd.exe") : "npm";
-const apps = ["web", "portfolio"];
+const apps = ["web", "portfolio", "affiliate"];
 const children = apps.map((app) => {
   const command = process.platform === "win32" ? ["/d", "/s", "/c", "npm run dev"] : ["run", "dev"];
   const child = spawn(npmCommand, command, {

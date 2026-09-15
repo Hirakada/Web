@@ -7,18 +7,24 @@
     "dev": "node scripts/dev.mjs",
     "dev:web": "npm --prefix apps/web run dev",
     "dev:portfolio": "npm --prefix apps/portfolio run dev",
+    "dev:affiliate": "npm --prefix apps/affiliate run dev",
     "build": "turbo run build",
     "build:web": "turbo run build --filter=web",
     "build:portfolio": "turbo run build --filter=portfolio",
+    "build:affiliate": "turbo run build --filter=affiliate",
     "lint": "turbo run lint",
     "lint:web": "turbo run lint --filter=web",
-    "lint:portfolio": "turbo run lint --filter=portfolio"
+    "lint:portfolio": "turbo run lint --filter=portfolio",
+    "lint:affiliate": "turbo run lint --filter=affiliate"
   },
   "devDependencies": {
     "turbo": "^2.10.7"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0"
+    "@vercel/speed-insights": "^2.0.0",
+    "next": "^16.3.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   }
 }
