@@ -11,15 +11,6 @@ import {
   headingFont,
 } from "@hirakada/config";
 
-import AppHeader from "@/components/AppHeader";
-
-import {
-  ScrollIndicator,
-  GlobalBackground,
-} from "@hirakada/ui";
-
-import AppFooter from "@/components/AppFooter";
-
 export const metadata: Metadata = defaultMetadata;
 
 export const viewport: Viewport = {
@@ -44,16 +35,7 @@ export default function RootLayout({
       `}
     >
       <body className="relative overflow-x-hidden bg-background text-foreground">
-        <GlobalBackground/>
-        <ScrollIndicator />
-
-        <AppHeader />
-
-        <main className="relative z-10">
-          {children}
-        </main>
-
-        <AppFooter/>
+        {children}
       </body>
     </html>
   );
