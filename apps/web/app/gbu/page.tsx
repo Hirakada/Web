@@ -75,11 +75,12 @@ export default function GbuPage() {
         variants={containerVariants}
         className="
           mx-auto flex min-h-dvh w-full
-          max-w-[var(--container-width)]
+          max-w-[520px]
           flex-col
+          px-6
+          sm:px-8
         "
         style={{
-          paddingInline: "var(--global-padding-x)",
           paddingBlock: "var(--section-padding-y)",
         }}
       >
