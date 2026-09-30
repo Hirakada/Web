@@ -189,20 +189,21 @@ export default function GBU({ banners }: GBUProps) {
           <div
             className="flex items-center justify-center overflow-hidden"
             style={{
-              width: "var(--avatar-xl)",
-              height: "var(--avatar-xl)",
-              borderRadius: "var(--radius-full)",
+              width: "72px",
+              height: "72px",
+              borderRadius: "10px",
               backgroundColor: "#ffffff",
-              border: "1px solid var(--color-border)",
-              boxShadow: "var(--shadow-base)",
-              padding: "var(--space-2)",
+              border: "1px solid rgba(var(--color-primary-rgb), 0.16)",
+              boxShadow:
+                "0 8px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.12)",
+              padding: "10px",
             }}
           >
             <Image
               src="/gbu/logo.svg"
               alt="GBU CENTER"
-              width={64}
-              height={64}
+              width={72}
+              height={72}
               className="h-full w-full object-contain"
               priority
             />
@@ -215,7 +216,7 @@ export default function GBU({ banners }: GBUProps) {
           className="mt-5 text-center"
         >
           <h1
-            className="text-2xl font-semibold tracking-tight"
+            className="notranslate text-2xl font-semibold tracking-tight"
             style={{
               color: "var(--text-heading)",
             }}
