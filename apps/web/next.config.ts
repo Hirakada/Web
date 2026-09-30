@@ -2,8 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   productionBrowserSourceMaps: true,
+
   images: {
     qualities: [25, 50, 70, 75],
+
     remotePatterns: [
       {
         protocol: "https",
@@ -18,6 +20,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "down-bs-id.img.susercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "down-id.img.susercontent.com",
         pathname: "/**",
       },
     ],
