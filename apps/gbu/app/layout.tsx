@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+import "@hirakada/ui/styles/global.css";
+
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -31,10 +33,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GbuLayout({
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  colorScheme: "dark",
+  themeColor: "#101010",
+};
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
-  return children;
+  return (
+    <html lang="id" className="dark">
+      <body className="relative overflow-x-hidden bg-background text-foreground">
+        {children}
+      </body>
+    </html>
+  );
 }
