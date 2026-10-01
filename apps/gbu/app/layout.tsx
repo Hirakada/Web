@@ -2,6 +2,7 @@ import "@hirakada/ui/styles/global.css";
 
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://gbu.hirakada.com"),
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "GBU CENTER — ATK • Print • Fotocopy • PPOB di Bulak, Surabaya.",
+    "GBU CENTER — ATK • Print • Fotokopi • PPOB di Bulak, Surabaya.",
 
   alternates: {
     canonical: "/",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "GBU CENTER",
     description:
-      "GBU CENTER — ATK • Print • Fotocopy • PPOB di Bulak, Surabaya.",
+      "GBU CENTER — ATK • Print • Fotokopi • PPOB di Bulak, Surabaya.",
     type: "website",
     url: "/",
   },
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     title: "GBU CENTER",
     description:
-      "GBU CENTER — ATK • Print • Fotocopy • PPOB di Bulak, Surabaya.",
+      "GBU CENTER — ATK • Print • Fotokopi • PPOB di Bulak, Surabaya.",
     card: "summary_large_image",
   },
 };
@@ -48,6 +49,13 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body className="relative overflow-x-hidden bg-background text-foreground">
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8870847030549850"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {children}
       </body>
     </html>

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
+import AdsBanner from "@/components/AdsBanner";
 
 const GOOGLE_MAPS_EMBED_URL =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15832.203326922163!2d112.7748002!3d-7.235042599999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7f9c8d63a6b6b%3A0xb2930a254195c81f!2sGBU%20CENTER%20Bulak!5e0!3m2!1sen!2sid!4v1790612104575!5m2!1sen!2sid";
@@ -83,11 +84,17 @@ const services = [
   },
 ];
 
+type BannerType = "affiliate" | "adsense";
+
 type GBUProps = {
   banners: AffiliateBanner[];
+  bannerType: BannerType;
 };
 
-export default function GBU({ banners }: GBUProps) {
+export default function GBU({
+  banners,
+  bannerType,
+}: GBUProps) {
   const leftBanner = banners[0];
   const rightBanner = banners[1];
 
@@ -97,7 +104,10 @@ export default function GBU({ banners }: GBUProps) {
   const [copied, setCopied] = useState(false);
 
   const [caozyLabel] = useState(
-    () => CAOZY_LABELS[Math.floor(Math.random() * CAOZY_LABELS.length)]
+    () =>
+      CAOZY_LABELS[
+        Math.floor(Math.random() * CAOZY_LABELS.length)
+      ],
   );
 
   async function handleCopyAddress() {
@@ -122,16 +132,13 @@ export default function GBU({ banners }: GBUProps) {
         color: "var(--text-high-emphasis)",
       }}
     >
-      {/* Desktop affiliate banners */}
-      {hasBanners && (
+      {/* Desktop banners */}
+      {(bannerType === "adsense" ||
+        (bannerType === "affiliate" && hasBanners)) && (
         <>
           {/* Left banner */}
-          <motion.a
+          <motion.div
             variants={itemVariants}
-            href={leftBanner.affiliateUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Lihat produk di Shopee"
             className="fixed left-0 z-20 hidden xl:block"
             style={{
               top: "var(--section-padding-y)",
@@ -141,40 +148,20 @@ export default function GBU({ banners }: GBUProps) {
               padding: "var(--space-4)",
             }}
           >
-            <div
-              className="relative h-full w-full overflow-hidden"
-              style={{
-                borderRadius: "var(--radius-card)",
-                border: "1px solid var(--color-border)",
-                backgroundColor: "var(--color-surface)",
-                boxShadow: "var(--shadow-base)",
-              }}
-            >
-              <Image
-                src={leftBanner.imageUrl}
-                alt=""
-                fill
+            {bannerType === "affiliate" && leftBanner ? (
+              <AdsBanner
+                type="affiliate"
+                banner={leftBanner}
                 sizes="calc((100vw - 520px) / 2)"
-                className="object-cover transition-opacity duration-[var(--duration-normal)] hover:opacity-90"
               />
-
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  backgroundColor:
-                    "rgba(var(--color-background-rgb), 0.42)",
-                }}
-              />
-            </div>
-          </motion.a>
+            ) : (
+              <AdsBanner type="adsense" />
+            )}
+          </motion.div>
 
           {/* Right banner */}
-          <motion.a
+          <motion.div
             variants={itemVariants}
-            href={rightBanner.affiliateUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Lihat produk di Shopee"
             className="fixed right-0 z-20 hidden xl:block"
             style={{
               top: "var(--section-padding-y)",
@@ -184,32 +171,16 @@ export default function GBU({ banners }: GBUProps) {
               padding: "var(--space-4)",
             }}
           >
-            <div
-              className="relative h-full w-full overflow-hidden"
-              style={{
-                borderRadius: "var(--radius-card)",
-                border: "1px solid var(--color-border)",
-                backgroundColor: "var(--color-surface)",
-                boxShadow: "var(--shadow-base)",
-              }}
-            >
-              <Image
-                src={rightBanner.imageUrl}
-                alt=""
-                fill
+            {bannerType === "affiliate" && rightBanner ? (
+              <AdsBanner
+                type="affiliate"
+                banner={rightBanner}
                 sizes="calc((100vw - 520px) / 2)"
-                className="object-cover transition-opacity duration-[var(--duration-normal)] hover:opacity-90"
               />
-
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  backgroundColor:
-                    "rgba(var(--color-background-rgb), 0.42)",
-                }}
-              />
-            </div>
-          </motion.a>
+            ) : (
+              <AdsBanner type="adsense" />
+            )}
+          </motion.div>
         </>
       )}
 
