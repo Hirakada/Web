@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-
-import { defaultMetadata } from "@hirakada/config";
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  ...defaultMetadata,
+  metadataBase: new URL("https://gbu.hirakada.com"),
 
   title: {
     absolute: "GBU CENTER",
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
     "GBU CENTER — ATK • Print • Fotocopy • PPOB di Bulak, Surabaya.",
 
   alternates: {
-    canonical: "/gbu",
+    canonical: "/",
   },
 
   openGraph: {
@@ -21,6 +20,7 @@ export const metadata: Metadata = {
     description:
       "GBU CENTER — ATK • Print • Fotocopy • PPOB di Bulak, Surabaya.",
     type: "website",
+    url: "/",
   },
 
   twitter: {
@@ -29,30 +29,12 @@ export const metadata: Metadata = {
       "GBU CENTER — ATK • Print • Fotocopy • PPOB di Bulak, Surabaya.",
     card: "summary_large_image",
   },
-
-  icons: {
-    icon: [
-      {
-        url: "/gbu/logo.svg",
-        type: "image/svg+xml",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-      {
-        url: "/favicon.ico",
-        type: "image/x-icon",
-      },
-    ],
-    apple: "/apple-icon.png",
-  },
 };
 
 export default function GbuLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return children;
 }

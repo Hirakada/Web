@@ -8,14 +8,19 @@
     "dev:web": "npm --prefix apps/web run dev",
     "dev:portfolio": "npm --prefix apps/portfolio run dev",
     "dev:affiliate": "npm --prefix apps/affiliate run dev",
+    "dev:gbu": "npm --prefix apps/gbu run dev",
+
     "build": "turbo run build",
     "build:web": "turbo run build --filter=web",
     "build:portfolio": "turbo run build --filter=portfolio",
     "build:affiliate": "turbo run build --filter=affiliate",
+    "build:gbu": "turbo run build --filter=gbu",
+
     "lint": "turbo run lint",
     "lint:web": "turbo run lint --filter=web",
     "lint:portfolio": "turbo run lint --filter=portfolio",
-    "lint:affiliate": "turbo run lint --filter=affiliate"
+    "lint:affiliate": "turbo run lint --filter=affiliate",
+    "lint:gbu": "turbo run lint --filter=gbu"
   },
   "devDependencies": {
     "turbo": "^2.10.7"
