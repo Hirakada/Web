@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -28,7 +28,7 @@ const WHATSAPP_URL =
 const GRABFOOD_URL =
   "MASUKKAN_LINK_GRABFOOD_DI_SINI";
 
-const HAUS_LABELS = [
+const CAOZY_LABELS = [
   "Time to caozy",
   "caozy sudah hadir",
   "Saatnya caozy",
@@ -95,17 +95,10 @@ export default function GBU({ banners }: GBUProps) {
     leftBanner !== undefined && rightBanner !== undefined;
 
   const [copied, setCopied] = useState(false);
-  const [hausLabel, setHausLabel] = useState<string>(
-    HAUS_LABELS[0],
+
+  const [caozyLabel] = useState(
+    () => CAOZY_LABELS[Math.floor(Math.random() * CAOZY_LABELS.length)]
   );
-
-  useEffect(() => {
-    const randomIndex = Math.floor(
-      Math.random() * HAUS_LABELS.length,
-    );
-
-    setHausLabel(HAUS_LABELS[randomIndex]);
-  }, []);
 
   async function handleCopyAddress() {
     try {
@@ -527,13 +520,13 @@ export default function GBU({ banners }: GBUProps) {
             />
           </motion.div>
 
-          {/* Haus / Caozy — separate brand */}
+          {/* Caozy — pesan melalui GrabFood */}
           <motion.a
             variants={itemVariants}
             href={GRABFOOD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Pesan melalui GrabFood"
+            aria-label="Pesan Caozy melalui GrabFood"
             className="flex w-full items-center justify-center"
             style={{
               minHeight: "var(--button-height)",
@@ -551,7 +544,7 @@ export default function GBU({ banners }: GBUProps) {
               translate="no"
               className="notranslate text-sm font-medium"
             >
-              {hausLabel}
+              {caozyLabel}
             </span>
           </motion.a>
 
