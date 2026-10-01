@@ -9,6 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hirakada/config": "workspace:*",
+    "@hirakada/ui": "workspace:*",
+    "@hirakada/cache": "workspace:*",
+    "@hirakada/database": "workspace:*",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "framer-motion": "^12.42.2",

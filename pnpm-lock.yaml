@@ -82,6 +82,18 @@ importers:
 
   apps/gbu:
     dependencies:
+      '@hirakada/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
+      '@hirakada/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@hirakada/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      '@hirakada/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@supabase/ssr':
         specifier: ^0.12.3
         version: 0.12.3(@supabase/supabase-js@2.110.8)
