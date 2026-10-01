@@ -1,19 +1,48 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Image from "next/image";
 
 import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
 
-type AdsBannerProps =
-  | {
-      type: "affiliate";
-      banner: AffiliateBanner;
-      sizes?: string;
-    }
-  | {
-      type: "adsense";
-    };
+type BannerType = "affiliate" | "adsense";
+
+type AdsBannerProps = {
+  slotId: string;
+  banner?: AffiliateBanner | undefined;
+  sizes?: string;
+};
+
+const clientBannerTypes = new Map<string, BannerType>();
+
+function getBannerType(slotId: string): BannerType {
+  const existing = clientBannerTypes.get(slotId);
+
+  if (existing) {
+    return existing;
+  }
+
+  const type: BannerType =
+    Math.random() < 0.5 ? "affiliate" : "adsense";
+
+  clientBannerTypes.set(slotId, type);
+
+  return type;
+}
+
+function subscribe() {
+  return () => {};
+}
+
+/*
+ * Server snapshot must be deterministic.
+ *
+ * During hydration React uses this value first,
+ * then switches to the client snapshot after hydration.
+ */
+function getServerBannerType(): BannerType {
+  return "affiliate";
+}
 
 declare global {
   interface Window {
@@ -24,14 +53,40 @@ declare global {
 const ADSENSE_CLIENT = "ca-pub-8870847030549850";
 const ADSENSE_SLOT = "2668088953";
 
-export default function AdsBanner(props: AdsBannerProps) {
-  if (props.type === "affiliate") {
+export default function AdsBanner({
+  slotId,
+  banner,
+  sizes = "100vw",
+}: AdsBannerProps) {
+  const type = useSyncExternalStore(
+    subscribe,
+    () => getBannerType(slotId),
+    getServerBannerType,
+  );
+
+  useEffect(() => {
+    if (type !== "adsense") {
+      return;
+    }
+
+    try {
+      window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.push({});
+    } catch {
+      // Ignore AdSense initialization errors.
+    }
+  }, [type]);
+
+  /*
+   * Affiliate
+   */
+  if (type === "affiliate" && banner) {
     return (
       <a
-        href={props.banner.affiliateUrl}
+        href={banner.affiliateUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Lihat produk"
+        aria-label="Lihat produk di Shopee"
         className="block h-full w-full"
       >
         <div
@@ -44,10 +99,10 @@ export default function AdsBanner(props: AdsBannerProps) {
           }}
         >
           <Image
-            src={props.banner.imageUrl}
+            src={banner.imageUrl}
             alt=""
             fill
-            sizes={props.sizes ?? "100vw"}
+            sizes={sizes}
             className="object-cover transition-opacity duration-[var(--duration-normal)] hover:opacity-90"
           />
 
@@ -63,24 +118,13 @@ export default function AdsBanner(props: AdsBannerProps) {
     );
   }
 
-  return <AdSenseBanner />;
-}
-
-function AdSenseBanner() {
-  const pushedRef = useRef(false);
-
-  useEffect(() => {
-    if (pushedRef.current) return;
-
-    try {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-      pushedRef.current = true;
-    } catch {
-      // Ignore AdSense initialization errors.
-    }
-  }, []);
-
+  /*
+   * AdSense
+   *
+   * Same AdSense configuration is used for both:
+   * - Desktop vertical banner
+   * - Mobile/tablet 1:1 banner
+   */
   return (
     <div
       className="relative h-full w-full overflow-hidden"

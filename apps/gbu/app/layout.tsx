@@ -2,7 +2,6 @@ import "@hirakada/ui/styles/global.css";
 
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://gbu.hirakada.com"),
@@ -49,11 +48,11 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body className="relative overflow-x-hidden bg-background text-foreground">
-        <Script
+        {/* Google AdSense — load once */}
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8870847030549850"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
 
         {children}

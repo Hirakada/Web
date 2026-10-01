@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -14,8 +14,8 @@ import {
   Printer,
 } from "lucide-react";
 
-import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
 import AdsBanner from "@/components/AdsBanner";
+import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
 
 const GOOGLE_MAPS_EMBED_URL =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15832.203326922163!2d112.7748002!3d-7.235042599999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7f9c8d63a6b6b%3A0xb2930a254195c81f!2sGBU%20CENTER%20Bulak!5e0!3m2!1sen!2sid!4v1790612104575!5m2!1sen!2sid";
@@ -84,30 +84,59 @@ const services = [
   },
 ];
 
-type BannerType = "affiliate" | "adsense";
-
 type GBUProps = {
   banners: AffiliateBanner[];
-  bannerType: BannerType;
 };
 
-export default function GBU({
-  banners,
-  bannerType,
-}: GBUProps) {
+/*
+ * Caozy label
+ *
+ * Server always renders the first label.
+ * Client gets a random label after hydration.
+ * This prevents hydration mismatch caused by Math.random().
+ */
+const caozyLabelCache = new Map<
+  string,
+  (typeof CAOZY_LABELS)[number]
+>();
+
+function getCaozyLabel(): (typeof CAOZY_LABELS)[number] {
+  const key = "gbu-caozy-label";
+
+  const existing = caozyLabelCache.get(key);
+
+  if (existing) {
+    return existing;
+  }
+
+  const label =
+    CAOZY_LABELS[
+      Math.floor(Math.random() * CAOZY_LABELS.length)
+    ] ?? CAOZY_LABELS[0];
+
+  caozyLabelCache.set(key, label);
+
+  return label;
+}
+
+function subscribeCaozyLabel() {
+  return () => {};
+}
+
+function getServerCaozyLabel() {
+  return CAOZY_LABELS[0];
+}
+
+export default function GBU({ banners }: GBUProps) {
   const leftBanner = banners[0];
   const rightBanner = banners[1];
 
-  const hasBanners =
-    leftBanner !== undefined && rightBanner !== undefined;
-
   const [copied, setCopied] = useState(false);
 
-  const [caozyLabel] = useState(
-    () =>
-      CAOZY_LABELS[
-        Math.floor(Math.random() * CAOZY_LABELS.length)
-      ],
+  const caozyLabel = useSyncExternalStore(
+    subscribeCaozyLabel,
+    getCaozyLabel,
+    getServerCaozyLabel,
   );
 
   async function handleCopyAddress() {
@@ -132,59 +161,56 @@ export default function GBU({
         color: "var(--text-high-emphasis)",
       }}
     >
-      {/* Desktop banners */}
-      {(bannerType === "adsense" ||
-        (bannerType === "affiliate" && hasBanners)) && (
-        <>
-          {/* Left banner */}
-          <motion.div
-            variants={itemVariants}
-            className="fixed left-0 z-20 hidden xl:block"
-            style={{
-              top: "var(--section-padding-y)",
-              bottom: "var(--section-padding-y)",
-              width:
-                "calc((100vw - 520px - (2 * var(--space-8))) / 2)",
-              padding: "var(--space-4)",
-            }}
-          >
-            {bannerType === "affiliate" && leftBanner ? (
-              <AdsBanner
-                type="affiliate"
-                banner={leftBanner}
-                sizes="calc((100vw - 520px) / 2)"
-              />
-            ) : (
-              <AdsBanner type="adsense" />
-            )}
-          </motion.div>
+      {/* =====================================================
+          DESKTOP BANNERS
+          ===================================================== */}
 
-          {/* Right banner */}
-          <motion.div
-            variants={itemVariants}
-            className="fixed right-0 z-20 hidden xl:block"
-            style={{
-              top: "var(--section-padding-y)",
-              bottom: "var(--section-padding-y)",
-              width:
-                "calc((100vw - 520px - (2 * var(--space-8))) / 2)",
-              padding: "var(--space-4)",
-            }}
-          >
-            {bannerType === "affiliate" && rightBanner ? (
-              <AdsBanner
-                type="affiliate"
-                banner={rightBanner}
-                sizes="calc((100vw - 520px) / 2)"
-              />
-            ) : (
-              <AdsBanner type="adsense" />
-            )}
-          </motion.div>
-        </>
-      )}
+      {/* Left desktop banner */}
+      <motion.div
+        variants={itemVariants}
+        className="fixed left-0 z-20 hidden items-center justify-center xl:flex"
+        style={{
+          top: "var(--section-padding-y)",
+          bottom: "var(--section-padding-y)",
+          width:
+            "calc((100vw - 520px - (2 * var(--space-8))) / 2)",
+          padding: "var(--space-4)",
+        }}
+      >
+        <div className="relative w-full max-h-full aspect-[3/5]">
+          <AdsBanner
+            slotId="desktop-left"
+            banner={leftBanner}
+            sizes="calc((100vw - 520px) / 2)"
+          />
+        </div>
+      </motion.div>
 
-      {/* Main container */}
+      {/* Right desktop banner */}
+      <motion.div
+        variants={itemVariants}
+        className="fixed right-0 z-20 hidden items-center justify-center xl:flex"
+        style={{
+          top: "var(--section-padding-y)",
+          bottom: "var(--section-padding-y)",
+          width:
+            "calc((100vw - 520px - (2 * var(--space-8))) / 2)",
+          padding: "var(--space-4)",
+        }}
+      >
+        <div className="relative w-full max-h-full aspect-[3/5]">
+          <AdsBanner
+            slotId="desktop-right"
+            banner={rightBanner}
+            sizes="calc((100vw - 520px) / 2)"
+          />
+        </div>
+      </motion.div>
+
+      {/* =====================================================
+          MAIN CONTAINER
+          ===================================================== */}
+
       <motion.main
         initial="hidden"
         animate="visible"
@@ -384,7 +410,8 @@ export default function GBU({
             <div
               className="relative aspect-video w-full overflow-hidden"
               style={{
-                backgroundColor: "var(--color-surface-elevated)",
+                backgroundColor:
+                  "var(--color-surface-elevated)",
               }}
             >
               <iframe
@@ -431,7 +458,7 @@ export default function GBU({
             </div>
           </motion.a>
 
-          {/* WhatsApp — GBU */}
+          {/* WhatsApp */}
           <motion.a
             variants={itemVariants}
             href={WHATSAPP_URL}
@@ -460,7 +487,7 @@ export default function GBU({
             </span>
           </motion.a>
 
-          {/* Separator — GBU / Caozy */}
+          {/* Separator */}
           <motion.div
             variants={itemVariants}
             className="flex items-center gap-4"
@@ -491,7 +518,7 @@ export default function GBU({
             />
           </motion.div>
 
-          {/* Caozy — pesan melalui GrabFood */}
+          {/* Caozy */}
           <motion.a
             variants={itemVariants}
             href={GRABFOOD_URL}
@@ -519,41 +546,23 @@ export default function GBU({
             </span>
           </motion.a>
 
-          {/* Mobile / tablet affiliate banner */}
-          {leftBanner && (
-            <motion.a
-              variants={itemVariants}
-              href={leftBanner.affiliateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Lihat produk di Shopee"
-              className="mt-10 block w-full overflow-hidden xl:hidden"
-              style={{
-                borderRadius: "var(--radius-card)",
-                border: "1px solid var(--color-border)",
-                backgroundColor: "var(--color-surface)",
-                boxShadow: "var(--shadow-base)",
-              }}
-            >
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={leftBanner.imageUrl}
-                  alt=""
-                  fill
-                  sizes="100vw"
-                  className="object-cover transition-opacity duration-[var(--duration-normal)] hover:opacity-90"
-                />
+          {/* =================================================
+              MOBILE / TABLET BANNER
+              1:1 — random Affiliate / AdSense
+              ================================================= */}
 
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    backgroundColor:
-                      "rgba(var(--color-background-rgb), 0.42)",
-                  }}
-                />
-              </div>
-            </motion.a>
-          )}
+          <motion.div
+            variants={itemVariants}
+            className="mt-10 block w-full overflow-hidden xl:hidden"
+          >
+            <div className="relative aspect-square w-full overflow-hidden">
+              <AdsBanner
+                slotId="mobile"
+                banner={leftBanner}
+                sizes="100vw"
+              />
+            </div>
+          </motion.div>
 
           {/* Footer */}
           <motion.footer
@@ -601,7 +610,8 @@ export default function GBU({
               style={{
                 borderRadius: "var(--radius-full)",
                 border: "1px solid var(--color-border)",
-                backgroundColor: "var(--color-surface-elevated)",
+                backgroundColor:
+                  "var(--color-surface-elevated)",
                 color: "var(--text-high-emphasis)",
                 paddingInline: "var(--space-4)",
                 paddingBlock: "var(--space-2)",
