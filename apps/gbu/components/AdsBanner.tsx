@@ -19,8 +19,8 @@ declare global {
   }
 }
 
-const ADSENSE_CLIENT = "ca-pub-8870847030549850";
-const ADSENSE_SLOT = "2668088953";
+const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_GBU_ADSENSE_CLIENT!;
+const ADSENSE_SLOT = process.env.NEXT_PUBLIC_GBU_ADSENSE_SLOT!;
 const ADSENSE_FILL_TIMEOUT = 8_000;
 const initializedSlots = new WeakSet<HTMLElement>();
 

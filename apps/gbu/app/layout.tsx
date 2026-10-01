@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gbu.hirakada.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_GBU_SITE_URL!),
 
   title: {
     absolute: "GBU CENTER",
@@ -51,7 +51,7 @@ export default function RootLayout({
         {/* Google AdSense — load once */}
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8870847030549850"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GBU_ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
 

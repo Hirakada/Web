@@ -18,16 +18,12 @@ import AdsBanner from "@/components/AdsBanner";
 import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
 
 const GOOGLE_MAPS_EMBED_URL =
-  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15832.203326922163!2d112.7748002!3d-7.235042599999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7f9c8d63a6b6b%3A0xb2930a254195c81f!2sGBU%20CENTER%20Bulak!5e0!3m2!1sen!2sid!4v1790612104575!5m2!1sen!2sid";
-
-const ADDRESS =
-  "Jl. Bulak Kalitinjang Baru Timur II No. 4 Kav. 21, Bulak, Kec. Bulak, Surabaya, Jawa Timur 60124";
-
-const WHATSAPP_URL =
-  "https://wa.me/62895401490641?text=Halo%20kak";
-
-const GRABFOOD_URL =
-  "MASUKKAN_LINK_GRABFOOD_DI_SINI";
+  process.env.NEXT_PUBLIC_GBU_GOOGLE_MAPS_EMBED_URL!;
+const GOOGLE_MAPS_URL = process.env.NEXT_PUBLIC_GBU_GOOGLE_MAPS_URL!;
+const ADDRESS = process.env.NEXT_PUBLIC_GBU_ADDRESS!;
+const WHATSAPP_URL = process.env.NEXT_PUBLIC_GBU_WHATSAPP_URL!;
+const GRABFOOD_URL = process.env.NEXT_PUBLIC_GBU_GRABFOOD_URL!;
+const POWERED_BY_URL = process.env.NEXT_PUBLIC_GBU_POWERED_BY_URL!;
 
 const CAOZY_LABELS = [
   "Time to caozy",
@@ -396,7 +392,7 @@ export default function GBU({ banners }: GBUProps) {
           {/* Google Maps */}
           <motion.a
             variants={itemVariants}
-            href="https://maps.google.com/?q=GBU+CENTER+Bulak"
+            href={GOOGLE_MAPS_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="group mt-4 block overflow-hidden"
@@ -570,7 +566,7 @@ export default function GBU({ banners }: GBUProps) {
             className="mt-10 pb-1 text-center"
           >
             <a
-              href="https://hirakada.vercel.app/"
+              href={POWERED_BY_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs transition-opacity duration-[var(--duration-normal)] hover:opacity-70"
