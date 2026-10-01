@@ -2,19 +2,15 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Hirakada",
-
-    short_name: "Hirakada",
-
+    name: "GBU CENTER",
+    short_name: "GBU",
     description:
-      "Official portfolio of Hizkya Raka Priananda, showcasing software engineering projects, modern web applications, UI/UX design, and digital innovation.",
+      "GBU CENTER — ATK, Print, Fotocopy, dan PPOB di Bulak, Surabaya.",
 
     start_url: "/",
-
     display: "standalone",
 
     background_color: "#101010",
-
     theme_color: "#101010",
 
     icons: [
