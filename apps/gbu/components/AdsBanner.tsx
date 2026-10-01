@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
-
-type BannerType = "affiliate" | "adsense";
 
 type AdsBannerProps = {
   slotId: string;
@@ -13,36 +11,7 @@ type AdsBannerProps = {
   sizes?: string;
 };
 
-const clientBannerTypes = new Map<string, BannerType>();
-
-function getBannerType(slotId: string): BannerType {
-  const existing = clientBannerTypes.get(slotId);
-
-  if (existing) {
-    return existing;
-  }
-
-  const type: BannerType =
-    Math.random() < 0.5 ? "affiliate" : "adsense";
-
-  clientBannerTypes.set(slotId, type);
-
-  return type;
-}
-
-function subscribe() {
-  return () => {};
-}
-
-/*
- * Server snapshot must be deterministic.
- *
- * During hydration React uses this value first,
- * then switches to the client snapshot after hydration.
- */
-function getServerBannerType(): BannerType {
-  return "affiliate";
-}
+type BannerState = "adsense" | "affiliate";
 
 declare global {
   interface Window {
@@ -52,35 +21,90 @@ declare global {
 
 const ADSENSE_CLIENT = "ca-pub-8870847030549850";
 const ADSENSE_SLOT = "2668088953";
+const ADSENSE_FILL_TIMEOUT = 8_000;
+const initializedSlots = new WeakSet<HTMLElement>();
 
 export default function AdsBanner({
   slotId,
   banner,
   sizes = "100vw",
 }: AdsBannerProps) {
-  const type = useSyncExternalStore(
-    subscribe,
-    () => getBannerType(slotId),
-    getServerBannerType,
-  );
+  const [state, setState] = useState<BannerState>("adsense");
+  const adSlotRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    if (type !== "adsense") {
+    const adSlot = adSlotRef.current;
+
+    if (!adSlot) {
       return;
     }
 
-    try {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    } catch {
-      // Ignore AdSense initialization errors.
-    }
-  }, [type]);
+    let active = true;
 
-  /*
-   * Affiliate
-   */
-  if (type === "affiliate" && banner) {
+    const clearChecks = () => {
+      window.clearTimeout(timeout);
+      observer.disconnect();
+      script?.removeEventListener("error", fallbackToAffiliate);
+    };
+
+    const fallbackToAffiliate = () => {
+      if (!active) {
+        return;
+      }
+
+      active = false;
+      clearChecks();
+      setState("affiliate");
+    };
+
+    const observer = new MutationObserver(() => {
+      const status = adSlot.getAttribute("data-ad-status");
+
+      if (status === "filled") {
+        active = false;
+        clearChecks();
+      } else if (status === "unfilled") {
+        fallbackToAffiliate();
+      }
+    });
+
+    observer.observe(adSlot, {
+      attributes: true,
+      attributeFilter: ["data-ad-status"],
+    });
+
+    const script = document.querySelector<HTMLScriptElement>(
+      `script[src^="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}"]`,
+    );
+    script?.addEventListener("error", fallbackToAffiliate);
+
+    const timeout = window.setTimeout(
+      fallbackToAffiliate,
+      ADSENSE_FILL_TIMEOUT,
+    );
+
+    if (!initializedSlots.has(adSlot)) {
+      initializedSlots.add(adSlot);
+
+      try {
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push({});
+      } catch {
+        queueMicrotask(fallbackToAffiliate);
+      }
+    }
+
+    return () => {
+      active = false;
+      clearChecks();
+    };
+  }, [slotId]);
+
+  if (state === "affiliate") {
+    if (!banner) {
+      return null;
+    }
+
     return (
       <a
         href={banner.affiliateUrl}
@@ -118,13 +142,6 @@ export default function AdsBanner({
     );
   }
 
-  /*
-   * AdSense
-   *
-   * Same AdSense configuration is used for both:
-   * - Desktop vertical banner
-   * - Mobile/tablet 1:1 banner
-   */
   return (
     <div
       className="relative h-full w-full overflow-hidden"
@@ -136,6 +153,8 @@ export default function AdsBanner({
       }}
     >
       <ins
+        ref={adSlotRef}
+        data-banner-slot={slotId}
         className="adsbygoogle block h-full w-full"
         style={{
           display: "block",
