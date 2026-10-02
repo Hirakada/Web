@@ -4,21 +4,24 @@ import path from "node:path";
 
 const BASE_URL = "https://affiliate.hirakada.com";
 
-const IGNORED_DIRECTORIES = new Set([
-  "api",
-]);
-
 function isPageFile(name: string) {
   return name === "page.tsx" || name === "page.ts";
 }
 
-function shouldIgnoreDirectory(name: string) {
+function isRouteGroup(name: string) {
+  return name.startsWith("(") && name.endsWith(")");
+}
+
+function isDynamicRoute(name: string) {
+  return name.startsWith("[") && name.endsWith("]");
+}
+
+function shouldIgnore(name: string) {
   return (
     name.startsWith("_") ||
     name.startsWith(".") ||
-    name.startsWith("(") ||
     name.startsWith("@") ||
-    name.startsWith("[")
+    name === "api"
   );
 }
 
@@ -37,11 +40,12 @@ function findStaticRoutes(
   });
 
   const hasPage = entries.some(
-    (entry) => entry.isFile() && isPageFile(entry.name),
+    (entry) =>
+      entry.isFile() && isPageFile(entry.name),
   );
 
-  if (hasPage && currentRoute) {
-    routes.push(currentRoute);
+  if (hasPage) {
+    routes.push(currentRoute || "/");
   }
 
   for (const entry of entries) {
@@ -51,17 +55,23 @@ function findStaticRoutes(
 
     const name = entry.name;
 
-    if (
-      shouldIgnoreDirectory(name) ||
-      IGNORED_DIRECTORIES.has(name)
-    ) {
+    if (shouldIgnore(name)) {
       continue;
     }
+
+    // Dynamic routes are handled by Supabase.
+    if (isDynamicRoute(name)) {
+      continue;
+    }
+
+    const childRoute = isRouteGroup(name)
+      ? currentRoute
+      : `${currentRoute}/${name}`;
 
     routes.push(
       ...findStaticRoutes(
         path.join(directory, name),
-        `${currentRoute}/${name}`,
+        childRoute,
       ),
     );
   }
@@ -70,58 +80,64 @@ function findStaticRoutes(
 }
 
 /**
- * Replace this function with your existing Supabase
- * server-side query for active affiliate products.
+ * Categories
  *
- * Expected result:
- *
- * [
- *   {
- *     slug: "legion-5",
- *     updated_at: "2026-10-01T..."
- *   },
- *   ...
- * ]
+ * Example:
+ * /electronics
+ * /fashion
  */
-async function getProductRoutes(): Promise<MetadataRoute.Sitemap> {
-  // TODO:
-  // Connect to the existing Supabase client used by the app.
-  //
-  // Example shape:
-  //
-  // const products = await getProductsFromSupabase();
-  //
-  // return products.map((product) => ({
-  //   url: `${BASE_URL}/products/${product.slug}`,
-  //   lastModified: product.updated_at
-  //     ? new Date(product.updated_at)
-  //     : new Date(),
-  //   changeFrequency: "weekly",
-  //   priority: 0.7,
-  // }));
-
+async function getCategoryRoutes(): Promise<
+  MetadataRoute.Sitemap
+> {
+  // Supabase query goes here.
   return [];
 }
 
 /**
- * Optional category slug routes.
+ * Subcategories
  *
- * Use this if your affiliate app has category/[slug].
+ * Example:
+ * /electronics/gaming
+ * /electronics/accessories
  */
-async function getCategoryRoutes(): Promise<MetadataRoute.Sitemap> {
-  // Connect this to your existing category query if categories
-  // are stored dynamically in Supabase.
-
+async function getSubcategoryRoutes(): Promise<
+  MetadataRoute.Sitemap
+> {
+  // Supabase query goes here.
   return [];
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const appDirectory = path.join(process.cwd(), "app");
+/**
+ * Products
+ *
+ * Example:
+ * /product/legion-5
+ * /product/mouse-lumi-g1
+ */
+async function getProductRoutes(): Promise<
+  MetadataRoute.Sitemap
+> {
+  // Supabase query goes here.
+  return [];
+}
 
-  const staticRoutes = [
-    "/",
-    ...findStaticRoutes(appDirectory),
-  ];
+export default async function sitemap(): Promise<
+  MetadataRoute.Sitemap
+> {
+  const appDirectory = path.join(
+    process.cwd(),
+    "app",
+  );
+
+  /*
+   * Static routes only.
+   *
+   * Dynamic routes such as [category],
+   * [subcategory], and [slug] are excluded here.
+   */
+  const staticRoutes = findStaticRoutes(
+    appDirectory,
+  );
 
   const staticEntries: MetadataRoute.Sitemap =
     [...new Set(staticRoutes)].map((route) => ({
@@ -131,17 +147,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           : `${BASE_URL}${route}`,
       lastModified: new Date(),
       changeFrequency:
-        route === "/" ? "weekly" : "monthly",
+        route === "/"
+          ? "weekly"
+          : "monthly",
       priority:
-        route === "/" ? 1 : 0.8,
+        route === "/"
+          ? 1
+          : 0.8,
     }));
 
-  const productEntries = await getProductRoutes();
-  const categoryEntries = await getCategoryRoutes();
+  const [
+    categoryEntries,
+    subcategoryEntries,
+    productEntries,
+  ] = await Promise.all([
+    getCategoryRoutes(),
+    getSubcategoryRoutes(),
+    getProductRoutes(),
+  ]);
 
   return [
     ...staticEntries,
     ...categoryEntries,
+    ...subcategoryEntries,
     ...productEntries,
   ];
 }

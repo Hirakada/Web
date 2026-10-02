@@ -8,17 +8,27 @@ const IGNORED_DIRECTORIES = new Set([
   "api",
 ]);
 
-function isPageFile(name: string) {
+function isPageFile(name: string): boolean {
   return name === "page.tsx" || name === "page.ts";
 }
 
-function shouldIgnoreDirectory(name: string) {
+function isRouteGroup(name: string): boolean {
+  return name.startsWith("(") && name.endsWith(")");
+}
+
+function isDynamicRoute(name: string): boolean {
+  return (
+    name.startsWith("[") &&
+    name.endsWith("]")
+  );
+}
+
+function shouldIgnoreDirectory(name: string): boolean {
   return (
     name.startsWith("_") ||
     name.startsWith(".") ||
-    name.startsWith("(") ||
     name.startsWith("@") ||
-    name.startsWith("[")
+    IGNORED_DIRECTORIES.has(name)
   );
 }
 
@@ -37,11 +47,12 @@ function findStaticRoutes(
   });
 
   const hasPage = entries.some(
-    (entry) => entry.isFile() && isPageFile(entry.name),
+    (entry) =>
+      entry.isFile() && isPageFile(entry.name),
   );
 
-  if (hasPage && currentRoute) {
-    routes.push(currentRoute);
+  if (hasPage) {
+    routes.push(currentRoute || "/");
   }
 
   for (const entry of entries) {
@@ -51,17 +62,31 @@ function findStaticRoutes(
 
     const name = entry.name;
 
-    if (
-      shouldIgnoreDirectory(name) ||
-      IGNORED_DIRECTORIES.has(name)
-    ) {
+    // API/private directories
+    if (shouldIgnoreDirectory(name)) {
       continue;
     }
 
+    // Dynamic route such as [id]
+    // It will be handled separately.
+    if (isDynamicRoute(name)) {
+      continue;
+    }
+
+    const childDirectory = path.join(
+      directory,
+      name,
+    );
+
+    // Route groups do not appear in URL.
+    const childRoute = isRouteGroup(name)
+      ? currentRoute
+      : `${currentRoute}/${name}`;
+
     routes.push(
       ...findStaticRoutes(
-        path.join(directory, name),
-        `${currentRoute}/${name}`,
+        childDirectory,
+        childRoute,
       ),
     );
   }
@@ -70,54 +95,85 @@ function findStaticRoutes(
 }
 
 /**
- * Connect this to the SAME source used by
- * app/projects/[slug]/page.tsx.
+ * IMPORTANT:
  *
- * Do not create a second, separate project list if your
- * portfolio already has a data source.
+ * Replace this function with the SAME data source
+ * that is used by app/[id]/page.tsx.
+ *
+ * Example result:
+ *
+ * [
+ *   {
+ *     id: "matcha-kun",
+ *     updatedAt: "2026-09-20",
+ *   },
+ *   {
+ *     id: "katamesta",
+ *     updatedAt: "2026-09-25",
+ *   },
+ * ]
  */
-async function getProjectRoutes(): Promise<MetadataRoute.Sitemap> {
-  // Example:
-  //
-  // const projects = await getProjects();
-  //
-  // return projects.map((project) => ({
-  //   url: `${BASE_URL}/projects/${project.slug}`,
-  //   lastModified: project.updatedAt
-  //     ? new Date(project.updatedAt)
-  //     : new Date(),
-  //   changeFrequency: "monthly",
-  //   priority: 0.7,
-  // }));
+async function getPortfolioRoutes(): Promise<
+  MetadataRoute.Sitemap
+> {
+  /*
+   * Example:
+   *
+   * const projects = await getProjects();
+   *
+   * return projects.map((project) => ({
+   *   url: `${BASE_URL}/${project.id}`,
+   *   lastModified: project.updatedAt
+   *     ? new Date(project.updatedAt)
+   *     : new Date(),
+   *   changeFrequency: "monthly",
+   *   priority: 0.7,
+   * }));
+   */
 
   return [];
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const appDirectory = path.join(process.cwd(), "app");
+export default async function sitemap(): Promise<
+  MetadataRoute.Sitemap
+> {
+  const appDirectory = path.join(
+    process.cwd(),
+    "app",
+  );
 
-  const staticRoutes = [
-    "/",
-    ...findStaticRoutes(appDirectory),
+  // Static routes
+  const staticRoutes = findStaticRoutes(
+    appDirectory,
+  );
+
+  const uniqueStaticRoutes = [
+    ...new Set(staticRoutes),
   ];
 
   const staticEntries: MetadataRoute.Sitemap =
-    [...new Set(staticRoutes)].map((route) => ({
+    uniqueStaticRoutes.map((route) => ({
       url:
         route === "/"
           ? BASE_URL
           : `${BASE_URL}${route}`,
       lastModified: new Date(),
       changeFrequency:
-        route === "/" ? "weekly" : "monthly",
+        route === "/"
+          ? "weekly"
+          : "monthly",
       priority:
-        route === "/" ? 1 : 0.8,
+        route === "/"
+          ? 1
+          : 0.8,
     }));
 
-  const projectEntries = await getProjectRoutes();
+  // Dynamic /[id] routes
+  const portfolioEntries =
+    await getPortfolioRoutes();
 
   return [
     ...staticEntries,
-    ...projectEntries,
+    ...portfolioEntries,
   ];
 }
