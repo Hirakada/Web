@@ -17,6 +17,8 @@ import {
 import AdsBanner from "@/components/AdsBanner";
 import type { AffiliateBanner } from "@/lib/Supabase/affiliate/affiliate";
 
+import PpobSlider from "./PPobSlider";
+
 const GOOGLE_MAPS_EMBED_URL =
   process.env.NEXT_PUBLIC_GBU_GOOGLE_MAPS_EMBED_URL!;
 const GOOGLE_MAPS_URL = process.env.NEXT_PUBLIC_GBU_GOOGLE_MAPS_URL!;
@@ -335,6 +337,8 @@ export default function GBU({ banners }: GBUProps) {
             })}
           </div>
         </motion.section>
+
+        <PpobSlider />
 
         {/* Content with horizontal padding */}
         <div className="px-6 sm:px-8">

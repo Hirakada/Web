@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import CategoryNavigation from "@/components/affiliate/CategoryNavigation";
@@ -52,7 +53,7 @@ export default async function CategoryPage({ params, searchParams }: { params: P
     <>
       <section className="items-stretch! px-4! py-8! sm:!px-6 md:!py-12 lg:!px-8 xl:!px-10">
         <div className="mx-auto w-full max-w-(--container-width)">
-          <nav aria-label="Breadcrumb" className="mb-5 text-xs text-(--text-muted)"><a href="/" className="hover:text-[var(--text-high-emphasis)]">Products</a> <span aria-hidden>/</span> {category.name}</nav>
+          <nav aria-label="Breadcrumb" className="mb-5 text-xs text-(--text-muted)"><Link href="/" className="hover:text-[var(--text-high-emphasis)]">Products</Link> <span aria-hidden>/</span> {category.name}</nav>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{category.name}</h1>
           {category.description && <p className="mt-3 max-w-2xl text-sm leading-6 text-(--text-medium-emphasis)">{category.description}</p>}
           <div className="mt-6"><CategoryNavigation categories={categories} activeSlug={slug} /></div>

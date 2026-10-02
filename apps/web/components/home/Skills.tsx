@@ -2,10 +2,8 @@
 
 import { useMemo } from "react";
 
-import { AttributeTag } from "@hirakada/ui";
+import { AttributeTag, InfiniteSlider } from "@hirakada/ui";
 import type { Attribute } from "@hirakada/database";
-
-import { InfiniteSlider } from "../ui/infinite-slider";
 
 interface SkillsProps {
   attributes: Attribute[];

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
-import { cn } from '@hirakada/ui';
+import { cn } from '../../lib/cn';
 
 type InfiniteSliderProps = {
   children: ReactNode;
