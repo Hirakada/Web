@@ -4,6 +4,7 @@ import type {
   Metadata,
   Viewport,
 } from "next";
+import Script from "next/script";
 
 
 import {
@@ -102,6 +103,18 @@ export default function RootLayout({
     >
 
       <body>
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S8MLFTKJQ3');
+          `}
+        </Script>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
+          strategy="afterInteractive"
+        />
 
         <AppHeader />
 

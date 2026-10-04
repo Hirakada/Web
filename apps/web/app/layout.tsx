@@ -4,6 +4,7 @@ import type {
   Metadata,
   Viewport,
 } from "next";
+import Script from "next/script";
 
 import {
   bodyFont,
@@ -35,6 +36,18 @@ export default function RootLayout({
       `}
     >
       <body className="relative overflow-x-hidden bg-background text-foreground">
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S8MLFTKJQ3');
+          `}
+        </Script>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
+          strategy="afterInteractive"
+        />
         {children}
       </body>
     </html>

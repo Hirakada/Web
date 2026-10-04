@@ -1,6 +1,7 @@
 import "@hirakada/ui/styles/global.css";
 
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 
 import { bodyFont, headingFont } from "@hirakada/config";
 import { GlobalBackground } from "@hirakada/ui";
@@ -41,6 +42,19 @@ export default function RootLayout({
       className={`dark ${headingFont.variable} ${bodyFont.variable}`}
     >
       <body className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S8MLFTKJQ3');
+          `}
+        </Script>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
+          strategy="afterInteractive"
+        />
+
         <GlobalBackground />
 
         <AppHeader />
