@@ -36,7 +36,7 @@ export default function RootLayout({
       `}
     >
       <body className="relative overflow-x-hidden bg-background text-foreground">
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -46,7 +46,7 @@ export default function RootLayout({
         </Script>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
         {children}
       </body>

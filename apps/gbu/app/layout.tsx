@@ -2,6 +2,7 @@ import "@hirakada/ui/styles/global.css";
 
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_GBU_SITE_URL!),
@@ -48,6 +49,19 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body className="relative overflow-x-hidden bg-background text-foreground">
+        <Script id="google-analytics" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S8MLFTKJQ3');
+          `}
+        </Script>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
+          strategy="beforeInteractive"
+        />
+
         {/* Google AdSense — load once */}
         <script
           async
