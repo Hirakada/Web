@@ -12,6 +12,7 @@
     "@hirakada/cache": "workspace:*",
     "@hirakada/config": "workspace:*",
     "@hirakada/database": "workspace:*",
+    "@hirakada/firebase": "workspace:*",
     "@hirakada/ui": "workspace:*",
     "@iconify/react": "^6.0.2",
     "@supabase/ssr": "^0.12.3",

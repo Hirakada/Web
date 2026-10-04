@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hirakada/config": "workspace:*",
+    "@hirakada/firebase": "workspace:*",
     "@hirakada/ui": "workspace:*",
     "@hirakada/cache": "workspace:*",
     "@hirakada/database": "workspace:*",

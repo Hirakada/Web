@@ -1,0 +1,1 @@
+export { FirebaseInitializer } from "./FirebaseInitializer";

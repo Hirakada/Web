@@ -12,6 +12,7 @@ import {
   defaultMetadata,
   headingFont,
 } from "@hirakada/config";
+import { FirebaseInitializer } from "@hirakada/firebase";
 
 
 import AppHeader from "@/components/AppHeader";
@@ -103,6 +104,7 @@ export default function RootLayout({
     >
 
       <body>
+        <FirebaseInitializer />
         <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

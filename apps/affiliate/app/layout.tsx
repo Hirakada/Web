@@ -5,6 +5,7 @@ import Script from "next/script";
 
 import { bodyFont, headingFont } from "@hirakada/config";
 import { GlobalBackground } from "@hirakada/ui";
+import { FirebaseInitializer } from "@hirakada/firebase";
 
 import AppFooter from "@/components/AppFooter";
 import AppHeader from "@/components/AppHeader";
@@ -42,6 +43,7 @@ export default function RootLayout({
       className={`dark ${headingFont.variable} ${bodyFont.variable}`}
     >
       <body className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+        <FirebaseInitializer />
         <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

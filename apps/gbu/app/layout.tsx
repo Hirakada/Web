@@ -3,6 +3,7 @@ import "@hirakada/ui/styles/global.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
+import { FirebaseInitializer } from "@hirakada/firebase";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_GBU_SITE_URL!),
@@ -49,6 +50,7 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body className="relative overflow-x-hidden bg-background text-foreground">
+        <FirebaseInitializer />
         <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

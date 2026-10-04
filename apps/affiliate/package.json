@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hirakada/config": "file:../../packages/config",
+    "@hirakada/firebase": "workspace:*",
     "@hirakada/ui": "file:../../packages/ui",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",

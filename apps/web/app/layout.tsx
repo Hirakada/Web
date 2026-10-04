@@ -11,6 +11,7 @@ import {
   defaultMetadata,
   headingFont,
 } from "@hirakada/config";
+import { FirebaseInitializer } from "@hirakada/firebase";
 
 export const metadata: Metadata = defaultMetadata;
 
@@ -36,6 +37,7 @@ export default function RootLayout({
       `}
     >
       <body className="relative overflow-x-hidden bg-background text-foreground">
+        <FirebaseInitializer />
         <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
