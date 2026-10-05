@@ -9,6 +9,7 @@ import {
 
 import RelatedProjects from "@/components/Project/RelatedProjects";
 import ProjectCard from "@/components/Project/ProjectCard";
+import ProjectGallery from "@/components/Project/ProjectGallery";
 
 interface PageProps {
   params: Promise<{
@@ -47,6 +48,10 @@ export default async function Page({
     >
       <ProjectCard
         project={project}
+      />
+
+      <ProjectGallery
+        images={project.images}
       />
 
       <RelatedProjects

@@ -14,9 +14,10 @@ import {
   CardContent,
   CardContributor,
   CardFooter,
-  CardImage,
   CardTitle,
 } from "@hirakada/ui";
+
+import ProjectCover from "./ProjectCover";
 
 export interface RelatedProjectsProps {
   projects: ProjectCard[];
@@ -96,17 +97,11 @@ export default function RelatedProjects({
               prefetch={false}
             >
               <Card className="h-full">
-                {project.coverImage && (
-                  <CardImage
-                    src={project.coverImage}
-                    alt={project.title}
-                    width={800}
-                    height={450}
-                    loading="lazy"
-                    decoding="async"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                )}
+                <ProjectCover
+                  imageUrl={project.coverImage}
+                  title={project.title}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
 
                 <CardContent>
                   <BulletTag

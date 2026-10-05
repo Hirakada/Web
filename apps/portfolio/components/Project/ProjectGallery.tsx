@@ -9,7 +9,11 @@ export interface ProjectGalleryProps {
 export default function ProjectGallery({
   images,
 }: ProjectGalleryProps) {
-  if (images.length === 0) {
+  const galleryImages = images.filter(
+    (image) => image.isBanner !== true
+  );
+
+  if (galleryImages.length === 0) {
     return null;
   }
 
@@ -37,7 +41,7 @@ export default function ProjectGallery({
           gap-8
         "
       >
-        {images.map((image) => (
+        {galleryImages.map((image) => (
           <figure
             key={image.id}
             className="

@@ -52,6 +52,7 @@ export default function ProjectHero({
         rounded-t-3xl
         md:aspect-auto
         md:h-[clamp(320px,55vh,620px)]
+        bg-(--color-surface)
       "
     >
       {spotlight && (
@@ -94,6 +95,24 @@ export default function ProjectHero({
             object-cover
           "
         />
+      )}
+
+      {!project.coverImage && (
+        <div
+          role="img"
+          aria-label={`${project.title} cover image unavailable`}
+          className="
+            absolute
+            inset-0
+            flex
+            items-center
+            justify-center
+            text-sm
+            text-(--text-medium-emphasis)
+          "
+        >
+          Cover image unavailable
+        </div>
       )}
     </div>
   );

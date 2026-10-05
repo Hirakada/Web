@@ -22,6 +22,8 @@ type ProjectImageRow = {
   caption: string | null;
 
   order: number;
+
+  isBanner: boolean | null;
 };
 
 type ProjectCategoryRow = {
@@ -81,11 +83,17 @@ type ProjectBaseRow = {
 
   title: string;
 
+  description: string;
+
   status: ProjectStatus;
 
   is_featured: boolean;
 
   project_images: ProjectImageRow[] | null;
+
+  project_categories:
+    | ProjectCategoryRow[]
+    | null;
 
   project_attributes:
     | ProjectAttributeRow[]
@@ -97,15 +105,9 @@ type ProjectBaseRow = {
 };
 
 type ProjectRow = ProjectBaseRow & {
-  description: string;
-
   type: ProjectType;
 
   completion_date: string | null;
-
-  project_categories:
-    | ProjectCategoryRow[]
-    | null;
 
   long_description: string | null;
 
@@ -117,11 +119,27 @@ type ProjectRow = ProjectBaseRow & {
 const PROJECT_CARD_SELECT = `
   id,
   title,
+  description,
   status,
   is_featured,
 
   project_images(
-    image_url
+    id,
+    image_url,
+    alt_text,
+    caption,
+    order,
+    isBanner
+  ),
+
+  project_categories(
+    categories(
+      id,
+      name,
+      icon,
+      color,
+      description
+    )
   ),
 
   project_attributes(
@@ -158,7 +176,8 @@ const PROJECT_DETAIL_SELECT = `
     image_url,
     alt_text,
     caption,
-    order
+    order,
+    isBanner
   ),
 
   project_categories(
@@ -204,6 +223,11 @@ function mapImages(
 ): Project["images"] {
   return [...rows]
     .sort((a, b) => a.order - b.order)
+    .filter(
+      (image) =>
+        typeof image.image_url === "string" &&
+        image.image_url.trim().length > 0
+    )
     .map((image) => ({
       id: image.id,
 
@@ -218,6 +242,8 @@ function mapImages(
       }),
 
       order: image.order,
+
+      isBanner: image.isBanner,
     }));
 }
 
@@ -387,19 +413,28 @@ function mapProjectCard(
   const images = mapImages(
     project.project_images ?? []
   );
+  const bannerImage = images.find(
+    (image) => image.isBanner === true
+  );
 
   return {
     id: project.id,
 
     title: project.title,
 
+    description: project.description,
+
     status: project.status,
 
     isFeatured: project.is_featured,
 
-    ...(images[0] && {
-      coverImage: images[0].imageUrl,
+    ...(bannerImage && {
+      coverImage: bannerImage.imageUrl,
     }),
+
+    categories: mapCategories(
+      project.project_categories ?? []
+    ),
 
     attributes: mapAttributes(
       project.project_attributes ?? []
@@ -424,6 +459,9 @@ function mapProjectDetail(
 ): Project {
   const images = mapImages(
     project.project_images ?? []
+  );
+  const bannerImage = images.find(
+    (image) => image.isBanner === true
   );
 
   return {
@@ -457,8 +495,8 @@ function mapProjectDetail(
         project.completion_date,
     }),
 
-    ...(images[0] && {
-      coverImage: images[0].imageUrl,
+    ...(bannerImage && {
+      coverImage: bannerImage.imageUrl,
     }),
 
     images,
@@ -537,4 +575,3 @@ export async function getRelatedProjects(
     data as unknown as ProjectBaseRow[]
   ).map(mapProjectCard);
 }
-

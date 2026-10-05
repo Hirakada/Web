@@ -1,23 +1,8 @@
-import Link from "next/link";
+import type { ProjectCard } from "@hirakada/database";
 
-import { DOMAIN } from "@hirakada/config";
+import { AttributeTag } from "@hirakada/ui";
 
-import {
-  PROJECT_STATUS_META,
-  type ProjectCard,
-} from "@hirakada/database";
-
-import {
-  AttributeTag,
-  BulletTag,
-  Card,
-  CardAttribute,
-  CardContent,
-  CardContributor,
-  CardFooter,
-  CardImage,
-  CardTitle,
-} from "@hirakada/ui";
+import FeaturedProjectCarousel from "./FeaturedProjectCarousel";
 
 interface FeaturedProjectProps {
   projects: ProjectCard[];
@@ -26,9 +11,17 @@ interface FeaturedProjectProps {
 export default function FeaturedProject({
   projects,
 }: FeaturedProjectProps) {
-  const featuredProjects = projects.filter(
-    (project) => project.isFeatured
+  const eligibleProjects = projects.filter(
+    (project) =>
+      project.isFeatured === true &&
+      typeof project.coverImage === "string" &&
+      project.coverImage.trim().length > 0
   );
+
+  const featuredProjects =
+    eligibleProjects.length > 5
+      ? shuffleProjects(eligibleProjects).slice(0, 5)
+      : eligibleProjects;
 
   if (featuredProjects.length === 0) {
     return null;
@@ -97,93 +90,27 @@ export default function FeaturedProject({
         </AttributeTag>
       </div>
 
-      {/* Projects */}
-
-      <div
-        className="
-          mt-12
-          flex
-          w-full
-          gap-[clamp(1.5rem,3vw,2.5rem)]
-          overflow-x-auto
-          overscroll-x-contain
-          scrollbar-hide
-          snap-x
-          snap-mandatory
-          md:grid
-          md:grid-cols-2
-          md:overflow-visible
-          md:snap-none
-          lg:grid-cols-[repeat(3,minmax(280px,1fr))]
-        "
-      >
-        {featuredProjects.map((project) => {
-          const status =
-            PROJECT_STATUS_META[
-              project.status
-            ];
-
-          return (
-            <Link
-              key={project.id}
-              href={`${DOMAIN.portfolio}/${project.id}`}
-              className="
-                block
-                h-full
-                w-full
-                shrink-0
-                snap-start
-                rounded-3xl
-                focus-visible:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
-                md:w-auto
-                md:shrink
-              "
-              aria-label={`View ${project.title}`}
-              prefetch={false}
-            >
-              <Card className="h-full">
-                {project.coverImage && (
-                  <CardImage
-                    src={project.coverImage}
-                    alt={project.title}
-                    width={800}
-                    height={450}
-                  />
-                )}
-
-                <CardContent>
-                  <BulletTag
-                    variant={status.variant}
-                    animated={status.animated}
-                  >
-                    {project.status}
-                  </BulletTag>
-
-                  <CardTitle>
-                    {project.title}
-                  </CardTitle>
-
-                  <CardFooter>
-                    <CardAttribute
-                      attributes={
-                        project.attributes
-                      }
-                    />
-
-                    <CardContributor
-                      contributors={
-                        project.contributors
-                      }
-                    />
-                  </CardFooter>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+      <FeaturedProjectCarousel
+        projects={featuredProjects}
+      />
     </section>
   );
+}
+
+function shuffleProjects(
+  projects: readonly ProjectCard[]
+): ProjectCard[] {
+  const shuffled = [...projects];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(
+      Math.random() * (index + 1)
+    );
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex]!,
+      shuffled[index]!,
+    ];
+  }
+
+  return shuffled;
 }

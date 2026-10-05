@@ -13,7 +13,7 @@ export function getCachedRelatedProjects(
   return unstable_cache(
     (projectId: string) =>
       getRelatedProjects(supabase, projectId, 3),
-    ["related-projects", "v1"],
+    ["related-projects", "v2"],
     {
       tags: ["projects", `project:${id}`],
       revalidate: ONE_HOUR,

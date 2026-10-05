@@ -1,21 +1,7 @@
-import Link from "next/link";
-
-import { DOMAIN } from "@hirakada/config";
 import { getCachedProjectCards } from "@hirakada/cache";
-import { PROJECT_STATUS_META } from "@hirakada/database";
 
 import { createClient } from "@/lib/Supabase/server";
-
-import {
-  BulletTag,
-  Card,
-  CardAttribute,
-  CardContent,
-  CardContributor,
-  CardFooter,
-  CardImage,
-  CardTitle,
-} from "@hirakada/ui";
+import ProjectList from "@/components/Project/ProjectList";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -63,90 +49,7 @@ export default async function Page() {
         </p>
       </div>
 
-      {/* Projects Grid */}
-      <div
-        className="
-          mx-auto
-          mt-10
-          grid
-          w-full
-          max-w-(--container-width)
-          grid-cols-1
-          gap-6
-          sm:mt-12
-          sm:grid-cols-2
-          sm:gap-6
-          lg:grid-cols-3
-          lg:gap-8
-        "
-      >
-        {projects.map((project) => {
-          const status =
-            PROJECT_STATUS_META[project.status];
-
-          return (
-            <Link
-              key={project.id}
-              href={`${DOMAIN.portfolio}/${project.id}`}
-              className="
-                block
-                h-full
-                rounded-3xl
-                focus-visible:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
-                focus-visible:ring-offset-2
-                focus-visible:ring-offset-(--color-background)
-              "
-              aria-label={`View ${project.title}`}
-              prefetch={false}
-            >
-              <Card className="h-full">
-                {project.coverImage && (
-                  <CardImage
-                    src={project.coverImage}
-                    alt={project.title}
-                    width={800}
-                    height={450}
-                    loading="lazy"
-                    decoding="async"
-                    sizes="
-                      (max-width: 639px) 100vw,
-                      (max-width: 1023px) 50vw,
-                      33vw
-                    "
-                  />
-                )}
-
-                <CardContent>
-                  <BulletTag
-                    variant={status.variant}
-                    animated={status.animated}
-                  >
-                    {project.status}
-                  </BulletTag>
-
-                  <CardTitle>
-                    {project.title}
-                  </CardTitle>
-
-                  <CardFooter>
-                    <CardAttribute
-                      attributes={project.attributes}
-                    />
-
-                    <CardContributor
-                      contributors={
-                        project.contributors
-                      }
-                    />
-                  </CardFooter>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+      <ProjectList projects={projects} />
     </section>
   );
 }

@@ -11,11 +11,15 @@ export interface ProjectCard {
 
   title: string;
 
+  description: string;
+
   status: ProjectStatus;
 
   isFeatured: boolean;
 
   coverImage?: string;
+
+  categories: Category[];
 
   attributes: Pick<
     Attribute,
@@ -70,4 +74,6 @@ export interface ProjectImage {
   caption?: string;
 
   order: number;
+
+  isBanner: boolean | null;
 }
