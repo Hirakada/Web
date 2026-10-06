@@ -113,7 +113,7 @@ export default function FeaturedProjectCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured projects"
-      className="mx-auto mt-12 w-full max-w-5xl"
+      className="mt-12 w-full"
     >
       <div
         ref={trackRef}
@@ -173,7 +173,7 @@ export default function FeaturedProjectCarousel({
                 w-full
                 shrink-0
                 snap-start
-                px-1
+                px-[clamp(0.75rem,1.5vw,1.25rem)]
                 py-2
                 md:w-1/2
                 lg:w-1/3
@@ -196,9 +196,11 @@ export default function FeaturedProjectCarousel({
                   <CardImage
                     src={coverImage}
                     alt={project.title}
-                    width={1200}
-                    height={675}
-                    sizes="(max-width: 768px) 100vw, 80vw"
+                    width={800}
+                    height={450}
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
 
                   <CardContent>
