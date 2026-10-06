@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -32,23 +32,80 @@ export default function FeaturedProjectCarousel({
       project.isFeatured === true &&
       typeof project.coverImage === "string" &&
       project.coverImage.trim().length > 0
-  );
+  ).slice(0, 5);
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(1);
 
-  function goToSlide(index: number) {
+  useEffect(() => {
     const track = trackRef.current;
-    const slide = track?.children.item(index);
 
-    if (!track || !(slide instanceof HTMLElement)) {
+    if (!track) {
       return;
     }
 
+    const currentTrack = track;
+
+    function updateVisibleCount() {
+      const firstSlide = currentTrack.children.item(0);
+
+      if (!(firstSlide instanceof HTMLElement)) {
+        return;
+      }
+
+      const slideWidth =
+        firstSlide.getBoundingClientRect().width;
+
+      if (slideWidth > 0) {
+        setVisibleCount(
+          Math.max(
+            1,
+            Math.floor(currentTrack.clientWidth / slideWidth)
+          )
+        );
+      }
+    }
+
+    updateVisibleCount();
+
+    const observer = new ResizeObserver(updateVisibleCount);
+    observer.observe(currentTrack);
+
+    return () => observer.disconnect();
+  }, [slides.length]);
+
+  function goToSlide(index: number) {
+    const track = trackRef.current;
+
+    if (
+      !track ||
+      slides.length === 0
+    ) {
+      return;
+    }
+
+    const firstSlide = track.children.item(0);
+
+    if (!(firstSlide instanceof HTMLElement)) {
+      return;
+    }
+
+    const slideWidth =
+      firstSlide.getBoundingClientRect().width;
+    const maxStartIndex = Math.max(
+      0,
+      slides.length - visibleCount
+    );
+    const nextIndex = Math.min(
+      Math.max(index, 0),
+      maxStartIndex
+    );
+
     track.scrollTo({
-      left: slide.offsetLeft - track.offsetLeft,
+      left: nextIndex * slideWidth,
       behavior: "smooth",
     });
-    setActiveIndex(index);
+    setActiveIndex(nextIndex);
   }
 
   return (
@@ -62,11 +119,28 @@ export default function FeaturedProjectCarousel({
         ref={trackRef}
         onScroll={(event) => {
           const track = event.currentTarget;
-          const index = Math.round(
-            track.scrollLeft / track.clientWidth
+          const firstSlide = track.children.item(0);
+
+          if (
+            !(firstSlide instanceof HTMLElement) ||
+            firstSlide.getBoundingClientRect().width === 0
+          ) {
+            return;
+          }
+
+          const slideWidth =
+            firstSlide.getBoundingClientRect().width;
+          const maxStartIndex = Math.max(
+            0,
+            slides.length - visibleCount
           );
+          const index = Math.min(
+            Math.round(track.scrollLeft / slideWidth),
+            maxStartIndex
+          );
+
           setActiveIndex(
-            Math.min(index, slides.length - 1)
+            index
           );
         }}
         className="
@@ -95,7 +169,15 @@ export default function FeaturedProjectCarousel({
               role="group"
               aria-roledescription="slide"
               aria-label={`${index + 1} of ${slides.length}: ${project.title}`}
-              className="w-full shrink-0 snap-start px-1 py-2"
+              className="
+                w-full
+                shrink-0
+                snap-start
+                px-1
+                py-2
+                md:w-1/2
+                lg:w-1/3
+              "
             >
               <Link
                 href={`${DOMAIN.portfolio}/${project.id}`}
@@ -148,7 +230,7 @@ export default function FeaturedProjectCarousel({
         })}
       </div>
 
-      {slides.length > 1 && (
+      {slides.length > visibleCount && (
         <div className="mt-5 flex items-center justify-center gap-4">
           <button
             type="button"
@@ -180,13 +262,17 @@ export default function FeaturedProjectCarousel({
             aria-live="polite"
             className="min-w-16 text-center text-sm text-(--text-medium-emphasis)"
           >
-            {activeIndex + 1} / {slides.length}
+            {activeIndex + 1}–
+            {Math.min(slides.length, activeIndex + visibleCount)} /{" "}
+            {slides.length}
           </p>
 
           <button
             type="button"
             aria-label="Next featured project"
-            disabled={activeIndex >= slides.length - 1}
+            disabled={
+              activeIndex >= slides.length - visibleCount
+            }
             onClick={() => goToSlide(activeIndex + 1)}
             className="
               rounded-full
