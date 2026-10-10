@@ -62,6 +62,22 @@ export interface Project {
   contributors: Contributor[];
 
   images: ProjectImage[];
+
+  media: ProjectMedia[];
+}
+
+export interface ProjectMedia {
+  id: string;
+
+  mediaType: "image" | "video";
+
+  mediaUrl: string;
+
+  altText?: string;
+
+  caption?: string;
+
+  order: number;
 }
 
 export interface ProjectImage {

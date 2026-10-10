@@ -6,6 +6,7 @@ import type { Contributor } from "../types/contributor";
 import type {
   Project,
   ProjectCard,
+  ProjectMedia,
 } from "../types/project";
 import type {
   ProjectStatus,
@@ -24,6 +25,22 @@ type ProjectImageRow = {
   order: number;
 
   isBanner: boolean | null;
+};
+
+type ProjectMediaRow = {
+  id: string;
+
+  media_type: "image" | "video";
+
+  media_url: string;
+
+  alt_text: string | null;
+
+  caption: string | null;
+
+  order: number;
+
+  isBanner: boolean;
 };
 
 type ProjectCategoryRow = {
@@ -90,6 +107,8 @@ type ProjectBaseRow = {
   is_featured: boolean;
 
   project_images: ProjectImageRow[] | null;
+
+  project_media?: ProjectMediaRow[] | null;
 
   project_categories:
     | ProjectCategoryRow[]
@@ -180,6 +199,16 @@ const PROJECT_DETAIL_SELECT = `
     isBanner
   ),
 
+  project_media(
+    id,
+    media_type,
+    media_url,
+    alt_text,
+    caption,
+    order,
+    isBanner
+  ),
+
   project_categories(
     categories(
       id,
@@ -244,6 +273,33 @@ function mapImages(
       order: image.order,
 
       isBanner: image.isBanner,
+    }));
+}
+
+function mapMedia(
+  rows: ProjectMediaRow[] | null | undefined
+): ProjectMedia[] {
+  return [...(rows ?? [])]
+    .sort((a, b) => a.order - b.order)
+    .filter(
+      (media) =>
+        (media.media_type === "image" ||
+          media.media_type === "video") &&
+        typeof media.media_url === "string" &&
+        media.media_url.trim().length > 0 &&
+        media.isBanner !== true
+    )
+    .map((media) => ({
+      id: media.id,
+      mediaType: media.media_type,
+      mediaUrl: media.media_url,
+      ...(media.alt_text && {
+        altText: media.alt_text,
+      }),
+      ...(media.caption && {
+        caption: media.caption,
+      }),
+      order: media.order,
     }));
 }
 
@@ -500,6 +556,8 @@ function mapProjectDetail(
     }),
 
     images,
+
+    media: mapMedia(project.project_media),
 
     categories: mapCategories(
       project.project_categories ?? []

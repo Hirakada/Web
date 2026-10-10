@@ -4,6 +4,7 @@ export type {
   Project,
   ProjectCard,
   ProjectImage,
+  ProjectMedia,
 } from "./types/project";
 
 export {

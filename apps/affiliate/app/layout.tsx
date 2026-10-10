@@ -44,7 +44,7 @@ export default function RootLayout({
     >
       <body className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
         <FirebaseInitializer />
-        <Script id="google-analytics" strategy="beforeInteractive">
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -54,7 +54,7 @@ export default function RootLayout({
         </Script>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
 
         <GlobalBackground />

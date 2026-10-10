@@ -11,6 +11,7 @@ import {
 
 import ProjectActions from "./ProjectActions";
 import ProjectContributors from "./ProjectContributors";
+import ProjectGallery from "./ProjectGallery";
 
 export interface ProjectContentProps {
   project: Project;
@@ -126,6 +127,11 @@ export default function ProjectContent({
           </div>
         </div>
       )}
+
+      <ProjectGallery
+        title={project.title}
+        media={project.media}
+      />
 
       {project.contributors.length > 0 && (
         <ProjectContributors
