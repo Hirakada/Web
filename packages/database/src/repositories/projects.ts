@@ -13,20 +13,6 @@ import type {
   ProjectType,
 } from "../types/enums";
 
-type ProjectImageRow = {
-  id: string;
-
-  image_url: string;
-
-  alt_text: string | null;
-
-  caption: string | null;
-
-  order: number;
-
-  isBanner: boolean | null;
-};
-
 type ProjectMediaRow = {
   id: string;
 
@@ -40,7 +26,7 @@ type ProjectMediaRow = {
 
   order: number;
 
-  isBanner: boolean;
+  isBanner: boolean | null;
 };
 
 type ProjectCategoryRow = {
@@ -106,9 +92,7 @@ type ProjectBaseRow = {
 
   is_featured: boolean;
 
-  project_images: ProjectImageRow[] | null;
-
-  project_media?: ProjectMediaRow[] | null;
+  project_media: ProjectMediaRow[] | null;
 
   project_categories:
     | ProjectCategoryRow[]
@@ -142,9 +126,10 @@ const PROJECT_CARD_SELECT = `
   status,
   is_featured,
 
-  project_images(
+  project_media(
     id,
-    image_url,
+    media_type,
+    media_url,
     alt_text,
     caption,
     order,
@@ -189,15 +174,6 @@ const PROJECT_DETAIL_SELECT = `
   type,
   is_featured,
   completion_date,
-
-  project_images(
-    id,
-    image_url,
-    alt_text,
-    caption,
-    order,
-    isBanner
-  ),
 
   project_media(
     id,
@@ -248,19 +224,20 @@ const PROJECT_DETAIL_SELECT = `
 `;
 
 function mapImages(
-  rows: ProjectImageRow[]
+  rows: ProjectMediaRow[]
 ): Project["images"] {
   return [...rows]
     .sort((a, b) => a.order - b.order)
     .filter(
       (image) =>
-        typeof image.image_url === "string" &&
-        image.image_url.trim().length > 0
+        image.media_type === "image" &&
+        typeof image.media_url === "string" &&
+        image.media_url.trim().length > 0
     )
     .map((image) => ({
       id: image.id,
 
-      imageUrl: image.image_url,
+      imageUrl: image.media_url,
 
       ...(image.alt_text && {
         altText: image.alt_text,
@@ -467,7 +444,7 @@ function mapProjectCard(
   project: ProjectBaseRow
 ): ProjectCard {
   const images = mapImages(
-    project.project_images ?? []
+    project.project_media ?? []
   );
   const bannerImage = images.find(
     (image) => image.isBanner === true
@@ -514,7 +491,7 @@ function mapProjectDetail(
   project: ProjectRow
 ): Project {
   const images = mapImages(
-    project.project_images ?? []
+    project.project_media ?? []
   );
   const bannerImage = images.find(
     (image) => image.isBanner === true

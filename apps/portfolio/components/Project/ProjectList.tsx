@@ -195,7 +195,7 @@ export default function ProjectList({
             lg:gap-8
           "
         >
-          {visibleProjects.map((project) => {
+          {visibleProjects.map((project, index) => {
             const status =
               PROJECT_STATUS_META[project.status];
 
@@ -220,6 +220,7 @@ export default function ProjectList({
                   <ProjectCover
                     imageUrl={project.coverImage}
                     title={project.title}
+                    eager={index === 0}
                     sizes="
                       (max-width: 767px) 100vw,
                       (max-width: 1023px) 50vw,

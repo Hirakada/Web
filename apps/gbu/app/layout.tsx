@@ -51,7 +51,7 @@ export default function RootLayout({
     <html lang="id" className="dark">
       <body className="relative overflow-x-hidden bg-background text-foreground">
         <FirebaseInitializer />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -61,15 +61,14 @@ export default function RootLayout({
         </Script>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-S8MLFTKJQ3"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
 
         {/* Google AdSense — load once */}
-        <Script
+        <script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GBU_ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
 
         {children}

@@ -4,12 +4,14 @@ interface ProjectCoverProps {
   imageUrl: string | undefined;
   title: string;
   sizes?: string;
+  eager?: boolean;
 }
 
 export default function ProjectCover({
   imageUrl,
   title,
   sizes,
+  eager = false,
 }: ProjectCoverProps) {
   if (!imageUrl) {
     return (
@@ -38,7 +40,7 @@ export default function ProjectCover({
       alt={title}
       width={800}
       height={450}
-      loading="lazy"
+      loading={eager ? "eager" : "lazy"}
       decoding="async"
       sizes={sizes}
     />

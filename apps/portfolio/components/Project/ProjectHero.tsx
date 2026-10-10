@@ -85,7 +85,7 @@ export default function ProjectHero({
           alt={project.title}
           width={1600}
           height={900}
-          priority
+          loading="eager"
           sizes="(max-width: 768px) 100vw, 60vw"
           className="
             relative
