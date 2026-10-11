@@ -13,6 +13,46 @@ import type {
   ProjectType,
 } from "../types/enums";
 
+const PROJECT_MEDIA_BUCKET_ENV = "HIRAKADA_SUPABASE_STORAGE_BUCKET";
+
+function resolveProjectMediaUrl(
+  supabase: SupabaseClient,
+  mediaUrl: string | null | undefined
+): string {
+  const value = mediaUrl?.trim();
+
+  if (!value) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  const bucketName =
+    process.env.HIRAKADA_SUPABASE_STORAGE_BUCKET?.trim();
+
+  if (!bucketName) {
+    throw new Error(
+      `Cannot resolve relative project media paths: ${PROJECT_MEDIA_BUCKET_ENV} is not configured.`
+    );
+  }
+
+  const { data } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(value.replace(/[?#]/g, (character) =>
+      character === "?" ? "%3F" : "%23"
+    ));
+
+  if (!data.publicUrl) {
+    throw new Error(
+      `Supabase did not return a public URL for project media bucket "${bucketName}".`
+    );
+  }
+
+  return data.publicUrl.replace(/%25(3F|23)/gi, "%$1");
+}
+
 type ProjectMediaRow = {
   id: string;
 
@@ -224,6 +264,7 @@ const PROJECT_DETAIL_SELECT = `
 `;
 
 function mapImages(
+  supabase: SupabaseClient,
   rows: ProjectMediaRow[]
 ): Project["images"] {
   return [...rows]
@@ -237,7 +278,10 @@ function mapImages(
     .map((image) => ({
       id: image.id,
 
-      imageUrl: image.media_url,
+      imageUrl: resolveProjectMediaUrl(
+        supabase,
+        image.media_url
+      ),
 
       ...(image.alt_text && {
         altText: image.alt_text,
@@ -254,6 +298,7 @@ function mapImages(
 }
 
 function mapMedia(
+  supabase: SupabaseClient,
   rows: ProjectMediaRow[] | null | undefined
 ): ProjectMedia[] {
   return [...(rows ?? [])]
@@ -269,7 +314,10 @@ function mapMedia(
     .map((media) => ({
       id: media.id,
       mediaType: media.media_type,
-      mediaUrl: media.media_url,
+      mediaUrl: resolveProjectMediaUrl(
+        supabase,
+        media.media_url
+      ),
       ...(media.alt_text && {
         altText: media.alt_text,
       }),
@@ -441,9 +489,11 @@ function mapContributors(
 }
 
 function mapProjectCard(
+  supabase: SupabaseClient,
   project: ProjectBaseRow
 ): ProjectCard {
   const images = mapImages(
+    supabase,
     project.project_media ?? []
   );
   const bannerImage = images.find(
@@ -488,9 +538,11 @@ function mapProjectCard(
 }
 
 function mapProjectDetail(
+  supabase: SupabaseClient,
   project: ProjectRow
 ): Project {
   const images = mapImages(
+    supabase,
     project.project_media ?? []
   );
   const bannerImage = images.find(
@@ -534,7 +586,10 @@ function mapProjectDetail(
 
     images,
 
-    media: mapMedia(project.project_media),
+    media: mapMedia(
+      supabase,
+      project.project_media
+    ),
 
     categories: mapCategories(
       project.project_categories ?? []
@@ -564,7 +619,9 @@ export async function getProjectCards(
 
   return (
     data as unknown as ProjectBaseRow[]
-  ).map(mapProjectCard);
+  ).map((project) =>
+    mapProjectCard(supabase, project)
+  );
 }
 
 export async function getProjectById(
@@ -586,6 +643,7 @@ export async function getProjectById(
   }
 
   return mapProjectDetail(
+    supabase,
     data as unknown as ProjectRow
   );
 }
@@ -608,5 +666,7 @@ export async function getRelatedProjects(
 
   return (
     data as unknown as ProjectBaseRow[]
-  ).map(mapProjectCard);
+  ).map((project) =>
+    mapProjectCard(supabase, project)
+  );
 }
