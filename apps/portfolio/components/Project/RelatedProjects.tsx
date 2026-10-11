@@ -103,7 +103,7 @@ export default function RelatedProjects({
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
 
-                <CardContent>
+                <CardContent className="justify-start">
                   <BulletTag
                     variant={status.variant}
                     animated={status.animated}
@@ -111,25 +111,28 @@ export default function RelatedProjects({
                     {project.status}
                   </BulletTag>
 
-                  <CardTitle>
+                  <CardTitle className="min-h-[2.5em] line-clamp-2">
                     {project.title}
                   </CardTitle>
 
-                  {project.categories.length > 0 && (
-                    <div
-                      aria-label="Project categories"
-                      className="mt-3 flex flex-wrap gap-2"
-                    >
-                      {project.categories.map((category) => (
-                        <span
-                          key={category}
-                          className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
-                        >
-                          {category}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <div
+                    aria-label={
+                      project.categories.length > 0
+                        ? "Project categories"
+                        : undefined
+                    }
+                    aria-hidden={project.categories.length === 0}
+                    className="mt-3 flex min-h-14 content-start flex-wrap gap-2"
+                  >
+                    {project.categories.map((category) => (
+                      <span
+                        key={category}
+                        className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
 
                   {project.completionDate && (
                     <p className="mt-3 text-sm text-(--text-medium-emphasis)">
@@ -143,7 +146,7 @@ export default function RelatedProjects({
                     </p>
                   )}
 
-                  <CardFooter>
+                  <CardFooter className="mt-auto">
                     <CardAttribute
                       attributes={project.attributes}
                     />

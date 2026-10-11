@@ -22,8 +22,11 @@ export default function ProjectCover({
           flex
           h-50
           w-full
+          shrink-0
           items-center
           justify-center
+          border-b
+          border-(--color-border)
           bg-(--color-surface)
           text-sm
           text-(--text-medium-emphasis)

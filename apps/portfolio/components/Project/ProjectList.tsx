@@ -238,7 +238,7 @@ export default function ProjectList({
                     "
                   />
 
-                  <CardContent>
+                  <CardContent className="justify-start">
                     <BulletTag
                       variant={status.variant}
                       animated={status.animated}
@@ -246,27 +246,32 @@ export default function ProjectList({
                       {project.status}
                     </BulletTag>
 
-                    <CardTitle>
+                    <CardTitle className="min-h-[2.5em] line-clamp-2">
                       {project.title}
                     </CardTitle>
 
-                    {projectCategories.length > 0 && (
-                      <div
-                        aria-label="Project categories"
-                        className="mt-3 flex flex-wrap gap-2"
-                      >
-                        {projectCategories.map((category) => (
-                          <span
-                            key={category}
-                            className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
-                          >
-                            {category}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    <div
+                      aria-label={
+                        projectCategories.length > 0
+                          ? "Project categories"
+                          : undefined
+                      }
+                      aria-hidden={
+                        projectCategories.length === 0
+                      }
+                      className="mt-3 flex min-h-14 content-start flex-wrap gap-2"
+                    >
+                      {projectCategories.map((category) => (
+                        <span
+                          key={category}
+                          className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
 
-                    <CardFooter>
+                    <CardFooter className="mt-auto">
                       <CardAttribute
                         attributes={project.attributes}
                       />

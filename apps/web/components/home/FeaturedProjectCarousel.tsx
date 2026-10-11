@@ -27,24 +27,12 @@ interface FeaturedProjectCarouselProps {
 export default function FeaturedProjectCarousel({
   projects,
 }: FeaturedProjectCarouselProps) {
-  const slides = projects.filter(
-    (project) =>
-      project.isFeatured === true &&
-      typeof project.coverImage === "string" &&
-      project.coverImage.trim().length > 0
-  ).slice(0, 5);
+  const slides = projects
+    .filter((project) => project.isFeatured === true)
+    .slice(0, 5);
   const trackRef = useRef<HTMLDivElement>(null);
-  const scrollbarRef = useRef<HTMLDivElement>(null);
-  const dragStartRef = useRef<{
-    pointerX: number;
-    scrollLeft: number;
-  } | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(1);
-  const [scrollbarMetrics, setScrollbarMetrics] = useState({
-    thumbWidth: 100,
-    thumbLeft: 0,
-  });
 
   useEffect(() => {
     const track = trackRef.current;
@@ -56,8 +44,6 @@ export default function FeaturedProjectCarousel({
     const currentTrack = track;
 
     function updateCarouselPosition() {
-      const maxScrollLeft =
-        currentTrack.scrollWidth - currentTrack.clientWidth;
       const firstSlide = currentTrack.children.item(0);
       const slideWidth =
         firstSlide instanceof HTMLElement
@@ -74,19 +60,6 @@ export default function FeaturedProjectCarousel({
         0,
         slides.length - currentVisibleCount
       );
-      const thumbWidth =
-        currentTrack.scrollWidth > 0
-          ? (currentTrack.clientWidth / currentTrack.scrollWidth) * 100
-          : 100;
-
-      setScrollbarMetrics({
-        thumbWidth,
-        thumbLeft:
-          maxScrollLeft > 0
-            ? (currentTrack.scrollLeft / maxScrollLeft) *
-              (100 - thumbWidth)
-            : 0,
-      });
 
       setVisibleCount(currentVisibleCount);
 
@@ -148,83 +121,6 @@ export default function FeaturedProjectCarousel({
     setActiveIndex(nextIndex);
   }
 
-  function handleScrollbarPointerDown(
-    event: React.PointerEvent<HTMLDivElement>
-  ) {
-    const track = trackRef.current;
-    const scrollbar = scrollbarRef.current;
-
-    if (!track || !scrollbar) {
-      return;
-    }
-
-    scrollbar.setPointerCapture(event.pointerId);
-    dragStartRef.current = {
-      pointerX: event.clientX,
-      scrollLeft: track.scrollLeft,
-    };
-
-    if (event.target === scrollbar) {
-      const bounds = scrollbar.getBoundingClientRect();
-      const clickRatio = Math.min(
-        Math.max((event.clientX - bounds.left) / bounds.width, 0),
-        1
-      );
-      track.scrollTo({
-        left:
-          clickRatio *
-          (track.scrollWidth - track.clientWidth),
-        behavior: "smooth",
-      });
-      dragStartRef.current = null;
-    }
-  }
-
-  function handleScrollbarPointerMove(
-    event: React.PointerEvent<HTMLDivElement>
-  ) {
-    const track = trackRef.current;
-    const scrollbar = scrollbarRef.current;
-    const dragStart = dragStartRef.current;
-
-    if (!track || !scrollbar || !dragStart) {
-      return;
-    }
-
-    const scrollbarWidth = scrollbar.clientWidth;
-    const thumbWidth =
-      (scrollbarMetrics.thumbWidth / 100) * scrollbarWidth;
-    const thumbTravel = scrollbarWidth - thumbWidth;
-
-    if (thumbTravel <= 0) {
-      return;
-    }
-
-    const scrollTravel = track.scrollWidth - track.clientWidth;
-    track.scrollLeft =
-      dragStart.scrollLeft +
-      ((event.clientX - dragStart.pointerX) / thumbTravel) *
-        scrollTravel;
-  }
-
-  function handleScrollbarKeyDown(
-    event: React.KeyboardEvent<HTMLDivElement>
-  ) {
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      goToSlide(activeIndex - 1);
-    } else if (event.key === "ArrowRight") {
-      event.preventDefault();
-      goToSlide(activeIndex + 1);
-    } else if (event.key === "Home") {
-      event.preventDefault();
-      goToSlide(0);
-    } else if (event.key === "End") {
-      event.preventDefault();
-      goToSlide(slides.length - visibleCount);
-    }
-  }
-
   return (
     <div
       role="region"
@@ -240,22 +136,12 @@ export default function FeaturedProjectCarousel({
           w-full
           snap-x
           snap-mandatory
-          overflow-x-auto
-          overscroll-x-contain
-          scrollbar-hide
-          [scrollbar-width:none]
-          [&::-webkit-scrollbar]:hidden
+          overflow-hidden
         "
-        style={{ scrollbarWidth: "none" }}
       >
         {slides.map((project, index) => {
           const status =
             PROJECT_STATUS_META[project.status];
-          const coverImage = project.coverImage;
-
-          if (!coverImage) {
-            return null;
-          }
 
           return (
             <div
@@ -287,17 +173,27 @@ export default function FeaturedProjectCarousel({
                 prefetch={false}
               >
                 <Card className="h-full">
-                  <CardImage
-                    src={coverImage}
-                    alt={project.title}
-                    width={800}
-                    height={450}
-                    loading="lazy"
-                    decoding="async"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
+                  {project.coverImage ? (
+                    <CardImage
+                      src={project.coverImage}
+                      alt={project.title}
+                      width={800}
+                      height={450}
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div
+                      role="img"
+                      aria-label={`${project.title} preview unavailable`}
+                      className="flex h-50 w-full shrink-0 items-center justify-center border-b border-(--color-border) bg-(--color-surface) text-sm text-(--text-medium-emphasis)"
+                    >
+                      Preview unavailable
+                    </div>
+                  )}
 
-                  <CardContent>
+                  <CardContent className="justify-start">
                     <BulletTag
                       variant={status.variant}
                       animated={status.animated}
@@ -305,11 +201,30 @@ export default function FeaturedProjectCarousel({
                       {project.status}
                     </BulletTag>
 
-                    <CardTitle>
+                    <CardTitle className="min-h-[2.5em] line-clamp-2">
                       {project.title}
                     </CardTitle>
 
-                    <CardFooter>
+                    <div
+                      aria-label={
+                        project.categories.length > 0
+                          ? "Project categories"
+                          : undefined
+                      }
+                      aria-hidden={project.categories.length === 0}
+                      className="mt-3 flex min-h-14 content-start flex-wrap gap-2"
+                    >
+                      {project.categories.map((category) => (
+                        <span
+                          key={category}
+                          className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
+
+                    <CardFooter className="mt-auto">
                       <CardAttribute
                         attributes={project.attributes}
                       />
@@ -327,25 +242,41 @@ export default function FeaturedProjectCarousel({
       </div>
 
       {slides.length > visibleCount && (
-        <div className="mx-auto mt-5 flex w-full max-w-xl items-center justify-center gap-4">
+        <div className="mx-auto mt-5 flex w-full items-center justify-center gap-5">
           <button
             type="button"
             aria-label="Previous featured project"
             disabled={activeIndex === 0}
             onClick={() => goToSlide(activeIndex - 1)}
             className="
+              inline-flex
+              size-12
+              items-center
+              justify-center
               rounded-full
               border
               border-(--color-border)
-              p-3
+              bg-(--color-surface)
               text-(--text-high-emphasis)
-              transition
-              hover:bg-(--color-surface)
+              shadow-sm
+              transition-[transform,background-color,border-color,box-shadow]
+              duration-300
+              ease-out
+              hover:-translate-y-0.5
+              hover:border-[rgba(var(--color-primary-rgb),0.4)]
+              hover:bg-[rgba(var(--color-primary-rgb),0.08)]
+              hover:shadow-md
+              active:translate-y-0
+              active:scale-95
               disabled:cursor-not-allowed
               disabled:opacity-40
+              disabled:hover:translate-y-0
+              disabled:hover:shadow-sm
               focus-visible:outline-none
               focus-visible:ring-2
               focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+              motion-reduce:transform-none
+              motion-reduce:transition-none
             "
           >
             <ChevronLeft
@@ -354,31 +285,40 @@ export default function FeaturedProjectCarousel({
             />
           </button>
 
-          <p
-            aria-live="polite"
-            className="min-w-12 text-center text-sm text-(--text-medium-emphasis)"
-          >
-            {activeIndex + 1}/{slides.length}
-          </p>
-
           <button
             type="button"
             aria-label="Next featured project"
             disabled={activeIndex >= slides.length - visibleCount}
             onClick={() => goToSlide(activeIndex + 1)}
             className="
+              inline-flex
+              size-12
+              items-center
+              justify-center
               rounded-full
               border
               border-(--color-border)
-              p-3
+              bg-(--color-surface)
               text-(--text-high-emphasis)
-              transition
-              hover:bg-(--color-surface)
+              shadow-sm
+              transition-[transform,background-color,border-color,box-shadow]
+              duration-300
+              ease-out
+              hover:-translate-y-0.5
+              hover:border-[rgba(var(--color-primary-rgb),0.4)]
+              hover:bg-[rgba(var(--color-primary-rgb),0.08)]
+              hover:shadow-md
+              active:translate-y-0
+              active:scale-95
               disabled:cursor-not-allowed
               disabled:opacity-40
+              disabled:hover:translate-y-0
+              disabled:hover:shadow-sm
               focus-visible:outline-none
               focus-visible:ring-2
               focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+              motion-reduce:transform-none
+              motion-reduce:transition-none
             "
           >
             <ChevronRight
@@ -386,61 +326,6 @@ export default function FeaturedProjectCarousel({
               size={20}
             />
           </button>
-        </div>
-      )}
-
-      {slides.length > visibleCount && (
-        <div
-          ref={scrollbarRef}
-          role="scrollbar"
-          aria-label="Featured project position"
-          aria-controls="featured-project-track"
-          aria-orientation="horizontal"
-          aria-valuemin={1}
-          aria-valuemax={slides.length}
-          aria-valuenow={activeIndex + 1}
-          tabIndex={0}
-          onKeyDown={handleScrollbarKeyDown}
-          onPointerDown={handleScrollbarPointerDown}
-          onPointerMove={handleScrollbarPointerMove}
-          onPointerUp={(event) => {
-            dragStartRef.current = null;
-            if (scrollbarRef.current?.hasPointerCapture(event.pointerId)) {
-              scrollbarRef.current.releasePointerCapture(event.pointerId);
-            }
-          }}
-          onPointerCancel={() => {
-            dragStartRef.current = null;
-          }}
-          className="
-            mx-auto
-            mt-4
-            h-2
-            w-full
-            max-w-xl
-            cursor-pointer
-            touch-none
-            rounded-full
-            bg-[rgba(var(--color-secondary-rgb),0.12)]
-            outline-none
-            focus-visible:ring-2
-            focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
-          "
-        >
-          <div
-            aria-hidden="true"
-            className="
-              h-full
-              rounded-full
-              bg-[rgba(var(--color-primary-rgb),0.7)]
-              transition-[margin-left]
-              duration-150
-            "
-            style={{
-              width: `${scrollbarMetrics.thumbWidth}%`,
-              marginLeft: `${scrollbarMetrics.thumbLeft}%`,
-            }}
-          />
         </div>
       )}
     </div>

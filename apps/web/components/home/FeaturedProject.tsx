@@ -12,16 +12,13 @@ export default function FeaturedProject({
   projects,
 }: FeaturedProjectProps) {
   const eligibleProjects = projects.filter(
-    (project) =>
-      project.isFeatured === true &&
-      typeof project.coverImage === "string" &&
-      project.coverImage.trim().length > 0
+    (project) => project.isFeatured === true
   );
 
-  const featuredProjects =
-    eligibleProjects.length > 5
-      ? shuffleProjects(eligibleProjects).slice(0, 5)
-      : eligibleProjects;
+  const featuredProjects = shuffleProjects(eligibleProjects).slice(
+    0,
+    5
+  );
 
   if (featuredProjects.length === 0) {
     return null;
