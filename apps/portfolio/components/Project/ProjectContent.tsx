@@ -75,6 +75,28 @@ export default function ProjectContent({
           </BulletTag>
         </div>
 
+        {project.categories.length > 0 && (
+          <ul
+            aria-label="Project categories"
+            className="flex flex-wrap justify-center gap-2"
+          >
+            {Array.from(
+              new Set(
+                project.categories
+                  .map((category) => category.name.trim())
+                  .filter(Boolean)
+              )
+            ).map((category) => (
+              <li
+                key={category}
+                className="rounded-full border border-(--color-border) px-3 py-1 text-sm text-(--text-medium-emphasis)"
+              >
+                {category}
+              </li>
+            ))}
+          </ul>
+        )}
+
         <h1 className="text-wrap">
           {project.title}
         </h1>

@@ -30,33 +30,29 @@ export default function ProjectList({
   projects,
 }: ProjectListProps) {
   const [search, setSearch] = useState("");
-  const [categoryId, setCategoryId] = useState("all");
+  const [categoryName, setCategoryName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const categories = useMemo(() => {
-    const categoryMap = new Map(
-      projects.flatMap((project) =>
-        project.categories.map((category) => [
-          category.id,
-          category,
-        ] as const)
+    return Array.from(
+      new Set(
+        projects.flatMap((project) =>
+          getProjectCategoryNames(project.categories)
+        )
       )
-    );
-
-    return Array.from(categoryMap.values()).sort(
-      (a, b) => a.name.localeCompare(b.name)
-    );
+    ).sort((a, b) => a.localeCompare(b));
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
 
     return projects.filter((project) => {
+      const projectCategories = getProjectCategoryNames(
+        project.categories
+      );
       const matchesCategory =
-        categoryId === "all" ||
-        project.categories.some(
-          (category) => category.id === categoryId
-        );
+        !categoryName ||
+        projectCategories.includes(categoryName);
 
       if (!matchesCategory) {
         return false;
@@ -69,9 +65,7 @@ export default function ProjectList({
       const searchableContent = [
         project.title,
         project.description,
-        ...project.categories.map(
-          (category) => category.name
-        ),
+        ...projectCategories,
         ...project.attributes.map(
           (attribute) => attribute.name
         ),
@@ -81,7 +75,7 @@ export default function ProjectList({
 
       return searchableContent.includes(query);
     });
-  }, [categoryId, projects, search]);
+  }, [categoryName, projects, search]);
 
   const totalPages = Math.ceil(
     filteredProjects.length / PROJECTS_PER_PAGE
@@ -98,7 +92,7 @@ export default function ProjectList({
   }
 
   function updateCategory(value: string) {
-    setCategoryId(value);
+    setCategoryName(value);
     setCurrentPage(1);
   }
 
@@ -153,7 +147,7 @@ export default function ProjectList({
           </label>
           <select
             id="project-category"
-            value={categoryId}
+            value={categoryName}
             onChange={(event) =>
               updateCategory(event.target.value)
             }
@@ -170,13 +164,13 @@ export default function ProjectList({
               focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
             "
           >
-            <option value="all">All categories</option>
+            <option value="">All categories</option>
             {categories.map((category) => (
               <option
-                key={category.id}
-                value={category.id}
+                key={category}
+                value={category}
               >
-                {category.name}
+                {category}
               </option>
             ))}
           </select>
@@ -198,6 +192,8 @@ export default function ProjectList({
           {visibleProjects.map((project, index) => {
             const status =
               PROJECT_STATUS_META[project.status];
+            const projectCategories =
+              getProjectCategoryNames(project.categories);
 
             return (
               <Link
@@ -240,6 +236,22 @@ export default function ProjectList({
                       {project.title}
                     </CardTitle>
 
+                    {projectCategories.length > 0 && (
+                      <div
+                        aria-label="Project categories"
+                        className="mt-3 flex flex-wrap gap-2"
+                      >
+                        {projectCategories.map((category) => (
+                          <span
+                            key={category}
+                            className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
+                          >
+                            {category}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
                     <CardFooter>
                       <CardAttribute
                         attributes={project.attributes}
@@ -269,12 +281,12 @@ export default function ProjectList({
           role="status"
         >
           <p>No projects found.</p>
-          {(search || categoryId !== "all") && (
+          {(search || categoryName) && (
             <button
               type="button"
               onClick={() => {
                 updateSearch("");
-                updateCategory("all");
+                updateCategory("");
               }}
               className="
                 mt-4
@@ -338,5 +350,17 @@ export default function ProjectList({
         </nav>
       )}
     </div>
+  );
+}
+
+function getProjectCategoryNames(
+  categories: ProjectCardData["categories"]
+): string[] {
+  return Array.from(
+    new Set(
+      categories
+        .map((category) => category.name.trim())
+        .filter(Boolean)
+    )
   );
 }

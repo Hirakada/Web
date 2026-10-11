@@ -14,6 +14,96 @@ export interface ProjectGalleryProps {
   media: ProjectMedia[];
 }
 
+interface PageScrollSnapshot {
+  scrollY: number;
+  body: {
+    overflow: string;
+    position: string;
+    top: string;
+    left: string;
+    right: string;
+    width: string;
+    paddingRight: string;
+  };
+  htmlOverflow: string;
+}
+
+let pageScrollLockCount = 0;
+let pageScrollSnapshot: PageScrollSnapshot | null = null;
+
+function acquirePageScrollLock(): () => void {
+  if (pageScrollLockCount === 0) {
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    const currentPaddingRight = Number.parseFloat(
+      window.getComputedStyle(body).paddingRight
+    );
+
+    pageScrollSnapshot = {
+      scrollY,
+      body: {
+        overflow: body.style.overflow,
+        position: body.style.position,
+        top: body.style.top,
+        left: body.style.left,
+        right: body.style.right,
+        width: body.style.width,
+        paddingRight: body.style.paddingRight,
+      },
+      htmlOverflow: document.documentElement.style.overflow,
+    };
+
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${
+        (Number.isFinite(currentPaddingRight)
+          ? currentPaddingRight
+          : 0) + scrollbarWidth
+      }px`;
+    }
+
+    document.documentElement.style.overflow = "hidden";
+  }
+
+  pageScrollLockCount += 1;
+  let released = false;
+
+  return () => {
+    if (released) {
+      return;
+    }
+
+    released = true;
+    pageScrollLockCount = Math.max(0, pageScrollLockCount - 1);
+
+    if (pageScrollLockCount !== 0 || !pageScrollSnapshot) {
+      return;
+    }
+
+    const snapshot = pageScrollSnapshot;
+    const body = document.body;
+    body.style.overflow = snapshot.body.overflow;
+    body.style.position = snapshot.body.position;
+    body.style.top = snapshot.body.top;
+    body.style.left = snapshot.body.left;
+    body.style.right = snapshot.body.right;
+    body.style.width = snapshot.body.width;
+    body.style.paddingRight = snapshot.body.paddingRight;
+    document.documentElement.style.overflow =
+      snapshot.htmlOverflow;
+    pageScrollSnapshot = null;
+    window.scrollTo(0, snapshot.scrollY);
+  };
+}
+
 export default function ProjectGallery({
   title,
   media,
@@ -21,14 +111,16 @@ export default function ProjectGallery({
   const reduceMotion = useReducedMotion();
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   const triggerRef = useRef<HTMLElement | null>(null);
+  const [hoveredMediaId, setHoveredMediaId] = useState<string | null>(
+    null
+  );
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const isViewerOpen = selectedIndex !== null;
 
-  const stopHoverPreview = useCallback((idToStop?: string) => {
-    const idsToPause = idToStop
-      ? [idToStop]
-      : Object.keys(videoRefs.current);
+  const stopHoverPreview = useCallback(() => {
+    setHoveredMediaId(null);
 
-    idsToPause.forEach((mediaId) => {
+    Object.keys(videoRefs.current).forEach((mediaId) => {
       const video = videoRefs.current[mediaId];
 
       if (!video) {
@@ -53,6 +145,7 @@ export default function ProjectGallery({
         return;
       }
 
+      setHoveredMediaId(mediaId);
       Object.entries(videoRefs.current).forEach(([id, currentVideo]) => {
         if (id === mediaId || !currentVideo) {
           return;
@@ -76,6 +169,9 @@ export default function ProjectGallery({
         return;
       }
 
+      setHoveredMediaId((currentId) =>
+        currentId === mediaId ? null : currentId
+      );
       const video = videoRefs.current[mediaId];
 
       if (!video) {
@@ -87,6 +183,21 @@ export default function ProjectGallery({
     },
     []
   );
+
+  const handleImagePointerEnter = useCallback(
+    (mediaId: string, pointerType: string) => {
+      if (pointerType === "mouse" && !reduceMotion) {
+        setHoveredMediaId(mediaId);
+      }
+    },
+    [reduceMotion]
+  );
+
+  const handleImagePointerLeave = useCallback((mediaId: string) => {
+    setHoveredMediaId((currentId) =>
+      currentId === mediaId ? null : currentId
+    );
+  }, []);
 
   const openMediaViewer = useCallback(
     (index: number, trigger: HTMLElement | null) => {
@@ -138,7 +249,15 @@ export default function ProjectGallery({
   }, [media.length, stopHoverPreview]);
 
   useEffect(() => {
-    if (selectedIndex === null) {
+    if (!isViewerOpen) {
+      return;
+    }
+
+    return acquirePageScrollLock();
+  }, [isViewerOpen]);
+
+  useEffect(() => {
+    if (!isViewerOpen) {
       return;
     }
 
@@ -157,16 +276,19 @@ export default function ProjectGallery({
       }
     };
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", handleKeydown);
 
     return () => {
       document.removeEventListener("keydown", handleKeydown);
-      document.body.style.overflow = previousOverflow;
       stopHoverPreview();
     };
-  }, [closeMediaViewer, selectedIndex, showNextMedia, showPreviousMedia, stopHoverPreview]);
+  }, [
+    closeMediaViewer,
+    isViewerOpen,
+    showNextMedia,
+    showPreviousMedia,
+    stopHoverPreview,
+  ]);
 
   if (media.length === 0) {
     return null;
@@ -192,9 +314,13 @@ export default function ProjectGallery({
                 openMediaViewer(index, event.currentTarget);
               }}
               aria-label={`Open ${item.altText ?? `${title} gallery item`} in preview`}
-              className="group relative aspect-square overflow-hidden rounded-xl border border-[rgba(var(--color-secondary-rgb),0.08)] bg-(--color-surface) text-left shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(var(--color-primary-rgb),0.45)]"
+              className="relative aspect-square overflow-hidden rounded-xl border border-[rgba(var(--color-secondary-rgb),0.08)] bg-(--color-surface) text-left shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(var(--color-primary-rgb),0.45)]"
             >
-              <div className="absolute inset-0 z-10 bg-black/10 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+              <div
+                className={`pointer-events-none absolute inset-0 z-10 bg-black/10 transition-opacity duration-200 ${
+                  hoveredMediaId === item.id ? "opacity-100" : "opacity-0"
+                } motion-reduce:transition-none`}
+              />
 
               {isVideo ? (
                 <video
@@ -207,7 +333,9 @@ export default function ProjectGallery({
                   playsInline
                   preload="metadata"
                   aria-label={item.altText ?? title}
-                  className="block h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                  className={`block h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none ${
+                    hoveredMediaId === item.id ? "scale-[1.04]" : ""
+                  }`}
                   onPointerEnter={(event) => {
                     handleVideoPointerEnter(
                       item.id,
@@ -231,7 +359,18 @@ export default function ProjectGallery({
                   decoding="async"
                   sizes="(max-width: 768px) 33vw, (max-width: 1280px) 25vw, 20vw"
                   unoptimized
-                  className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                  className={`h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none ${
+                    hoveredMediaId === item.id ? "scale-[1.04]" : ""
+                  }`}
+                  onPointerEnter={(event) => {
+                    handleImagePointerEnter(
+                      item.id,
+                      event.pointerType
+                    );
+                  }}
+                  onPointerLeave={() => {
+                    handleImagePointerLeave(item.id);
+                  }}
                 />
               )}
 
@@ -255,7 +394,7 @@ export default function ProjectGallery({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/80 p-3 backdrop-blur-sm sm:p-6"
+              className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overscroll-contain touch-pan-y bg-black/80 p-3 backdrop-blur-sm sm:p-6"
               onClick={closeMediaViewer}
             >
               <motion.div
