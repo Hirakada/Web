@@ -34,13 +34,23 @@ export default function ProjectList({
   const [currentPage, setCurrentPage] = useState(1);
 
   const categories = useMemo(() => {
-    return Array.from(
-      new Set(
-        projects.flatMap((project) =>
-          getProjectCategoryNames(project.categories)
-        )
-      )
-    ).sort((a, b) => a.localeCompare(b));
+    const categoryLabels = new Map<string, string>();
+
+    projects.forEach((project) => {
+      getProjectCategoryNames(project.categories).forEach(
+        (category) => {
+          const normalizedCategory =
+            category.toLocaleLowerCase();
+          if (!categoryLabels.has(normalizedCategory)) {
+            categoryLabels.set(normalizedCategory, category);
+          }
+        }
+      );
+    });
+
+    return Array.from(categoryLabels.values()).sort((a, b) =>
+      a.localeCompare(b)
+    );
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
@@ -52,7 +62,11 @@ export default function ProjectList({
       );
       const matchesCategory =
         !categoryName ||
-        projectCategories.includes(categoryName);
+        projectCategories.some(
+          (category) =>
+            category.toLocaleLowerCase() ===
+            categoryName.toLocaleLowerCase()
+        );
 
       if (!matchesCategory) {
         return false;
@@ -99,13 +113,11 @@ export default function ProjectList({
   return (
     <div className="mx-auto mt-10 w-full max-w-(--container-width) sm:mt-12">
       <div
-        className="
-          mb-8
-          grid
-          grid-cols-1
-          gap-4
-          md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.5fr)]
-        "
+        className={`mb-8 grid grid-cols-1 gap-4 ${
+          categories.length > 0
+            ? "md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.5fr)]"
+            : ""
+        }`}
       >
         <div className="flex flex-col gap-2">
           <label
@@ -138,43 +150,45 @@ export default function ProjectList({
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="project-category"
-            className="text-sm font-medium"
-          >
-            Category
-          </label>
-          <select
-            id="project-category"
-            value={categoryName}
-            onChange={(event) =>
-              updateCategory(event.target.value)
-            }
-            className="
-              min-h-12
-              rounded-xl
-              border
-              border-(--color-border)
-              bg-(--color-surface)
-              px-4
-              text-(--text-high-emphasis)
-              outline-none
-              focus-visible:ring-2
-              focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
-            "
-          >
-            <option value="">All categories</option>
-            {categories.map((category) => (
-              <option
-                key={category}
-                value={category}
-              >
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
+        {categories.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="project-category"
+              className="text-sm font-medium"
+            >
+              Category
+            </label>
+            <select
+              id="project-category"
+              value={categoryName}
+              onChange={(event) =>
+                updateCategory(event.target.value)
+              }
+              className="
+                min-h-12
+                rounded-xl
+                border
+                border-(--color-border)
+                bg-(--color-surface)
+                px-4
+                text-(--text-high-emphasis)
+                outline-none
+                focus-visible:ring-2
+                focus-visible:ring-[rgba(var(--color-primary-rgb),0.3)]
+              "
+            >
+              <option value="">All categories</option>
+              {categories.map((category) => (
+                <option
+                  key={category}
+                  value={category}
+                >
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {visibleProjects.length > 0 ? (
@@ -356,11 +370,21 @@ export default function ProjectList({
 function getProjectCategoryNames(
   categories: ProjectCardData["categories"]
 ): string[] {
+  const names = new Map<string, string>();
+
+  for (const category of categories) {
+    const name = category.trim();
+    if (!name) {
+      continue;
+    }
+
+    const normalizedName = name.toLocaleLowerCase();
+    if (!names.has(normalizedName)) {
+      names.set(normalizedName, name);
+    }
+  }
+
   return Array.from(
-    new Set(
-      categories
-        .map((category) => category.name.trim())
-        .filter(Boolean)
-    )
+    names.values()
   );
 }

@@ -26,8 +26,11 @@ import {
 
 import {
   Card,
+  CardImage,
   CardTitle,
 } from "@hirakada/ui";
+import type { ProjectCard } from "@hirakada/database";
+import { DOMAIN } from "@hirakada/config";
 
 interface Organization {
   id: string;
@@ -45,7 +48,7 @@ interface Organization {
 
 interface ExperienceItem {
   id: string;
-  experience_type: "work" | "entrepreneur";
+  experience_type: "work" | "entrepreneur" | null;
   title: string;
   role: string | null;
   description: string | null;
@@ -54,6 +57,7 @@ interface ExperienceItem {
   location: string | null;
   url: string | null;
   sort_order: number;
+  projects: ProjectCard[];
   organizations: Organization | null;
   attributes: {
     id: string;
@@ -991,6 +995,7 @@ export function Experience({
                 return (
                   <motion.article
                     key={item.id}
+                    id={`experience-${item.id}`}
                     initial={{
                       opacity: 1,
                       y: 0,
@@ -1146,6 +1151,7 @@ export function Experience({
               return (
                 <motion.article
                   key={item.id}
+                  id={`experience-${item.id}`}
                   initial={{
                     opacity: 1,
                     y: 0,
@@ -1607,6 +1613,45 @@ export function Experience({
                   </a>
                 ))}
               </div>
+            )}
+
+            {selectedExperience.projects.length > 0 && (
+              <section className="mt-7">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                  Projects
+                </h3>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {selectedExperience.projects.map((project) => (
+                    <a
+                      key={project.id}
+                      href={`${DOMAIN.portfolio}/${project.id}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="flex min-w-0 items-center gap-3 rounded-xl border border-black/10 p-3 transition-colors hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-white/10"
+                    >
+                      {project.coverImage && (
+                        <CardImage
+                          src={project.coverImage}
+                          alt=""
+                          width={80}
+                          height={80}
+                          unoptimized
+                          className="size-16 shrink-0 rounded-lg object-cover"
+                        />
+                      )}
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium">
+                          {project.title}
+                        </span>
+                        {project.categories.length > 0 && (
+                          <span className="mt-1 block truncate text-xs text-muted">
+                            {project.categories.join(" · ")}
+                          </span>
+                        )}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </section>
             )}
 
             {selectedExperience.url && (

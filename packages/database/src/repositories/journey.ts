@@ -1,9 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { ProjectCard } from "../types/project";
+import { getProjectCardsByExperienceIds } from "./projects";
 
 export interface JourneyEntry {
   id: string;
   section: "experience" | "education";
-  experience_type: "work" | "entrepreneur";
+  experience_type: "work" | "entrepreneur" | null;
   title: string;
   role: string | null;
   description: string | null;
@@ -12,6 +14,7 @@ export interface JourneyEntry {
   location: string | null;
   url: string | null;
   sort_order: number;
+  projects: ProjectCard[];
   organizations: {
     id: string;
     name: string;
@@ -111,7 +114,7 @@ export async function getJourneyEntries<
     throw error;
   }
 
-  return (data ?? []).map((entry) => ({
+  const entries = (data ?? []).map((entry) => ({
     ...(entry as unknown as Omit<JourneyEntry, "organizations"> & {
       organizations:
         | JourneyEntry["organizations"]
@@ -138,5 +141,91 @@ export async function getJourneyEntries<
       : [],
     images: entry.images ?? [],
     links: entry.links ?? [],
+    projects: [],
   })) as unknown as Extract<JourneyEntry, { section: Section }>[];
+
+  if (section !== "experience" || entries.length === 0) {
+    return entries;
+  }
+
+  const projectCards = await getProjectCardsByExperienceIds(
+    supabase,
+    entries.map((entry) => entry.id)
+  );
+  const projectsByExperienceId = new Map<string, ProjectCard[]>();
+
+  for (const project of projectCards) {
+    if (!project.experienceId) {
+      continue;
+    }
+
+    const associatedProjects =
+      projectsByExperienceId.get(project.experienceId) ?? [];
+    associatedProjects.push(project);
+    projectsByExperienceId.set(
+      project.experienceId,
+      associatedProjects
+    );
+  }
+
+  return entries.map((entry) => ({
+    ...entry,
+    projects: projectsByExperienceId.get(entry.id) ?? [],
+  }));
+}
+
+export async function getJourneyEntryById(
+  supabase: SupabaseClient,
+  id: string
+): Promise<JourneyEntry | null> {
+  const { data, error } = await supabase
+    .from("journey_entries")
+    .select(JOURNEY_SELECT)
+    .eq("id", id)
+    .eq("section", "experience")
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  const entry = ({
+    ...(data as unknown as Omit<JourneyEntry, "organizations"> & {
+      organizations:
+        | JourneyEntry["organizations"]
+        | JourneyEntry["organizations"][]
+        | null;
+      journey_attributes: {
+        attribute:
+          | JourneyEntry["attributes"][number]
+          | JourneyEntry["attributes"][number][]
+          | null;
+      }[];
+    }),
+    organizations: Array.isArray(data.organizations)
+      ? data.organizations[0] ?? null
+      : data.organizations ?? null,
+    attributes: Array.isArray(data.journey_attributes)
+      ? data.journey_attributes.flatMap((relation) =>
+          relation.attribute
+            ? Array.isArray(relation.attribute)
+              ? relation.attribute
+              : [relation.attribute]
+            : []
+        )
+      : [],
+    images: data.images ?? [],
+    links: data.links ?? [],
+    projects: [],
+  }) as unknown as JourneyEntry;
+
+  entry.projects = await getProjectCardsByExperienceIds(supabase, [
+    id,
+  ]);
+
+  return entry;
 }

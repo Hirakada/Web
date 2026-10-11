@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Attribute } from "../types/attribute";
-import type { Category } from "../types/category";
 import type { Contributor } from "../types/contributor";
 import type {
   Project,
@@ -69,20 +68,6 @@ type ProjectMediaRow = {
   isBanner: boolean | null;
 };
 
-type ProjectCategoryRow = {
-  categories: {
-    id: string;
-
-    name: string;
-
-    icon: string | null;
-
-    color: string | null;
-
-    description: string | null;
-  };
-};
-
 type ProjectAttributeRow = {
   attributes: {
     id: string;
@@ -132,11 +117,13 @@ type ProjectBaseRow = {
 
   is_featured: boolean;
 
-  project_media: ProjectMediaRow[] | null;
+  categories: string[] | null;
 
-  project_categories:
-    | ProjectCategoryRow[]
-    | null;
+  experience_id: string | null;
+
+  completion_date: string | null;
+
+  project_media: ProjectMediaRow[] | null;
 
   project_attributes:
     | ProjectAttributeRow[]
@@ -165,6 +152,9 @@ const PROJECT_CARD_SELECT = `
   description,
   status,
   is_featured,
+  categories,
+  experience_id,
+  completion_date,
 
   project_media(
     id,
@@ -174,16 +164,6 @@ const PROJECT_CARD_SELECT = `
     caption,
     order,
     isBanner
-  ),
-
-  project_categories(
-    categories(
-      id,
-      name,
-      icon,
-      color,
-      description
-    )
   ),
 
   project_attributes(
@@ -214,6 +194,8 @@ const PROJECT_DETAIL_SELECT = `
   type,
   is_featured,
   completion_date,
+  experience_id,
+  categories,
 
   project_media(
     id,
@@ -223,16 +205,6 @@ const PROJECT_DETAIL_SELECT = `
     caption,
     order,
     isBanner
-  ),
-
-  project_categories(
-    categories(
-      id,
-      name,
-      icon,
-      color,
-      description
-    )
   ),
 
   project_attributes(
@@ -329,28 +301,21 @@ function mapMedia(
 }
 
 function mapCategories(
-  rows: ProjectCategoryRow[]
-): Category[] {
-  return rows.map(
-    ({ categories }) => ({
-      id: categories.id,
+  categories: string[] | null | undefined
+): string[] {
+  const seen = new Set<string>();
 
-      name: categories.name,
+  return (categories ?? []).flatMap((category) => {
+    const name = category.trim();
+    const normalizedName = name.toLocaleLowerCase();
 
-      ...(categories.icon && {
-        icon: categories.icon,
-      }),
+    if (!name || seen.has(normalizedName)) {
+      return [];
+    }
 
-      ...(categories.color && {
-        color: categories.color,
-      }),
-
-      ...(categories.description && {
-        description:
-          categories.description,
-      }),
-    })
-  );
+    seen.add(normalizedName);
+    return [name];
+  });
 }
 
 function mapAttributes(
@@ -511,13 +476,19 @@ function mapProjectCard(
 
     isFeatured: project.is_featured,
 
+    categories: mapCategories(project.categories),
+
+    ...(project.completion_date && {
+      completionDate: project.completion_date,
+    }),
+
+    ...(project.experience_id && {
+      experienceId: project.experience_id,
+    }),
+
     ...(bannerImage && {
       coverImage: bannerImage.imageUrl,
     }),
-
-    categories: mapCategories(
-      project.project_categories ?? []
-    ),
 
     attributes: mapAttributes(
       project.project_attributes ?? []
@@ -580,6 +551,10 @@ function mapProjectDetail(
         project.completion_date,
     }),
 
+      ...(project.experience_id && {
+        experienceId: project.experience_id,
+      }),
+
     ...(bannerImage && {
       coverImage: bannerImage.imageUrl,
     }),
@@ -591,9 +566,7 @@ function mapProjectDetail(
       project.project_media
     ),
 
-    categories: mapCategories(
-      project.project_categories ?? []
-    ),
+    categories: mapCategories(project.categories),
 
     attributes: mapAttributes(
       project.project_attributes ?? []
@@ -620,6 +593,44 @@ export async function getProjectCards(
   return (
     data as unknown as ProjectBaseRow[]
   ).map((project) =>
+    mapProjectCard(supabase, project)
+  );
+}
+
+export async function getProjectCardsByExperienceIds(
+  supabase: SupabaseClient,
+  experienceIds: string[],
+  excludeProjectId?: string,
+  limit?: number
+): Promise<ProjectCard[]> {
+  const uniqueIds = Array.from(new Set(experienceIds));
+
+  if (uniqueIds.length === 0) {
+    return [];
+  }
+
+  let query = supabase
+    .from("projects")
+    .select(PROJECT_CARD_SELECT)
+    .in("experience_id", uniqueIds)
+    .order("order")
+    .order("title");
+
+  if (excludeProjectId) {
+    query = query.neq("id", excludeProjectId);
+  }
+
+  if (limit !== undefined) {
+    query = query.limit(limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as unknown as ProjectBaseRow[]).map((project) =>
     mapProjectCard(supabase, project)
   );
 }
@@ -653,20 +664,158 @@ export async function getRelatedProjects(
   currentId: string,
   limit = 3
 ): Promise<ProjectCard[]> {
+  const [outgoing, incoming, currentProject] = await Promise.all([
+    supabase
+      .from("project_relations")
+      .select("related_project_id")
+      .eq("project_id", currentId),
+    supabase
+      .from("project_relations")
+      .select("project_id")
+      .eq("related_project_id", currentId),
+    supabase
+      .from("projects")
+      .select("categories, experience_id")
+      .eq("id", currentId)
+      .maybeSingle(),
+  ]);
+
+  if (outgoing.error) {
+    throw outgoing.error;
+  }
+  if (incoming.error) {
+    throw incoming.error;
+  }
+  if (currentProject.error) {
+    throw currentProject.error;
+  }
+
+  const explicitIds = Array.from(
+    new Set([
+      ...(outgoing.data ?? []).map((relation) =>
+        relation.related_project_id
+      ),
+      ...(incoming.data ?? []).map((relation) =>
+        relation.project_id
+      ),
+    ])
+  ).filter((projectId) => projectId !== currentId);
+
+  if (explicitIds.length > 0) {
+    const explicitProjects = await getProjectCardsByIds(
+      supabase,
+      explicitIds,
+      limit
+    );
+
+    if (explicitProjects.length > 0) {
+      return explicitProjects;
+    }
+  }
+
+  const experienceId = currentProject.data?.experience_id;
+
+  if (experienceId) {
+    const experienceProjects =
+      await getProjectCardsByExperienceIds(
+        supabase,
+        [experienceId],
+        currentId,
+        limit
+      );
+
+    if (experienceProjects.length > 0) {
+      return experienceProjects;
+    }
+  }
+
+  const categories = mapCategories(currentProject.data?.categories);
+
+  if (categories.length === 0) {
+    return [];
+  }
+
+  const { data: candidates, error: candidateError } = await supabase
+    .from("projects")
+    .select("id, title, categories, completion_date")
+    .neq("id", currentId)
+    .overlaps("categories", categories);
+
+  if (candidateError) {
+    throw candidateError;
+  }
+
+  const normalizedCategories = new Set(
+    categories.map((category) => category.toLocaleLowerCase())
+  );
+
+  const rankedIds = (candidates ?? [])
+    .map((project) => ({
+      id: project.id,
+      title: project.title,
+      completionDate: project.completion_date,
+      sharedCategoryCount: mapCategories(project.categories).filter(
+        (category) =>
+          normalizedCategories.has(category.toLocaleLowerCase())
+      ).length,
+    }))
+    .filter((project) => project.sharedCategoryCount > 0)
+    .sort(
+      (a, b) =>
+        b.sharedCategoryCount - a.sharedCategoryCount ||
+        (b.completionDate ?? "").localeCompare(
+          a.completionDate ?? ""
+        ) ||
+        a.title.localeCompare(b.title) ||
+        a.id.localeCompare(b.id)
+    )
+    .slice(0, limit)
+    .map((project) => project.id);
+
+  return getProjectCardsByIds(
+    supabase,
+    rankedIds,
+    limit,
+    true
+  );
+}
+
+async function getProjectCardsByIds(
+  supabase: SupabaseClient,
+  projectIds: string[],
+  limit: number,
+  preserveInputOrder = false
+): Promise<ProjectCard[]> {
+  if (projectIds.length === 0) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from("projects")
     .select(PROJECT_CARD_SELECT)
-    .neq("id", currentId)
+    .in("id", projectIds)
     .order("order")
+    .order("title")
     .limit(limit);
 
   if (error) {
     throw error;
   }
 
-  return (
-    data as unknown as ProjectBaseRow[]
-  ).map((project) =>
+  const cards = (data as unknown as ProjectBaseRow[]).map((project) =>
     mapProjectCard(supabase, project)
   );
+
+  const cardsById = new Map(
+    cards.map((project) => [project.id, project])
+  );
+
+  if (!preserveInputOrder) {
+    return cards;
+  }
+
+  return projectIds.flatMap((projectId) => {
+    const project = cardsById.get(projectId);
+    return project ? [project] : [];
+  });
 }

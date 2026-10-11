@@ -1,4 +1,7 @@
-import type { Project } from "@hirakada/database";
+import type {
+  JourneyEntry,
+  Project,
+} from "@hirakada/database";
 
 import { Card } from "@hirakada/ui";
 
@@ -7,10 +10,12 @@ import ProjectContent from "./ProjectContent";
 
 export interface ProjectCardProps {
   project: Project;
+  experience?: JourneyEntry | null;
 }
 
 export default function ProjectCard({
   project,
+  experience,
 }: ProjectCardProps) {
   return (
     <Card
@@ -41,6 +46,7 @@ export default function ProjectCard({
 
       <ProjectContent
         project={project}
+        experience={experience ?? null}
       />
     </Card>
   );

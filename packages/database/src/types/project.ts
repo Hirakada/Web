@@ -1,5 +1,4 @@
 import type { Attribute } from "./attribute";
-import type { Category } from "./category";
 import type { Contributor } from "./contributor";
 import type {
   ProjectStatus,
@@ -19,7 +18,11 @@ export interface ProjectCard {
 
   coverImage?: string;
 
-  categories: Category[];
+  completionDate?: string;
+
+  categories: string[];
+
+  experienceId?: string;
 
   attributes: Pick<
     Attribute,
@@ -55,7 +58,9 @@ export interface Project {
 
   coverImage?: string;
 
-  categories: Category[];
+  categories: string[];
+
+  experienceId?: string;
 
   attributes: Attribute[];
 

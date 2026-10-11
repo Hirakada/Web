@@ -115,6 +115,34 @@ export default function RelatedProjects({
                     {project.title}
                   </CardTitle>
 
+                  {project.categories.length > 0 && (
+                    <div
+                      aria-label="Project categories"
+                      className="mt-3 flex flex-wrap gap-2"
+                    >
+                      {project.categories.map((category) => (
+                        <span
+                          key={category}
+                          className="rounded-full border border-(--color-border) px-2.5 py-1 text-xs text-(--text-medium-emphasis)"
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {project.completionDate && (
+                    <p className="mt-3 text-sm text-(--text-medium-emphasis)">
+                      Completed{" "}
+                      {new Intl.DateTimeFormat("en", {
+                        month: "short",
+                        year: "numeric",
+                      }).format(
+                        new Date(`${project.completionDate}T00:00:00`)
+                      )}
+                    </p>
+                  )}
+
                   <CardFooter>
                     <CardAttribute
                       attributes={project.attributes}

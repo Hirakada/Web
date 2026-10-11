@@ -5,6 +5,7 @@ import { createClient } from "@/lib/Supabase/server";
 import {
   getCachedProject,
   getCachedRelatedProjects,
+  getCachedJourneyEntry,
 } from "@hirakada/cache";
 
 import RelatedProjects from "@/components/Project/RelatedProjects";
@@ -32,6 +33,10 @@ export default async function Page({
     notFound();
   }
 
+  const experience = project.experienceId
+    ? await getCachedJourneyEntry(supabase, project.experienceId)
+    : null;
+
   return (
     <main
       className="
@@ -47,6 +52,7 @@ export default async function Page({
     >
       <ProjectCard
         project={project}
+        experience={experience}
       />
 
       <RelatedProjects

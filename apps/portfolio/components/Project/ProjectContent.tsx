@@ -1,6 +1,7 @@
 import {
   PROJECT_STATUS_META,
   PROJECT_TYPE_META,
+  type JourneyEntry,
   type Project,
 } from "@hirakada/database";
 
@@ -11,14 +12,17 @@ import {
 
 import ProjectActions from "./ProjectActions";
 import ProjectContributors from "./ProjectContributors";
+import ProjectExperienceReference from "./ProjectExperienceReference";
 import ProjectGallery from "./ProjectGallery";
 
 export interface ProjectContentProps {
   project: Project;
+  experience?: JourneyEntry | null;
 }
 
 export default function ProjectContent({
   project,
+  experience,
 }: ProjectContentProps) {
   const status =
     PROJECT_STATUS_META[project.status];
@@ -83,7 +87,7 @@ export default function ProjectContent({
             {Array.from(
               new Set(
                 project.categories
-                  .map((category) => category.name.trim())
+                  .map((category) => category.trim())
                   .filter(Boolean)
               )
             ).map((category) => (
@@ -110,6 +114,12 @@ export default function ProjectContent({
           {project.longDescription}
         </p>
       </div>
+
+      {experience && (
+        <ProjectExperienceReference
+          experience={experience}
+        />
+      )}
 
       {project.attributes.length > 0 && (
         <div

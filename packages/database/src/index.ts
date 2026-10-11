@@ -15,6 +15,7 @@ export {
 export { getAttributes } from "./repositories/attributes";
 export {
   getJourneyEntries,
+  getJourneyEntryById,
   type JourneyEntry,
 } from "./repositories/journey";
 

@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getProjectById } from "@hirakada/database";
 
-const CACHE_VERSION = "v8";
+const CACHE_VERSION = "v9";
 
 const FIVE_MINUTES = 5 * 60;
 
