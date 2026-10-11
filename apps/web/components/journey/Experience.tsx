@@ -1616,17 +1616,17 @@ export function Experience({
             )}
 
             {selectedExperience.projects.length > 0 && (
-              <section className="mt-7">
+              <section className="mt-6 w-full">
                 <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
                   Projects
                 </h3>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div className="mt-3 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
                   {selectedExperience.projects.map((project) => (
                     <a
                       key={project.id}
                       href={`${DOMAIN.portfolio}/${project.id}`}
                       onClick={(event) => event.stopPropagation()}
-                      className="flex min-w-0 items-center gap-3 rounded-xl border border-black/10 p-3 transition-colors hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-white/10"
+                      className="flex w-full min-w-0 items-center gap-3 rounded-xl border border-black/10 p-3 transition-colors hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-white/10"
                     >
                       {project.coverImage && (
                         <CardImage

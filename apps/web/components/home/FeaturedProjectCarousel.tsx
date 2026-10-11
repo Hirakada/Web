@@ -243,7 +243,10 @@ export default function FeaturedProjectCarousel({
           overflow-x-auto
           overscroll-x-contain
           scrollbar-hide
+          [scrollbar-width:none]
+          [&::-webkit-scrollbar]:hidden
         "
+        style={{ scrollbarWidth: "none" }}
       >
         {slides.map((project, index) => {
           const status =
@@ -353,11 +356,9 @@ export default function FeaturedProjectCarousel({
 
           <p
             aria-live="polite"
-            className="min-w-16 text-center text-sm text-(--text-medium-emphasis)"
+            className="min-w-12 text-center text-sm text-(--text-medium-emphasis)"
           >
-            {activeIndex + 1}–
-            {Math.min(slides.length, activeIndex + visibleCount)} /{" "}
-            {slides.length}
+            {activeIndex + 1}/{slides.length}
           </p>
 
           <button
@@ -432,7 +433,7 @@ export default function FeaturedProjectCarousel({
               h-full
               rounded-full
               bg-[rgba(var(--color-primary-rgb),0.7)]
-              transition-[left]
+              transition-[margin-left]
               duration-150
             "
             style={{
