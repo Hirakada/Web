@@ -3,7 +3,7 @@ import { unstable_cache } from "next/cache";
 
 import { getProjectCards } from "@hirakada/database";
 
-const ONE_HOUR = 60 * 60;
+const FIVE_MINUTES = 5 * 60;
 
 export async function getCachedProjectCards(
   supabase: SupabaseClient
@@ -13,7 +13,7 @@ export async function getCachedProjectCards(
     ["project-cards", "v7"],
     {
       tags: ["projects"],
-      revalidate: ONE_HOUR,
+      revalidate: FIVE_MINUTES,
     }
   )();
 }

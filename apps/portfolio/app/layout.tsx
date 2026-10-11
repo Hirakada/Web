@@ -12,6 +12,7 @@ import {
   defaultMetadata,
   headingFont,
 } from "@hirakada/config";
+import { RefreshOnFocus } from "@hirakada/ui";
 import { FirebaseInitializer } from "@hirakada/firebase";
 
 
@@ -105,6 +106,7 @@ export default function RootLayout({
 
       <body>
         <FirebaseInitializer />
+        <RefreshOnFocus />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

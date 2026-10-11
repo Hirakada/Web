@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getRelatedProjects } from "@hirakada/database";
 
-const ONE_HOUR = 60 * 60;
+const FIVE_MINUTES = 5 * 60;
 
 export function getCachedRelatedProjects(
   supabase: SupabaseClient,
@@ -16,7 +16,7 @@ export function getCachedRelatedProjects(
     ["related-projects", "v4"],
     {
       tags: ["projects", `project:${id}`],
-      revalidate: ONE_HOUR,
+      revalidate: FIVE_MINUTES,
     }
   )(id);
 }

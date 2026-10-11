@@ -6,7 +6,7 @@ import { getProjectById } from "@hirakada/database";
 
 const CACHE_VERSION = "v8";
 
-const ONE_HOUR = 60 * 60;
+const FIVE_MINUTES = 5 * 60;
 
 export function getCachedProject(
   supabase: SupabaseClient,
@@ -27,7 +27,7 @@ export function getCachedProject(
         "projects",
         `project:${id}`,
       ],
-      revalidate: ONE_HOUR,
+      revalidate: FIVE_MINUTES,
     }
   )(id);
 }

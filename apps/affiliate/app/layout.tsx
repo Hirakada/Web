@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
 import { bodyFont, headingFont } from "@hirakada/config";
-import { GlobalBackground } from "@hirakada/ui";
+import { GlobalBackground, RefreshOnFocus } from "@hirakada/ui";
 import { FirebaseInitializer } from "@hirakada/firebase";
 
 import AppFooter from "@/components/AppFooter";
@@ -44,6 +44,7 @@ export default function RootLayout({
     >
       <body className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
         <FirebaseInitializer />
+        <RefreshOnFocus />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

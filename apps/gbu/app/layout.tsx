@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
 import { FirebaseInitializer } from "@hirakada/firebase";
+import { RefreshOnFocus } from "@hirakada/ui";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_GBU_SITE_URL!),
@@ -51,6 +52,7 @@ export default function RootLayout({
     <html lang="id" className="dark">
       <body className="relative overflow-x-hidden bg-background text-foreground">
         <FirebaseInitializer />
+        <RefreshOnFocus />
         <Script id="google-analytics" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];

@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getAttributes } from "@hirakada/database";
 
-const ONE_HOUR = 60 * 60;
+const FIVE_MINUTES = 5 * 60;
 
 export function getCachedAttributes(
   supabase: SupabaseClient
@@ -14,7 +14,7 @@ export function getCachedAttributes(
     ["attributes", "v4"],
     {
       tags: ["attributes"],
-      revalidate: ONE_HOUR,
+      revalidate: FIVE_MINUTES,
     }
   )();
 }

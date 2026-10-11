@@ -6,3 +6,4 @@ export * from "./Header";
 export * from "./InfiniteSlider";
 export * from "./ScrollIndicator";
 export * from "./Background";
+export { RefreshOnFocus } from "./RefreshOnFocus";

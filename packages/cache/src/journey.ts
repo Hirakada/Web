@@ -7,7 +7,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getJourneyEntries } from "@hirakada/database";
 
-const ONE_HOUR = 60 * 60;
+const FIVE_MINUTES = 5 * 60;
 
 export function getCachedJourneyEntries<
   Section extends JourneyEntry["section"],
@@ -21,7 +21,7 @@ export function getCachedJourneyEntries<
     ["journey-entries", "v4"],
     {
       tags: ["journey"],
-      revalidate: ONE_HOUR,
+      revalidate: FIVE_MINUTES,
     }
   )(section) as ReturnType<
     typeof getJourneyEntries<Section>
