@@ -1,9 +1,6 @@
 import AppHeader from "@/components/AppHeader";
 
-import {
-  ScrollIndicator,
-  GlobalBackground,
-} from "@hirakada/ui";
+import { GlobalBackground } from "@hirakada/ui";
 
 import AppFooter from "@/components/AppFooter";
 
@@ -15,7 +12,6 @@ export default function MainLayout({
   return (
     <>
       <GlobalBackground />
-      <ScrollIndicator />
 
       <AppHeader />
 

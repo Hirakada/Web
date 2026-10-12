@@ -11,7 +11,10 @@ import {
   defaultMetadata,
   headingFont,
 } from "@hirakada/config";
-import { RefreshOnFocus } from "@hirakada/ui";
+import {
+  RefreshOnFocus,
+  ScrollIndicator,
+} from "@hirakada/ui";
 import { FirebaseInitializer } from "@hirakada/firebase";
 
 export const metadata: Metadata = defaultMetadata;
@@ -40,6 +43,7 @@ export default function RootLayout({
       <body className="relative overflow-x-hidden bg-background text-foreground">
         <FirebaseInitializer />
         <RefreshOnFocus />
+        <ScrollIndicator />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
