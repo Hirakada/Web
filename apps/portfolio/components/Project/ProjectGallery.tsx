@@ -1,7 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useLayoutEffect,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import type { ProjectMedia } from "@hirakada/database";
 
@@ -15,6 +21,7 @@ export interface ProjectGalleryProps {
 }
 
 interface PageScrollSnapshot {
+  scrollX: number;
   scrollY: number;
   body: {
     overflow: string;
@@ -26,6 +33,7 @@ interface PageScrollSnapshot {
     paddingRight: string;
   };
   htmlOverflow: string;
+  htmlScrollBehavior: string;
 }
 
 let pageScrollLockCount = 0;
@@ -34,6 +42,7 @@ let pageScrollSnapshot: PageScrollSnapshot | null = null;
 function acquirePageScrollLock(): () => void {
   if (pageScrollLockCount === 0) {
     const body = document.body;
+    const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const scrollbarWidth =
       window.innerWidth - document.documentElement.clientWidth;
@@ -42,6 +51,7 @@ function acquirePageScrollLock(): () => void {
     );
 
     pageScrollSnapshot = {
+      scrollX,
       scrollY,
       body: {
         overflow: body.style.overflow,
@@ -53,8 +63,11 @@ function acquirePageScrollLock(): () => void {
         paddingRight: body.style.paddingRight,
       },
       htmlOverflow: document.documentElement.style.overflow,
+      htmlScrollBehavior:
+        document.documentElement.style.scrollBehavior,
     };
 
+    document.documentElement.style.scrollBehavior = "auto";
     body.style.overflow = "hidden";
     body.style.position = "fixed";
     body.style.top = `-${scrollY}px`;
@@ -99,8 +112,11 @@ function acquirePageScrollLock(): () => void {
     body.style.paddingRight = snapshot.body.paddingRight;
     document.documentElement.style.overflow =
       snapshot.htmlOverflow;
+    document.documentElement.style.scrollBehavior = "auto";
     pageScrollSnapshot = null;
-    window.scrollTo(0, snapshot.scrollY);
+    window.scrollTo(snapshot.scrollX, snapshot.scrollY);
+    document.documentElement.style.scrollBehavior =
+      snapshot.htmlScrollBehavior;
   };
 }
 
@@ -248,7 +264,7 @@ export default function ProjectGallery({
     stopHoverPreview();
   }, [media.length, stopHoverPreview]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isViewerOpen) {
       return;
     }
