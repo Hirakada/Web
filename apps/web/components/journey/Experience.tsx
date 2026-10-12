@@ -1616,7 +1616,7 @@ export function Experience({
             )}
 
             {selectedExperience.projects.length > 0 && (
-              <section className="mt-6 w-full">
+              <div className="mt-6 w-full">
                 <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
                   Projects
                 </h3>
@@ -1651,7 +1651,7 @@ export function Experience({
                     </a>
                   ))}
                 </div>
-              </section>
+              </div>
             )}
 
             {selectedExperience.url && (
