@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -667,20 +666,24 @@ export function Experience({
     useState(0);
   const [lineLeft, setLineLeft] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!selectedExperience) {
       return;
     }
 
+    const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const previousHtmlOverflow =
       document.documentElement.style.overflow;
+    const previousHtmlScrollBehavior =
+      document.documentElement.style.scrollBehavior;
     const previousBodyOverflow = document.body.style.overflow;
     const previousBodyPosition = document.body.style.position;
     const previousBodyTop = document.body.style.top;
     const previousBodyWidth = document.body.style.width;
 
     document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.scrollBehavior = "auto";
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
@@ -697,11 +700,15 @@ export function Experience({
     return () => {
       document.documentElement.style.overflow =
         previousHtmlOverflow;
+      document.documentElement.style.scrollBehavior =
+        "auto";
       document.body.style.overflow = previousBodyOverflow;
       document.body.style.position = previousBodyPosition;
       document.body.style.top = previousBodyTop;
       document.body.style.width = previousBodyWidth;
-      window.scrollTo(0, scrollY);
+      window.scrollTo(scrollX, scrollY);
+      document.documentElement.style.scrollBehavior =
+        previousHtmlScrollBehavior;
       window.removeEventListener("keydown", closeOnEscape);
     };
   }, [selectedExperience]);
