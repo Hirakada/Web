@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 
 import { DOMAIN } from "@hirakada/config";
 import {
@@ -30,95 +31,23 @@ export default function FeaturedProjectCarousel({
   const slides = projects
     .filter((project) => project.isFeatured === true)
     .slice(0, 5);
-  const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(1);
+  const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const track = trackRef.current;
+  function getSlideOffset(index: number) {
+    const offset = (index - activeIndex + slides.length) % slides.length;
 
-    if (!track) {
-      return;
-    }
+    return offset > slides.length / 2
+      ? offset - slides.length
+      : offset;
+  }
 
-    const currentTrack = track;
+  function showPreviousSlide() {
+    setActiveIndex((index) => (index - 1 + slides.length) % slides.length);
+  }
 
-    function updateCarouselPosition() {
-      const firstSlide = currentTrack.children.item(0);
-      const slideWidth =
-        firstSlide instanceof HTMLElement
-          ? firstSlide.getBoundingClientRect().width
-          : 0;
-      const currentVisibleCount =
-        slideWidth > 0
-          ? Math.max(
-              1,
-              Math.floor(currentTrack.clientWidth / slideWidth)
-            )
-          : 1;
-      const maxStartIndex = Math.max(
-        0,
-        slides.length - currentVisibleCount
-      );
-
-      setVisibleCount(currentVisibleCount);
-
-      if (slideWidth > 0) {
-        setActiveIndex(
-            Math.min(
-              Math.round(currentTrack.scrollLeft / slideWidth),
-              maxStartIndex
-            )
-        );
-      }
-    }
-
-    updateCarouselPosition();
-
-    const observer = new ResizeObserver(updateCarouselPosition);
-    observer.observe(currentTrack);
-    currentTrack.addEventListener("scroll", updateCarouselPosition, {
-      passive: true,
-    });
-
-    return () => {
-      observer.disconnect();
-      currentTrack.removeEventListener(
-        "scroll",
-        updateCarouselPosition
-      );
-    };
-  }, [slides.length]);
-
-  function goToSlide(index: number) {
-    const track = trackRef.current;
-
-    if (
-      !track ||
-      slides.length === 0
-    ) {
-      return;
-    }
-
-    const firstSlide = track.children.item(0);
-
-    if (!(firstSlide instanceof HTMLElement)) {
-      return;
-    }
-
-    const slideWidth =
-      firstSlide.getBoundingClientRect().width;
-    const maxStartIndex = Math.max(
-      0,
-      slides.length - visibleCount
-    );
-    const nextIndex = Math.min(Math.max(index, 0), maxStartIndex);
-
-    track.scrollTo({
-      left: nextIndex * slideWidth,
-      behavior: "smooth",
-    });
-    setActiveIndex(nextIndex);
+  function showNextSlide() {
+    setActiveIndex((index) => (index + 1) % slides.length);
   }
 
   return (
@@ -128,39 +57,60 @@ export default function FeaturedProjectCarousel({
       aria-label="Featured projects"
       className="mt-12 w-full"
     >
-      <div
-        id="featured-project-track"
-        ref={trackRef}
-        className="
-          flex
-          w-full
-          snap-x
-          snap-mandatory
-          overflow-hidden
-        "
-      >
+      <div className="grid w-full [perspective:1200px]">
         {slides.map((project, index) => {
           const status =
             PROJECT_STATUS_META[project.status];
+          const offset = getSlideOffset(index);
+          const distance = Math.abs(offset);
+          const isActive = offset === 0;
 
           return (
-            <div
+            <motion.div
               key={project.id}
+              initial={false}
+              animate={{
+                x: `${offset * 78}%`,
+                y: distance * 8,
+                rotateY: offset * -28,
+                scale: isActive ? 1 : distance === 1 ? 0.88 : 0.74,
+                opacity: isActive ? 1 : distance === 1 ? 0.76 : 0.42,
+              }}
+              transition={
+                shouldReduceMotion
+                  ? { duration: 0 }
+                  : {
+                      type: "spring",
+                      stiffness: 150,
+                      damping: 22,
+                    }
+              }
+              style={{
+                transformStyle: "preserve-3d",
+                zIndex: slides.length - distance,
+                pointerEvents: distance > 1 ? "none" : "auto",
+              }}
               role="group"
               aria-roledescription="slide"
               aria-label={`${index + 1} of ${slides.length}: ${project.title}`}
+              aria-hidden={!isActive}
+              onClick={(event) => {
+                if (!isActive) {
+                  event.preventDefault();
+                  setActiveIndex(index);
+                }
+              }}
               className="
-                w-full
-                shrink-0
-                snap-start
-                px-[clamp(0.75rem,1.5vw,1.25rem)]
-                py-2
-              md:w-1/2
-              lg:w-1/3
+                col-start-1
+                row-start-1
+                mx-auto
+                w-[min(86vw,34rem)]
+                md:w-[min(48vw,38rem)]
               "
             >
               <Link
                 href={`${DOMAIN.portfolio}/${project.id}`}
+                tabIndex={isActive ? 0 : -1}
                 className="
                   block
                   h-full
@@ -236,18 +186,17 @@ export default function FeaturedProjectCarousel({
                   </CardContent>
                 </Card>
               </Link>
-            </div>
+            </motion.div>
           );
         })}
       </div>
 
-      {slides.length > visibleCount && (
+      {slides.length > 1 && (
         <div className="mx-auto mt-5 flex w-full items-center justify-center gap-5">
           <button
             type="button"
             aria-label="Previous featured project"
-            disabled={activeIndex === 0}
-            onClick={() => goToSlide(activeIndex - 1)}
+            onClick={showPreviousSlide}
             className="
               inline-flex
               size-12
@@ -288,8 +237,7 @@ export default function FeaturedProjectCarousel({
           <button
             type="button"
             aria-label="Next featured project"
-            disabled={activeIndex >= slides.length - visibleCount}
-            onClick={() => goToSlide(activeIndex + 1)}
+            onClick={showNextSlide}
             className="
               inline-flex
               size-12
@@ -328,6 +276,9 @@ export default function FeaturedProjectCarousel({
           </button>
         </div>
       )}
+      <p className="sr-only" aria-live="polite">
+        Featured project {activeIndex + 1} of {slides.length}
+      </p>
     </div>
   );
 }

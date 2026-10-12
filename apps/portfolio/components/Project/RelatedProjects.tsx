@@ -134,18 +134,6 @@ export default function RelatedProjects({
                     ))}
                   </div>
 
-                  {project.completionDate && (
-                    <p className="mt-3 text-sm text-(--text-medium-emphasis)">
-                      Completed{" "}
-                      {new Intl.DateTimeFormat("en", {
-                        month: "short",
-                        year: "numeric",
-                      }).format(
-                        new Date(`${project.completionDate}T00:00:00`)
-                      )}
-                    </p>
-                  )}
-
                   <CardFooter className="mt-auto">
                     <CardAttribute
                       attributes={project.attributes}
